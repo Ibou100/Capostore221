@@ -35,12 +35,12 @@ export const EditorialStoryView: React.FC = () => {
           </p>
         </div>
 
-        {/* Editorial Photo */}
-        <div className="aspect-[16/9] bg-zinc-900 rounded-sm overflow-hidden mb-12">
+        {/* Editorial Photo - Real Client Product */}
+        <div className="aspect-[16/9] bg-[#EDE5D8] rounded-sm overflow-hidden mb-12 border border-[#D9CEBE]">
           <img
-            src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1600&q=85"
-            alt="Maison CAPOSTORE221 Dakar Shooting"
-            className="w-full h-full object-cover object-center grayscale contrast-110"
+            src="/products/pantalon-cargo-ecru.jpg"
+            alt="Maison CAPOSTORE221 Dakar Atelier"
+            className="w-full h-full object-cover object-center"
           />
         </div>
 

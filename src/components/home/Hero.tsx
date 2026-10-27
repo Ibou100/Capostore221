@@ -1,77 +1,139 @@
 import React from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, MessageCircle, ShieldCheck, Truck, Sparkles } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export const Hero: React.FC = () => {
   const { goToCatalog } = useStore();
 
   return (
-    <section className="relative w-full bg-capo-black text-white overflow-hidden min-h-[82vh] flex items-center">
-      {/* Background Editorial Image with subtle cinematic overlay */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=2000&q=85"
-          alt="Éditorial Mode CAPOSTORE221 Dakar"
-          className="w-full h-full object-cover object-center brightness-[0.75] contrast-[1.05] scale-100 hover:scale-105 transition-transform duration-1000 ease-out"
-        />
-        {/* Editorial gradient shadows for readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-capo-black via-capo-black/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-capo-black/80 via-capo-black/30 to-transparent" />
-      </div>
+    <section className="relative w-full bg-[#FAF7F2] text-[#141210] border-b border-[#E8DFD5] overflow-hidden">
+      {/* Subtle warm African decorative accent line */}
+      <div className="h-1 w-full bg-gradient-to-r from-[#B85D19] via-[#D49A3D] to-[#141210]" />
 
-      {/* Content Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 w-full">
-        <div className="max-w-2xl">
-          {/* Subtle badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs uppercase tracking-widest text-zinc-200 mb-6 animate-fade-in">
-            <Sparkles className="w-3.5 h-3.5 text-capo-accent" />
-            <span>CAPOSTORE221 • Dakar, Sénégal</span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          
+          {/* Left Column: Clean Editorial Typography */}
+          <div className="lg:col-span-7 space-y-6 text-left">
+            {/* Teranga Dakar Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EDE5D8] border border-[#D9CEBE] text-xs font-semibold tracking-wider text-[#7A3E12] uppercase">
+              <span className="text-sm">🇸🇳</span>
+              <span>Dakar 221 • Mode Urbaine & Streetwear Chic</span>
+            </div>
+
+            {/* Main Headline */}
+            <h1 className="font-display font-black text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] text-[#141210] uppercase">
+              L'Élégance Urbaine <br />
+              <span className="text-[#B85D19] font-serif italic normal-case">au cœur de Dakar.</span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg text-[#4A453E] leading-relaxed max-w-xl font-normal">
+              Découvrez notre sélection exclusive de pièces de caractère disponibles immédiatement à Dakar. Chinos tailleur, cargos écru, chemises légères, montures en acétate et maroquinerie soignée.
+            </p>
+
+            {/* Trust Points */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 pb-2">
+              <div className="flex items-center gap-2 text-xs text-[#2E2A25] font-medium">
+                <Truck className="w-4 h-4 text-[#B85D19] shrink-0" />
+                <span>Livraison Dakar 24h</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-[#2E2A25] font-medium">
+                <ShieldCheck className="w-4 h-4 text-[#B85D19] shrink-0" />
+                <span>100% Photos Réelles</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-[#2E2A25] font-medium">
+                <Sparkles className="w-4 h-4 text-[#B85D19] shrink-0" />
+                <span>Wave & Orange Money</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+              <button
+                onClick={() => goToCatalog({ category: 'tous' })}
+                className="bg-[#141210] hover:bg-[#2C2723] text-white px-7 py-3.5 font-display font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
+              >
+                <span>Voir le catalogue (21 pièces)</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <a
+                href="https://wa.me/221770000000?text=Bonjour%20CAPOSTORE221,%20je%20souhaite%20d%C3%A9couvrir%20vos%20pi%C3%A8ces%20disponibles"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#25D366] hover:bg-[#20BA5A] text-white px-6 py-3.5 font-display font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-sm"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>Commander sur WhatsApp</span>
+              </a>
+            </div>
           </div>
 
-          {/* Main Title */}
-          <h1 className="font-display font-black text-4xl sm:text-6xl lg:text-7xl tracking-tightest leading-[1.05] text-white uppercase text-balance mb-6">
-            Ton style.<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-zinc-400">
-              Tes règles.
-            </span>
-          </h1>
+          {/* Right Column: Genuine Client Products Showcase */}
+          <div className="lg:col-span-5 relative">
+            <div className="relative bg-[#EDE5D8]/70 border border-[#D9CEBE] p-4 sm:p-5 rounded-sm shadow-sm">
+              <div className="grid grid-cols-2 gap-3">
+                {/* Main Featured Photo: Prince de Galles */}
+                <div 
+                  onClick={() => goToCatalog({ category: 'vetements' })}
+                  className="col-span-2 relative aspect-[16/11] rounded-sm overflow-hidden bg-white border border-[#D9CEBE] cursor-pointer group"
+                >
+                  <img
+                    src="/products/pantalon-prince-galles.jpg"
+                    alt="Pantalon Prince de Galles Almadies"
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3 text-white">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-[#B85D19] text-white inline-block mb-1">
+                      Pièce Phare
+                    </span>
+                    <p className="text-xs sm:text-sm font-bold truncate">Pantalon Prince de Galles « Almadies »</p>
+                    <p className="text-xs text-[#E8DFD5] font-semibold">32 000 FCFA</p>
+                  </div>
+                </div>
 
-          {/* Subtitle */}
-          <p className="text-base sm:text-lg lg:text-xl text-zinc-300 font-normal leading-relaxed mb-8 max-w-xl text-balance">
-            Découvre les pièces qui affirment ta personnalité. Une vision singulière du streetwear d'avant-garde et de l'élégance urbaine dakaroise.
-          </p>
+                {/* Second Photo: Lunettes Acétate */}
+                <div 
+                  onClick={() => goToCatalog({ category: 'lunettes' })}
+                  className="relative aspect-square rounded-sm overflow-hidden bg-white border border-[#D9CEBE] cursor-pointer group"
+                >
+                  <img
+                    src="/products/monture-lunettes-acetate-bordeaux.jpg"
+                    alt="Monture Optique Acétate Sculpté"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <div className="absolute bottom-2 left-2 right-2 text-white">
+                    <p className="text-[11px] font-bold truncate">Lunettes Acétate</p>
+                    <p className="text-[11px] text-[#E8DFD5] font-semibold">42 000 FCFA</p>
+                  </div>
+                </div>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-            <button
-              onClick={() => goToCatalog({ category: 'tous' })}
-              className="group bg-white text-capo-black hover:bg-zinc-100 px-8 py-4 rounded-none font-display font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-3 transition-all duration-300 shadow-xl"
-            >
-              <span>Explorer la collection</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </button>
+                {/* Third Photo: Pochette XQR Cuir */}
+                <div 
+                  onClick={() => goToCatalog({ category: 'accessoires' })}
+                  className="relative aspect-square rounded-sm overflow-hidden bg-white border border-[#D9CEBE] cursor-pointer group"
+                >
+                  <img
+                    src="/products/pochette-cuir-dragonne-xqr.png"
+                    alt="Pochette Cuir Matelassé XQR"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <div className="absolute bottom-2 left-2 right-2 text-white">
+                    <p className="text-[11px] font-bold truncate">Pochette Cuir XQR</p>
+                    <p className="text-[11px] text-[#E8DFD5] font-semibold">35 000 FCFA</p>
+                  </div>
+                </div>
+              </div>
 
-            <button
-              onClick={() => goToCatalog({ category: 'tous' })}
-              className="bg-transparent hover:bg-white/10 text-white border border-white/30 px-8 py-4 rounded-none font-display font-medium text-xs uppercase tracking-widest transition-all duration-300 backdrop-blur-sm"
-            >
-              Découvrir les nouveautés
-            </button>
-          </div>
-
-          {/* Editorial Key Values */}
-          <div className="mt-12 pt-8 border-t border-white/15 grid grid-cols-3 gap-4 text-left">
-            <div>
-              <p className="font-display font-bold text-xl sm:text-2xl text-white">100%</p>
-              <p className="text-[11px] text-zinc-400 uppercase tracking-wider mt-0.5">Designs Exclusifs</p>
-            </div>
-            <div>
-              <p className="font-display font-bold text-xl sm:text-2xl text-white">24H</p>
-              <p className="text-[11px] text-zinc-400 uppercase tracking-wider mt-0.5">Dakar Express</p>
-            </div>
-            <div>
-              <p className="font-display font-bold text-xl sm:text-2xl text-white">FCFA</p>
-              <p className="text-[11px] text-zinc-400 uppercase tracking-wider mt-0.5">Prix Transparents</p>
+              {/* Floating Quality Tag */}
+              <div className="absolute -bottom-3 -right-3 bg-[#141210] text-white px-3 py-1.5 border border-[#D49A3D] shadow-md text-[11px] font-semibold tracking-wider uppercase flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#25D366] inline-block animate-pulse" />
+                <span>Disponible à Dakar</span>
+              </div>
             </div>
           </div>
 

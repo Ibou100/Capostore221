@@ -22,10 +22,9 @@ export const Navbar: React.FC = () => {
 
   const navLinks: { label: string; category?: CategoryId; isSpecial?: boolean; filterType?: 'newest' | 'all' }[] = [
     { label: 'Accueil' },
-    { label: 'Nouveautés', filterType: 'newest' },
+    { label: 'Tout le Catalogue', filterType: 'all' },
     { label: 'Vêtements', category: 'vetements' },
     { label: 'Lunettes', category: 'lunettes' },
-    { label: 'Chaussures', category: 'chaussures' },
     { label: 'Accessoires', category: 'accessoires' },
   ];
 
@@ -82,11 +81,11 @@ export const Navbar: React.FC = () => {
                 <span className="text-capo-accent text-[9px] font-mono ml-0.5">221</span>
               </div>
               <div className="flex flex-col">
-                <span className="font-display font-extrabold tracking-tightest text-xl sm:text-2xl text-capo-black leading-none">
-                  CAPOSTORE<span className="text-zinc-400 font-light tracking-normal text-lg ml-0.5">221</span>
+                <span className="font-display font-extrabold tracking-tight text-xl sm:text-2xl text-[#141210] leading-none">
+                  CAPOSTORE<span className="text-[#B85D19] font-semibold text-lg ml-0.5">221</span>
                 </span>
-                <span className="text-[9px] tracking-widest uppercase text-zinc-500 font-medium">
-                  Maison de Mode • Dakar
+                <span className="text-[9px] tracking-widest uppercase text-[#7A3E12] font-bold">
+                  Boutique Dakaroise • Dakar 221
                 </span>
               </div>
             </button>

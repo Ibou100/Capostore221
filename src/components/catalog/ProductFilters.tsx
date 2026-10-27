@@ -8,7 +8,6 @@ const CATEGORIES: { id: CategoryId; label: string }[] = [
   { id: 'tous', label: 'Toutes les catégories' },
   { id: 'vetements', label: 'Vêtements' },
   { id: 'lunettes', label: 'Lunettes' },
-  { id: 'chaussures', label: 'Chaussures' },
   { id: 'accessoires', label: 'Accessoires' },
 ];
 
@@ -19,7 +18,7 @@ const GENDERS: { id: 'all' | ProductGender; label: string }[] = [
   { id: 'unisexe', label: 'Unisexe' },
 ];
 
-const AVAILABLE_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '40', '41', '42', '43', '44', '45'];
+const AVAILABLE_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
 const COLOR_SWATCHES = [
   { name: 'Noir', hex: '#111113' },

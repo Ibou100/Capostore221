@@ -86,27 +86,22 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2 text-sm text-zinc-400">
               <li>
                 <button onClick={() => goToCatalog({ category: 'vetements' })} className="hover:text-white transition-colors">
-                  Vêtements
+                  Vêtements (Pantalons, Chemises, Polos)
                 </button>
               </li>
               <li>
                 <button onClick={() => goToCatalog({ category: 'lunettes' })} className="hover:text-white transition-colors">
-                  Lunettes Solaires
-                </button>
-              </li>
-              <li>
-                <button onClick={() => goToCatalog({ category: 'chaussures' })} className="hover:text-white transition-colors">
-                  Chaussures & Sneakers
+                  Lunettes & Montures
                 </button>
               </li>
               <li>
                 <button onClick={() => goToCatalog({ category: 'accessoires' })} className="hover:text-white transition-colors">
-                  Maroquinerie & Bijoux
+                  Maroquinerie & Pochettes
                 </button>
               </li>
               <li>
                 <button onClick={() => goToCatalog({ category: 'tous' })} className="hover:text-white transition-colors">
-                  Voir tout le catalogue
+                  Voir toutes les 21 pièces
                 </button>
               </li>
             </ul>
