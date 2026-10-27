@@ -721,6 +721,81 @@ export const INITIAL_PRODUCTS: Product[] = [
     published: true,
     createdAt: '2026-10-27'
   },
+  {
+    id: 'capo-client-020',
+    name: 'Chemise Popeline Coton Ciel Épurée « Plateau Business »',
+    slug: 'chemise-popeline-coton-ciel-epuree-plateau-business',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 32000,
+    compareAtPrice: 38000,
+    images: [
+      '/products/chemise-popeline-bleu-pastel.png'
+    ],
+    description: 'Chemise formelle et business épurée en popeline de coton haute définition bleu ciel lumineux. Col boutonné classique aux pointes précises, boutons nacrés blancs cousus croix, patte de boutonnage américaine impeccable et poignets ajustables avec fente boutonnée renforcée.',
+    details: [
+      'Coupe regular moderne au tombé ajusté net',
+      'Popeline 100% coton doux au toucher soyeux anti-froissement',
+      'Col boutonné américain classique structure rigide',
+      'Étiquette tissée « Estudio Fitted » d\'origine au col',
+      'Boutonnière avec boutons en nacre blanche polie',
+      'Poignets biseautés à double boutonnage'
+    ],
+    materials: '100% Coton popeline peigné 140 g/m²',
+    availableSizes: ['S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Bleu Ciel Pastel', hex: '#A8C4E6' }
+    ],
+    variants: [
+      { id: 'vc76', size: 'S', color: { name: 'Bleu Ciel Pastel', hex: '#A8C4E6' }, stock: 5 },
+      { id: 'vc77', size: 'M', color: { name: 'Bleu Ciel Pastel', hex: '#A8C4E6' }, stock: 10 },
+      { id: 'vc78', size: 'L', color: { name: 'Bleu Ciel Pastel', hex: '#A8C4E6' }, stock: 7 },
+      { id: 'vc79', size: 'XL', color: { name: 'Bleu Ciel Pastel', hex: '#A8C4E6' }, stock: 4 },
+    ],
+    stock: 26,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-021',
+    name: 'Pochette à Main Cuir Matelassé & Dragonne « XQR Executive »',
+    slug: 'pochette-a-main-cuir-matelasse-dragonne-xqr-executive',
+    category: 'accessoires',
+    subCategory: 'Sacs & Maroquinerie',
+    gender: 'unisexe',
+    price: 35000,
+    compareAtPrice: 42000,
+    images: [
+      '/products/pochette-cuir-dragonne-xqr.png'
+    ],
+    description: 'Pochette zippée moderne et sophistiquée en cuir véritable grainé marron ébène / prune foncé. Surpiqûres quadrillées façon matelassage architectural, logo métallique en relief « XQR » en finition gunmetal brossé, dragonne amovible pour un porté poignet sécurisé et double poche zippée extérieure.',
+    details: [
+      'Cuir pleine fleur texturé haute résistance aux rayures',
+      'Finition quadrillée matelassée surpiquée ton sur ton',
+      'Lettrage métallique en relief chromé gunmetal « XQR »',
+      'Fermeture zippée supérieure fluide + poche verticale zippée avant',
+      'Tirettes de zip en métal plein brossé',
+      'Dragonne de poignet en cuir avec mousqueton pivotant',
+      'Dimensions idéales pour tablette compacte, carnet, smartphone et portefeuille : 28 cm x 18 cm'
+    ],
+    materials: 'Cuir de vachette véritable texturé, doublure sergé résistant & métal gunmetal',
+    availableColors: [
+      { name: 'Ébène Prune Foncé', hex: '#2A1820' }
+    ],
+    variants: [
+      { id: 'vc80', color: { name: 'Ébène Prune Foncé', hex: '#2A1820' }, stock: 14 }
+    ],
+    stock: 14,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
 
   // --- VÊTEMENTS DE CRÉATION & VESTIAIRE ---
   {
