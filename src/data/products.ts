@@ -532,6 +532,195 @@ export const INITIAL_PRODUCTS: Product[] = [
     published: true,
     createdAt: '2026-10-27'
   },
+  {
+    id: 'capo-client-015',
+    name: 'T-Shirt Henley Col Tunisien Coton Chiné « Somone »',
+    slug: 't-shirt-henley-col-tunisien-coton-chine-somone',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 24000,
+    compareAtPrice: 29000,
+    images: [
+      '/products/tshirt-henley-gris-chine.jpg'
+    ],
+    description: 'T-shirt manches courtes style henley à col tunisien en jersey de coton flammé chiné gris perle. Patte de boutonnage 2 boutons contrastés noirs mats, bord-côte extensible au col ras-du-cou et tombé droit fluide ultra-confortable pour les journées chaudes dakaroises.',
+    details: [
+      'Coupe droite décontractée contemporaine',
+      'Jersey 100% coton flammé chiné respirant 200 g/m²',
+      'Col rond tunisien avec patte 2 boutons noirs cousus main',
+      'Finitions double piqûre aux emmanchures et à la base',
+      'Idéal porté seul ou sous une surchemise ouverte'
+    ],
+    materials: '100% Coton peigné flammé',
+    availableSizes: ['M', 'L', 'XL', 'XXL'],
+    availableColors: [
+      { name: 'Gris Chiné Perle', hex: '#B8B9BD' }
+    ],
+    variants: [
+      { id: 'vc57', size: 'M', color: { name: 'Gris Chiné Perle', hex: '#B8B9BD' }, stock: 6 },
+      { id: 'vc58', size: 'L', color: { name: 'Gris Chiné Perle', hex: '#B8B9BD' }, stock: 9 },
+      { id: 'vc59', size: 'XL', color: { name: 'Gris Chiné Perle', hex: '#B8B9BD' }, stock: 7 },
+      { id: 'vc60', size: 'XXL', color: { name: 'Gris Chiné Perle', hex: '#B8B9BD' }, stock: 4 },
+    ],
+    stock: 26,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-016',
+    name: 'Chemise Oxford Slim Fit Bleu Azur « Fann Corniche »',
+    slug: 'chemise-oxford-slim-fit-bleu-azur-fann-corniche',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 34000,
+    compareAtPrice: 40000,
+    images: [
+      '/products/chemise-oxford-bleu-azur.png'
+    ],
+    description: 'L\'incontournable chemise oxford classique en pur coton teint en fil bleu ciel éclatant. Col boutonné structuré à pointes maintenues, broderie signature marine prestigieuse sur la poitrine, boutons blancs nacrés gravés et poignets ajustables à revers net.',
+    details: [
+      'Coupe semi-ajustée intemporelle slim fit',
+      'Tissage Oxford 100% coton lourd double retors',
+      'Col boutonné américain aux lignes impeccables',
+      'Broderie emblème brodé ton marine au torse gauche',
+      'Poignets arrondis réglables à deux boutons'
+    ],
+    materials: '100% Coton peigné double retors',
+    availableSizes: ['S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Bleu Azur Éclatant', hex: '#688EE6' }
+    ],
+    variants: [
+      { id: 'vc61', size: 'S', color: { name: 'Bleu Azur Éclatant', hex: '#688EE6' }, stock: 4 },
+      { id: 'vc62', size: 'M', color: { name: 'Bleu Azur Éclatant', hex: '#688EE6' }, stock: 8 },
+      { id: 'vc63', size: 'L', color: { name: 'Bleu Azur Éclatant', hex: '#688EE6' }, stock: 6 },
+      { id: 'vc64', size: 'XL', color: { name: 'Bleu Azur Éclatant', hex: '#688EE6' }, stock: 3 },
+    ],
+    stock: 21,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-017',
+    name: 'Chemise Tartan Automne Taupe & Bleu Slate « Saint-Louis »',
+    slug: 'chemise-tartan-automne-taupe-bleu-slate-saint-louis',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 31000,
+    compareAtPrice: 36000,
+    images: [
+      '/products/chemise-carreaux-taupe-azur.jpg'
+    ],
+    description: 'Chemise casual élégante à carreaux tartan vintage mariant des tons chauds de terre taupe, bleu ardoise, corail discret et lignes écrues. Col boutonné américain, poche poitrine plaquée ornée d\'un bouton nacre et broderie logo signature au fil brun.',
+    details: [
+      'Coupe contemporaine confort fit',
+      'Popeline douce de coton peigné texturé',
+      'Poche plaquée poitrine avec fermeture boutonnée et broderie emblème',
+      'Col boutonné souple et patte de gorge surpiquée',
+      'Poignets biseautés ajustables renforcés'
+    ],
+    materials: '100% Coton peigné tissé teint',
+    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    availableColors: [
+      { name: 'Tartan Taupe & Slate', hex: '#877568' }
+    ],
+    variants: [
+      { id: 'vc65', size: 'S', color: { name: 'Tartan Taupe & Slate', hex: '#877568' }, stock: 4 },
+      { id: 'vc66', size: 'M', color: { name: 'Tartan Taupe & Slate', hex: '#877568' }, stock: 7 },
+      { id: 'vc67', size: 'L', color: { name: 'Tartan Taupe & Slate', hex: '#877568' }, stock: 6 },
+      { id: 'vc68', size: 'XL', color: { name: 'Tartan Taupe & Slate', hex: '#877568' }, stock: 4 },
+      { id: 'vc69', size: 'XXL', color: { name: 'Tartan Taupe & Slate', hex: '#877568' }, stock: 2 },
+    ],
+    stock: 23,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-018',
+    name: 'Monture Optique Acétate Sculpté Prune & Écaille « Almadies Eyewear »',
+    slug: 'monture-optique-acetate-sculpte-prune-ecaille-almadies-eyewear',
+    category: 'lunettes',
+    subCategory: 'Lunettes',
+    gender: 'unisexe',
+    price: 42000,
+    compareAtPrice: 50000,
+    images: [
+      '/products/monture-lunettes-acetate-bordeaux.jpg'
+    ],
+    description: 'Une pièce d\'optique sculpturale d\'exception. Monture géométrique épaisse en acétate italien de cellulose biseauté coloris prune foncé et reflets écaille marbrée. Armatures métalliques internes ciselées en filigrane gravé visibles par transparence le long des branches, charnières 5 crans robustes et pont architectural.',
+    details: [
+      'Design géométrique biseauté audacieux',
+      'Acétate de cellulose de haute densité lustré à la main',
+      'Armature métallique interne gravée ciselée visible par transparence',
+      'Charnières 5 points en acier inoxydable haute précision',
+      'Verres neutres de présentation remplaçables par verres correcteurs ou solaires',
+      'Livré avec étui rigide CAPOSTORE221 et chamoisine microfibre'
+    ],
+    materials: 'Acétate de cellulose premium & armature acier inoxydable gravé',
+    availableColors: [
+      { name: 'Prune & Écaille Marbrée', hex: '#4F1B2D' }
+    ],
+    variants: [
+      { id: 'vc70', color: { name: 'Prune & Écaille Marbrée', hex: '#4F1B2D' }, stock: 15 }
+    ],
+    stock: 15,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-019',
+    name: 'Polo Rugby Rétro Club Vert Forêt & Crème « California Oars »',
+    slug: 'polo-rugby-retro-club-vert-foret-creme-california-oars',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 30000,
+    compareAtPrice: 36000,
+    images: [
+      '/products/polo-vintage-vert-foret.png'
+    ],
+    description: 'Inspiré du vestiaire universitaire vintage et des clubs d\'aviron. Confectionné en piqué de coton lourd vert forêt intense avec col polo contrasté en maille côtelée beurre crème. Patte polo sous patte cachée, et écusson brodé blanc « CALIFORNIA » aux rames croisées sur la poitrine.',
+    details: [
+      'Coupe ample boxy rétro années 90',
+      'Maille piquée de coton 240 g/m² au tombé lourd',
+      'Col polo contrasté en côte souple écru crème',
+      'Broderie artisanale haute précision California crossed oars sur le cœur',
+      'Bas droit fendu sur les côtés pour un tombé naturel'
+    ],
+    materials: '100% Coton piqué peigné lourd',
+    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    availableColors: [
+      { name: 'Vert Forêt & Crème', hex: '#2A4736' }
+    ],
+    variants: [
+      { id: 'vc71', size: 'S', color: { name: 'Vert Forêt & Crème', hex: '#2A4736' }, stock: 4 },
+      { id: 'vc72', size: 'M', color: { name: 'Vert Forêt & Crème', hex: '#2A4736' }, stock: 8 },
+      { id: 'vc73', size: 'L', color: { name: 'Vert Forêt & Crème', hex: '#2A4736' }, stock: 7 },
+      { id: 'vc74', size: 'XL', color: { name: 'Vert Forêt & Crème', hex: '#2A4736' }, stock: 4 },
+      { id: 'vc75', size: 'XXL', color: { name: 'Vert Forêt & Crème', hex: '#2A4736' }, stock: 3 },
+    ],
+    stock: 26,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
 
   // --- VÊTEMENTS DE CRÉATION & VESTIAIRE ---
   {
@@ -1012,9 +1201,9 @@ export const CATEGORIES_META = [
   {
     id: 'lunettes',
     name: 'Lunettes',
-    tagline: 'Montures acétate sculptées & verres UV400 haute clarté',
-    image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=1200&q=85',
-    description: 'Des solaires de caractère pour affronter la lumière dakaroise avec panache et protection absolue.'
+    tagline: 'Montures acétate sculptées prune & verres haute clarté',
+    image: '/products/monture-lunettes-acetate-bordeaux.jpg',
+    description: 'Des montures et solaires de caractère pour affronter la lumière dakaroise avec panache et protection absolue.'
   },
   {
     id: 'chaussures',
@@ -1050,12 +1239,12 @@ export const HOME_COLLECTIONS = [
     cta: 'Découvrir la Sélection'
   },
   {
-    title: 'Lunettes Solaires',
-    subtitle: 'Acétate d\'exception & protection solaire UV400',
+    title: 'Lunettes & Montures',
+    subtitle: 'Acétate sculpté biseauté & armatures ciselées',
     filterType: 'all',
     category: 'lunettes',
-    image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=1000&q=85',
-    cta: 'Explorer les Solaires'
+    image: '/products/monture-lunettes-acetate-bordeaux.jpg',
+    cta: 'Explorer les Lunettes'
   },
   {
     title: 'Chaussures & Sneakers',
