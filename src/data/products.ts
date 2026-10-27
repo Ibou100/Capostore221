@@ -1,7 +1,200 @@
 import type { Product } from '../types';
 
 export const INITIAL_PRODUCTS: Product[] = [
-  // --- VÊTEMENTS (HOMME & FEMME & UNISEXE) ---
+  // --- NOUVELLE SÉLECTION CLIENT CAPOSTORE221 (PHOTOS RÉELLES) ---
+  {
+    id: 'capo-client-001',
+    name: 'Pantalon Tailleur Prince de Galles « Almadies »',
+    slug: 'pantalon-tailleur-prince-de-galles-almadies',
+    category: 'vetements',
+    subCategory: 'Pantalons',
+    gender: 'homme',
+    price: 32000,
+    compareAtPrice: 38000,
+    images: [
+      '/products/pantalon-prince-galles.jpg'
+    ],
+    description: 'Pantalon chino tailleur à la coupe moderne fuselée, confectionné dans un sergé souple au motif Prince de Galles gris chiné et noir. Bouton gravé, taille semi-élastiquée pour un confort irréprochable et détail liseré tricolore discret à la poche cavalière.',
+    details: [
+      'Coupe slim-tapered contemporaine',
+      'Motif Prince de Galles tissé en fil teinté',
+      'Ceinture avec passants et élastique dos d\'aisance',
+      'Poches cavalières avant avec liseré contrasté & poches passepoilées arrière',
+      'Lavage délicat à 30°C ou pressing'
+    ],
+    materials: '65% Viscose, 30% Coton peigné, 5% Élasthanne',
+    availableSizes: ['S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Prince de Galles Gris', hex: '#4A4B50' }
+    ],
+    variants: [
+      { id: 'vc1', size: 'S', color: { name: 'Prince de Galles Gris', hex: '#4A4B50' }, stock: 4 },
+      { id: 'vc2', size: 'M', color: { name: 'Prince de Galles Gris', hex: '#4A4B50' }, stock: 8 },
+      { id: 'vc3', size: 'L', color: { name: 'Prince de Galles Gris', hex: '#4A4B50' }, stock: 5 },
+      { id: 'vc4', size: 'XL', color: { name: 'Prince de Galles Gris', hex: '#4A4B50' }, stock: 3 },
+    ],
+    stock: 20,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-25'
+  },
+  {
+    id: 'capo-client-002',
+    name: 'Bermuda Cargo Poches Zippées Écru « Ngor »',
+    slug: 'bermuda-cargo-poches-zippees-ecru-ngor',
+    category: 'vetements',
+    subCategory: 'Pantalons',
+    gender: 'homme',
+    price: 26000,
+    compareAtPrice: 32000,
+    images: [
+      '/products/bermuda-cargo-ecru.jpg'
+    ],
+    description: 'Bermuda utilitaire estival en sergé de coton écru délavé ultra-robuste. Multiples rangements ergonomiques avec doubles poches cargo à rabat et poche zippée technique en métal vieilli sur la cuisse droite. Idéal pour la saison chaude dakaroise.',
+    details: [
+      'Coupe regular cargo au-dessus du genou',
+      'Toile de coton peigné lourd délavé vintage',
+      'Poche latérale droite zippée en métal vieilli',
+      'Fermeture braguette zippée avec bouton métal siglé',
+      'Passants de ceinture renforcés'
+    ],
+    materials: '100% Coton sergé naturel résistant',
+    availableSizes: ['S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Blanc Écru Naturel', hex: '#F0ECE4' }
+    ],
+    variants: [
+      { id: 'vc5', size: 'S', color: { name: 'Blanc Écru Naturel', hex: '#F0ECE4' }, stock: 6 },
+      { id: 'vc6', size: 'M', color: { name: 'Blanc Écru Naturel', hex: '#F0ECE4' }, stock: 10 },
+      { id: 'vc7', size: 'L', color: { name: 'Blanc Écru Naturel', hex: '#F0ECE4' }, stock: 6 },
+      { id: 'vc8', size: 'XL', color: { name: 'Blanc Écru Naturel', hex: '#F0ECE4' }, stock: 4 },
+    ],
+    stock: 26,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-25'
+  },
+  {
+    id: 'capo-client-003',
+    name: 'Pantalon Cargo Large Carpenter Écru « Gorée »',
+    slug: 'pantalon-cargo-large-carpenter-ecru-goree',
+    category: 'vetements',
+    subCategory: 'Pantalons',
+    gender: 'unisexe',
+    price: 38000,
+    compareAtPrice: 45000,
+    images: [
+      '/products/pantalon-cargo-ecru.jpg'
+    ],
+    description: 'La pièce streetwear emblématique de CAPOSTORE221. Coupe droite relax skate/streetwear en sergé de coton écru non blanchi 340 g/m². Empiècements genoux surpiqués façon double-knee et grandes poches cargo à rabat.',
+    details: [
+      'Coupe droite décontractée skate/loose fit',
+      'Toile sergé épaisse haute ténacité',
+      'Double empiècement genoux renforcé surpiqué',
+      'Poches cargo latérales à soufflet et rabat',
+      'Finition bas de jambe droit net'
+    ],
+    materials: '100% Coton biologique épais 340 g/m²',
+    availableSizes: ['XS', 'S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Écru Minéral', hex: '#EDE8E0' }
+    ],
+    variants: [
+      { id: 'vc9', size: 'XS', color: { name: 'Écru Minéral', hex: '#EDE8E0' }, stock: 3 },
+      { id: 'vc10', size: 'S', color: { name: 'Écru Minéral', hex: '#EDE8E0' }, stock: 6 },
+      { id: 'vc11', size: 'M', color: { name: 'Écru Minéral', hex: '#EDE8E0' }, stock: 8 },
+      { id: 'vc12', size: 'L', color: { name: 'Écru Minéral', hex: '#EDE8E0' }, stock: 5 },
+      { id: 'vc13', size: 'XL', color: { name: 'Écru Minéral', hex: '#EDE8E0' }, stock: 3 },
+    ],
+    stock: 25,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-25'
+  },
+  {
+    id: 'capo-client-004',
+    name: 'Jean Brut Carpenter Délavé « Dakar Denim 221 »',
+    slug: 'jean-brut-carpenter-delave-dakar-denim-221',
+    category: 'vetements',
+    subCategory: 'Pantalons',
+    gender: 'homme',
+    price: 35000,
+    images: [
+      '/products/jean-carpenter-denim.jpg'
+    ],
+    description: 'Jean denim carpenter de caractère, confectionné dans une toile 100% coton 14 oz avec délavage vintage indigo intense. Poche utilitaire latérale sur la cuisse droite, poches arrière plaquées avec broderie rouge distinctive et étiquette cuir au dos.',
+    details: [
+      'Coupe droite authentique carpenter streetwear',
+      'Toile denim lourd 14 oz résistant',
+      'Poche outil latérale droite surpiquée',
+      'Broderie rouge contrastée artisanale sur la poche arrière',
+      'Étiquette jacron en cuir patiné à la ceinture'
+    ],
+    materials: '100% Denim coton lourd prélavé',
+    availableSizes: ['S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Indigo Brut Délavé', hex: '#2B394A' }
+    ],
+    variants: [
+      { id: 'vc14', size: 'S', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 4 },
+      { id: 'vc15', size: 'M', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 7 },
+      { id: 'vc16', size: 'L', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 5 },
+      { id: 'vc17', size: 'XL', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 2 },
+    ],
+    stock: 18,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-25'
+  },
+  {
+    id: 'capo-client-005',
+    name: 'Chemise Tartan Madras Col Boutonné « Plateau »',
+    slug: 'chemise-tartan-madras-col-boutonne-plateau',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 29000,
+    compareAtPrice: 34000,
+    images: [
+      '/products/chemise-carreaux-burton.jpg'
+    ],
+    description: 'Chemise casual chic en popeline de coton fine et légère. Carreaux tartan madras harmonieux ocre ambré, bleu marine, blanc et écru. Col boutonné américain souple, poche poitrine plaquée et poignets ajustables à deux boutons.',
+    details: [
+      'Coupe ajustée moderne sans entrave',
+      'Popeline de coton aérée 100% respirante',
+      'Col boutonné américain (Button-down collar)',
+      'Poche plaquée sur la poitrine',
+      'Boutons nacrés gravés cousus croisés'
+    ],
+    materials: '100% Coton peigné haute finesse',
+    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    availableColors: [
+      { name: 'Madras Ambré & Marine', hex: '#B86F36' }
+    ],
+    variants: [
+      { id: 'vc18', size: 'S', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 4 },
+      { id: 'vc19', size: 'M', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 9 },
+      { id: 'vc20', size: 'L', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 6 },
+      { id: 'vc21', size: 'XL', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 4 },
+      { id: 'vc22', size: 'XXL', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 2 },
+    ],
+    stock: 25,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-25'
+  },
+
+  // --- VÊTEMENTS DE CRÉATION & VESTIAIRE ---
   {
     id: 'capo-vet-001',
     name: 'Blouson Aviateur Structuré « Almadies »',
@@ -15,7 +208,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=1200&q=85'
     ],
-    description: 'Une pièce maîtresse alliant la rigueur du tailoring urbain et la décontraction contemporaine. Confectionné dans un sergé lourd déperlant au tombé impeccable, doté de zips métalliques argent mat brossé et d\'une doublure satinée monogrammée CAPO.',
+    description: 'Une pièce maîtresse alliant la rigueur du tailoring urbain et la décontraction contemporaine. Confectionné dans un sergé lourd déperlant au tombé impeccable, doté de zips métalliques argent mat brossé et d\'une doublure satinée monogrammée CAPOSTORE221.',
     details: [
       'Coupe droite oversize légèrement écourtée',
       'Tissu extérieur sergé technique 380 g/m²',
@@ -38,7 +231,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       { id: 'v6', size: 'L', color: { name: 'Gris Asphalte', hex: '#4A4A52' }, stock: 2 },
     ],
     stock: 22,
-    isNew: true,
+    isNew: false,
     isFeatured: true,
     isPopular: true,
     published: true,
@@ -56,7 +249,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=1200&q=85'
     ],
-    description: 'Le basique ultime élevé au rang de standard luxe. Coton peigné 280 GSM au tombé lourd, col côtelé épais indéformable et broderie ton-sur-ton « CAPO 221 » discrète au dos du col.',
+    description: 'Le basique ultime élevé au rang de standard luxe. Coton peigné 280 GSM au tombé lourd, col côtelé épais indéformable et broderie ton-sur-ton « CAPOSTORE 221 » discrète au dos du col.',
     details: [
       'Coupe ample carrée boxy fit',
       '100% Coton biologique peigné 280 GSM',
@@ -81,50 +274,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     ],
     stock: 60,
     isNew: false,
-    isFeatured: true,
-    isPopular: true,
-    published: true,
-    createdAt: '2026-02-15'
-  },
-  {
-    id: 'capo-vet-003',
-    name: 'Pantalon Cargo Tailleur « Plateau »',
-    slug: 'pantalon-cargo-tailleur-plateau',
-    category: 'vetements',
-    subCategory: 'Pantalons',
-    gender: 'homme',
-    price: 55000,
-    compareAtPrice: 65000,
-    images: [
-      'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&w=1200&q=85'
-    ],
-    description: 'Une fusion parfaite entre l\'utilitaire urbain et les lignes formelles d\'un pantalon tailleur. Poches cargo à soufflet plat intégrées sans surépaisseur, pinces frontales et patte de serrage dissimulée à la taille.',
-    details: [
-      'Coupe fuselée relax à taille mi-haute',
-      'Pinces architecturales sur le devant',
-      'Deux poches cargo plaquées discrètes avec rabat aimanté',
-      'Passants pour ceinture et pattes d\'ajustement latérales',
-      'Finitions intérieures gansées'
-    ],
-    materials: '68% Laine froide, 28% Polyester recyclé, 4% Élasthanne',
-    availableSizes: ['S', 'M', 'L', 'XL'],
-    availableColors: [
-      { name: 'Noir Charbon', hex: '#161619' },
-      { name: 'Olive Sombre', hex: '#3B4237' }
-    ],
-    variants: [
-      { id: 'v13', size: 'S', color: { name: 'Noir Charbon', hex: '#161619' }, stock: 4 },
-      { id: 'v14', size: 'M', color: { name: 'Noir Charbon', hex: '#161619' }, stock: 7 },
-      { id: 'v15', size: 'L', color: { name: 'Noir Charbon', hex: '#161619' }, stock: 5 },
-      { id: 'v16', size: 'XL', color: { name: 'Noir Charbon', hex: '#161619' }, stock: 3 },
-    ],
-    stock: 19,
-    isNew: true,
     isFeatured: false,
     isPopular: true,
     published: true,
-    createdAt: '2026-03-01'
+    createdAt: '2026-02-15'
   },
   {
     id: 'capo-vet-004',
@@ -138,11 +291,11 @@ export const INITIAL_PRODUCTS: Product[] = [
       'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=85'
     ],
-    description: 'Une silhouette audacieuse aux épaules appuyées et au croisé profond. Conçu pour apporter une allure sculpturale instantanée, que ce soit porté avec le pantalon coordonné ou un denim brut décontracté.',
+    description: 'Une silhouette audacieuse aux épaules appuyées et au croisé profond. Conçu pour apporter une allure sculpturale instantanée, que ce soit porté avec un denim brut ou un pantalon tailleur.',
     details: [
       'Coupe déstructurée oversize féminine',
       'Épaulettes intégrées légères pour une carrure nette',
-      'Boutonnage croisé avec boutons en corne gravée CAPO',
+      'Boutonnage croisé avec boutons gravés CAPOSTORE221',
       'Poches à rabat et fente centrale d\'aisance au dos'
     ],
     materials: '70% Viscose fluide lourde, 30% Coton peigné',
@@ -158,7 +311,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       { id: 'v20', size: 'S', color: { name: 'Noir Minéral', hex: '#121214' }, stock: 6 },
     ],
     stock: 18,
-    isNew: true,
+    isNew: false,
     isFeatured: true,
     isPopular: false,
     published: true,
@@ -230,17 +383,17 @@ export const INITIAL_PRODUCTS: Product[] = [
     variants: [
       { id: 'v25', size: 'XS', color: { name: 'Noir Nuit', hex: '#0B0B0C' }, stock: 2 },
       { id: 'v26', size: 'S', color: { name: 'Noir Nuit', hex: '#0B0B0C' }, stock: 3 },
-      { id: 'v27', size: 'M', color: { name: 'Noir Nuit', hex: '#0B0B0C' }, stock: 0 }, // Out of stock on M
+      { id: 'v27', size: 'M', color: { name: 'Noir Nuit', hex: '#0B0B0C' }, stock: 0 },
     ],
     stock: 5,
-    isNew: true,
+    isNew: false,
     isFeatured: true,
     isPopular: false,
     published: true,
     createdAt: '2026-03-05'
   },
 
-  // --- LUNETTES (PAS DE TAILLE S/M/L) ---
+  // --- LUNETTES (PAS DE TAILLE VÊTEMENT) ---
   {
     id: 'capo-lun-001',
     name: 'Lunettes « Solstice » Acétate Épais',
@@ -259,10 +412,9 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Acétate de cellulose 8mm découpé avec biseaux géométriques',
       'Charnières 7 barillets rivetées en acier inoxydable',
       'Verres minéraux teintés UV400 Catégorie 3',
-      'Livré avec son étui rigide CAPO221 en cuir végane et chamoisine microfibre'
+      'Livré avec son étui rigide CAPOSTORE221 en cuir végane et chamoisine microfibre'
     ],
     materials: 'Acétate de cellulose biodégradable d\'Italie, charnières inox',
-    // NO availableSizes! Sunglasses have no clothing sizes.
     availableColors: [
       { name: 'Noir Ébène Poli', hex: '#101012' },
       { name: 'Écaille Havane', hex: '#583D29' },
@@ -274,7 +426,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       { id: 'v30', color: { name: 'Ambre Fumé', hex: '#A86C32' }, stock: 4 },
     ],
     stock: 17,
-    isNew: true,
+    isNew: false,
     isFeatured: true,
     isPopular: true,
     published: true,
@@ -315,43 +467,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     published: true,
     createdAt: '2026-02-10'
   },
-  {
-    id: 'capo-lun-003',
-    name: 'Lunettes Pilote Contemporaines « Horizon »',
-    slug: 'lunettes-pilote-contemporaines-horizon',
-    category: 'lunettes',
-    subCategory: 'Lunettes de Soleil',
-    gender: 'unisexe',
-    price: 45000,
-    images: [
-      'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1577803645773-f96470509666?auto=format&fit=crop&w=1200&q=85'
-    ],
-    description: 'Une réinterprétation avant-gardiste de la forme pilote classique avec double pont rectiligne et cerclage en acétate translucide teinté champagne.',
-    details: [
-      'Double pont droit au profil architectural',
-      'Monture hybride acétate translucide et métal doré mat',
-      'Protection solaire anti-éblouissement maximale',
-      'Gravure discrète du logo CAPO sur le verre supérieur gauche'
-    ],
-    materials: 'Acétate translucide & laiton brossé doré',
-    availableColors: [
-      { name: 'Champagne / Or Mat', hex: '#C5A880' },
-      { name: 'Fumée Grise', hex: '#4F525A' }
-    ],
-    variants: [
-      { id: 'v33', color: { name: 'Champagne / Or Mat', hex: '#C5A880' }, stock: 4 },
-      { id: 'v34', color: { name: 'Fumée Grise', hex: '#4F525A' }, stock: 3 },
-    ],
-    stock: 7,
-    isNew: true,
-    isFeatured: false,
-    isPopular: false,
-    published: true,
-    createdAt: '2026-03-01'
-  },
 
-  // --- CHAUSSURES (TAILLES 40, 41, 42, 43, 44, 45) ---
+  // --- CHAUSSURES (POINTURES 40 À 45) ---
   {
     id: 'capo-ch-001',
     name: 'Sneakers Chunky « Mamelles 01 »',
@@ -388,7 +505,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       { id: 'v41', size: '43', color: { name: 'Noir Monolithe', hex: '#141416' }, stock: 4 },
     ],
     stock: 35,
-    isNew: true,
+    isNew: false,
     isFeatured: true,
     isPopular: true,
     published: true,
@@ -432,46 +549,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     published: true,
     createdAt: '2026-01-25'
   },
-  {
-    id: 'capo-ch-003',
-    name: 'Mules Minimalistes en Cuir Souple',
-    slug: 'mules-minimalistes-cuir-souple',
-    category: 'chaussures',
-    subCategory: 'Sandales & Mules',
-    gender: 'femme',
-    price: 65000,
-    images: [
-      'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=1200&q=85'
-    ],
-    description: 'Une sandale d\'une élégance dépouillée absolue. Bride large en agneau nappa ultra-doux, semelle carrée géométrique et talon bloc biseauté de 4 cm.',
-    details: [
-      'Bout carré moderne',
-      'Talon stable et confortable de 4 cm',
-      'Semelle de propreté rembourrée en mousse mémoire de forme',
-      'Fabriqué artisanalement avec finitions tranches cirées'
-    ],
-    materials: '100% Cuir d\'agneau nappa plongé',
-    availableSizes: ['36', '37', '38', '39', '40', '41'],
-    availableColors: [
-      { name: 'Noir Mat', hex: '#141416' },
-      { name: 'Sable Chaud', hex: '#D6C5AD' }
-    ],
-    variants: [
-      { id: 'v47', size: '37', color: { name: 'Noir Mat', hex: '#141416' }, stock: 3 },
-      { id: 'v48', size: '38', color: { name: 'Noir Mat', hex: '#141416' }, stock: 4 },
-      { id: 'v49', size: '39', color: { name: 'Noir Mat', hex: '#141416' }, stock: 2 },
-      { id: 'v50', size: '38', color: { name: 'Sable Chaud', hex: '#D6C5AD' }, stock: 3 },
-    ],
-    stock: 12,
-    isNew: true,
-    isFeatured: false,
-    isPopular: true,
-    published: true,
-    createdAt: '2026-03-07'
-  },
 
-  // --- ACCESSOIRES (PAS DE TAILLE S/M/L) ---
+  // --- ACCESSOIRES (MAROQUINERIE & BIJOUX) ---
   {
     id: 'capo-acc-001',
     name: 'Sac Bandoulière Holster « Ngor »',
@@ -493,7 +572,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Dimensions : 24 cm x 16 cm x 6 cm'
     ],
     materials: 'Cuir pleine fleur résistant aux intempéries, quincaillerie acier mat',
-    // NO sizes!
     availableColors: [
       { name: 'Noir Brut', hex: '#121214' },
       { name: 'Brun Cuir Brûlé', hex: '#4A2E1D' }
@@ -503,48 +581,11 @@ export const INITIAL_PRODUCTS: Product[] = [
       { id: 'v52', color: { name: 'Brun Cuir Brûlé', hex: '#4A2E1D' }, stock: 4 },
     ],
     stock: 10,
-    isNew: true,
+    isNew: false,
     isFeatured: true,
     isPopular: true,
     published: true,
     createdAt: '2026-03-04'
-  },
-  {
-    id: 'capo-acc-002',
-    name: 'Casquette Structurée « CAPO Monogram »',
-    slug: 'casquette-structuree-capo-monogram',
-    category: 'accessoires',
-    subCategory: 'Chapeaux & Casquettes',
-    gender: 'unisexe',
-    price: 22000,
-    images: [
-      'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=1200&q=85'
-    ],
-    description: 'Couronne à profil moyen 6 panneaux, visière préincurvée et broderie relief 3D ton-sur-ton « C221 ». Boucle de serrage arrière en métal argent vieilli.',
-    details: [
-      'Sergé de coton 100% lourd lavé',
-      'Bande de propreté intérieure absorbante thermo-régulatrice',
-      'Fermoir arrière en métal avec passant dissimulé',
-      'Taille unique ajustable'
-    ],
-    materials: '100% Coton peigné sergé haute densité',
-    availableColors: [
-      { name: 'Noir Absolu', hex: '#111113' },
-      { name: 'Sable Minéral', hex: '#C2B8A3' },
-      { name: 'Vert Forêt Sombre', hex: '#263428' }
-    ],
-    variants: [
-      { id: 'v53', color: { name: 'Noir Absolu', hex: '#111113' }, stock: 12 },
-      { id: 'v54', color: { name: 'Sable Minéral', hex: '#C2B8A3' }, stock: 8 },
-      { id: 'v55', color: { name: 'Vert Forêt Sombre', hex: '#263428' }, stock: 6 },
-    ],
-    stock: 26,
-    isNew: false,
-    isFeatured: false,
-    isPopular: true,
-    published: true,
-    createdAt: '2026-02-01'
   },
   {
     id: 'capo-acc-003',
@@ -563,7 +604,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Argent 925 massif poinçonné certifié',
       'Poids : environ 48 grammes d\'argent massif',
       'Fermoir à cliquet double sécurité',
-      'Livré avec écrin rigide et certificat d\'authenticité'
+      'Livré avec écrin rigide CAPOSTORE221 et certificat d\'authenticité'
     ],
     materials: 'Argent sterling 925 massif rhodié anti-oxydation',
     availableColors: [
@@ -573,84 +614,46 @@ export const INITIAL_PRODUCTS: Product[] = [
       { id: 'v56', color: { name: 'Argent Brossé', hex: '#D1D5DB' }, stock: 4 }
     ],
     stock: 4,
-    isNew: true,
+    isNew: false,
     isFeatured: true,
     isPopular: false,
     published: true,
     createdAt: '2026-03-11'
   },
   {
-    id: 'capo-acc-004',
-    name: 'Ceinture Cuir Lisse « Loop 221 »',
-    slug: 'ceinture-cuir-lisse-loop-221',
+    id: 'capo-acc-002',
+    name: 'Casquette Structurée « CAPOSTORE Monogram »',
+    slug: 'casquette-structuree-capostore-monogram',
     category: 'accessoires',
-    subCategory: 'Ceintures & Maroquinerie',
+    subCategory: 'Chapeaux & Casquettes',
     gender: 'unisexe',
-    price: 32000,
+    price: 22000,
     images: [
-      'https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=1200&q=85'
+      'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1200&q=85',
+      'https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=1200&q=85'
     ],
-    description: 'Une pièce sobre et racée. Cuir tannage végétal de 35 mm de largeur avec tranche teintée à la main et boucle géométrique exclusive en métal coulé brossé.',
+    description: 'Couronne à profil moyen 6 panneaux, visière préincurvée et broderie relief 3D ton-sur-ton « CS221 ». Boucle de serrage arrière en métal argent vieilli.',
     details: [
-      'Cuir tannage végétal artisanal durable qui se patine avec le temps',
-      'Largeur optimale de 35 mm compatible costumes et pantalons streetwear',
-      'Boucle ardillon minimaliste sans fioriture',
-      'Fabriqué au Sénégal'
+      'Sergé de coton 100% lourd lavé',
+      'Bande de propreté intérieure absorbante thermo-régulatrice',
+      'Fermoir arrière en métal avec passant dissimulé',
+      'Taille unique ajustable'
     ],
-    materials: '100% Cuir pleine fleur tannage végétal',
-    availableSizes: ['85 cm', '95 cm', '105 cm'],
+    materials: '100% Coton peigné sergé haute densité',
     availableColors: [
-      { name: 'Noir Profond', hex: '#111113' },
-      { name: 'Cognac Ambré', hex: '#63381E' }
+      { name: 'Noir Absolu', hex: '#111113' },
+      { name: 'Sable Minéral', hex: '#C2B8A3' }
     ],
     variants: [
-      { id: 'v57', size: '85 cm', color: { name: 'Noir Profond', hex: '#111113' }, stock: 3 },
-      { id: 'v58', size: '95 cm', color: { name: 'Noir Profond', hex: '#111113' }, stock: 5 },
-      { id: 'v59', size: '105 cm', color: { name: 'Noir Profond', hex: '#111113' }, stock: 3 },
-      { id: 'v60', size: '95 cm', color: { name: 'Cognac Ambré', hex: '#63381E' }, stock: 4 },
+      { id: 'v53', color: { name: 'Noir Absolu', hex: '#111113' }, stock: 12 },
+      { id: 'v54', color: { name: 'Sable Minéral', hex: '#C2B8A3' }, stock: 8 },
     ],
-    stock: 15,
+    stock: 20,
     isNew: false,
     isFeatured: false,
-    isPopular: false,
+    isPopular: true,
     published: true,
-    createdAt: '2026-02-18'
-  },
-
-  // --- OUT OF STOCK DEMO ITEM FOR TESTING STOCK INTEGRITY ---
-  {
-    id: 'capo-vet-999',
-    name: 'Parka Technique Déconstruite « Harmattan »',
-    slug: 'parka-technique-deconstruite-harmattan',
-    category: 'vetements',
-    subCategory: 'Vestes & Manteaux',
-    gender: 'unisexe',
-    price: 135000,
-    images: [
-      'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1200&q=85'
-    ],
-    description: 'Édition défilé capsule limitée. Parka trois-quarts à membrane triple couche coupe-vent et déperlante. Cette pièce d\'archive est actuellement victime de son succès.',
-    details: [
-      'Membrane 3 couches étanche 20 000 mm',
-      'Capuche tempête ergonomique',
-      'Finitions thermocollées sans coutures traversantes'
-    ],
-    materials: '100% Polyamide technique laminé',
-    availableSizes: ['M', 'L'],
-    availableColors: [
-      { name: 'Noir Obsidienne', hex: '#0B0C0E' }
-    ],
-    variants: [
-      { id: 'v99', size: 'M', color: { name: 'Noir Obsidienne', hex: '#0B0C0E' }, stock: 0 },
-      { id: 'v100', size: 'L', color: { name: 'Noir Obsidienne', hex: '#0B0C0E' }, stock: 0 },
-    ],
-    stock: 0, // OUT OF STOCK
-    isNew: false,
-    isFeatured: false,
-    isPopular: false,
-    published: true,
-    createdAt: '2026-01-05'
+    createdAt: '2026-02-01'
   }
 ];
 
@@ -658,14 +661,14 @@ export const CATEGORIES_META = [
   {
     id: 'tous',
     name: 'Tout le Catalogue',
-    description: 'L\'ensemble des créations CAPO221'
+    description: 'L\'ensemble des créations et sélections exclusives CAPOSTORE221 à Dakar.'
   },
   {
     id: 'vetements',
     name: 'Vêtements',
-    tagline: 'Tailoring décontracté, vestes d\'exception & hauts boxy',
-    image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=85',
-    description: 'Une coupe irréprochable, des matières denses et un style affirmé pour le quotidien et les grands soirs.'
+    tagline: 'Pantalons cargo, chinos Prince de Galles, jeans carpenter & chemises',
+    image: '/products/pantalon-cargo-ecru.jpg',
+    description: 'Coupes impeccables, finitions de créateur et matières denses sélectionnées pour l\'élégance urbaine dakaroise.'
   },
   {
     id: 'lunettes',
@@ -693,22 +696,22 @@ export const CATEGORIES_META = [
 export const HOME_COLLECTIONS = [
   {
     title: 'Mode Homme',
-    subtitle: 'Lignes architecturales & streetwear affûté',
+    subtitle: 'Chinos Prince de Galles, bermudas cargo & denims carpenter',
     filterType: 'homme',
     category: 'vetements',
-    image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=85',
+    image: '/products/pantalon-prince-galles.jpg',
     cta: 'Découvrir Homme'
   },
   {
-    title: 'Mode Femme',
-    subtitle: 'Élégance urbaine & silhouettes puissantes',
-    filterType: 'femme',
+    title: 'Mode Femme & Unisexe',
+    subtitle: 'Cargos larges déstructurés & blazers architecturaux',
+    filterType: 'all',
     category: 'vetements',
-    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85',
-    cta: 'Découvrir Femme'
+    image: '/products/pantalon-cargo-ecru.jpg',
+    cta: 'Découvrir la Sélection'
   },
   {
-    title: 'Lunettes',
+    title: 'Lunettes Solaires',
     subtitle: 'Acétate d\'exception & protection solaire UV400',
     filterType: 'all',
     category: 'lunettes',
@@ -716,16 +719,16 @@ export const HOME_COLLECTIONS = [
     cta: 'Explorer les Solaires'
   },
   {
-    title: 'Chaussures',
-    subtitle: 'Sneakers massives & bottines de caractère',
+    title: 'Chaussures & Sneakers',
+    subtitle: 'Volumes audacieux & cuirs pleine fleur',
     filterType: 'all',
     category: 'chaussures',
     image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1000&q=85',
     cta: 'Voir les Chaussures'
   },
   {
-    title: 'Accessoires',
-    subtitle: 'Maroquinerie fonctionnelle & bijoux argent 925',
+    title: 'Accessoires & Bijoux',
+    subtitle: 'Maroquinerie fonctionnelle & argent massif 925',
     filterType: 'all',
     category: 'accessoires',
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=1000&q=85',

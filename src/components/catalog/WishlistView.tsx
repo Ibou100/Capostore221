@@ -17,7 +17,7 @@ export const WishlistView: React.FC = () => {
         {/* Header */}
         <div className="pb-8 mb-8 border-b border-zinc-200">
           <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-2">
-            Maison CAPO221
+            Maison CAPOSTORE221
           </p>
           <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-capo-black tracking-tightest uppercase">
             Mes Pièces Favorites ({favoritedProducts.length})

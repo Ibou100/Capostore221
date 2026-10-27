@@ -1,10 +1,10 @@
-# CAPO221 — Maison de Mode Contemporaine
+# CAPOSTORE221 — Maison de Mode Contemporaine
 
 Boutique e-commerce premium de prêt-à-porter, streetwear d'avant-garde, solaires et accessoires, ancrée à Dakar, Sénégal.
 
 ## 💎 Identité Visuelle & Direction Artistique
 
-- **Nom de marque :** CAPO221
+- **Nom de marque :** CAPOSTORE221
 - **Positionnement :** Fashion premium, streetwear contemporain, élégance urbaine dakaroise.
 - **Devise :** Franc CFA (XOF) avec séparateur de milliers officiel (`45 000 FCFA`).
 - **Typographie :** *Space Grotesk* (titres éditoriaux percutants) & *Plus Jakarta Sans* (lisibilité contemporaine).
@@ -17,7 +17,7 @@ Boutique e-commerce premium de prêt-à-porter, streetwear d'avant-garde, solair
 
 ### 1. Page d'Accueil Éditoriale
 - **Barre d'annonce :** Informations de livraison express 24h à Dakar et seuil de gratuité, fermable.
-- **En-tête & Logo :** Identité typographique CAPO221 avec monogramme C221, recherche instantanée, compteur de favoris et panier dynamique. Menu mobile sous forme de tiroir latéral fluide.
+- **En-tête & Logo :** Identité typographique CAPOSTORE221 avec monogramme CS221, recherche instantanée, compteur de favoris et panier dynamique. Menu mobile sous forme de tiroir latéral fluide.
 - **Hero Section :** Photographie éditoriale haute définition, typographie percutante, boutons d'action rapide vers le catalogue et les nouveautés, indicateurs clés.
 - **Grandes Collections Visuelles :** Sections dédiées pour *Mode Homme*, *Mode Femme*, *Lunettes*, *Chaussures* et *Accessoires*.
 - **Nouveautés Récentes :** Grille de produits récents avec badges « Nouveau » et tarification transparente en FCFA.

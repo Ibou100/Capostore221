@@ -19,7 +19,7 @@ export const CatalogView: React.FC = () => {
         {/* Editorial Catalog Header */}
         <div className="pb-8 mb-8 border-b border-zinc-200">
           <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-2">
-            Collection CAPO221 • Dakar
+            Collection CAPOSTORE221 • Dakar
           </p>
           <h1 className="font-display font-extrabold text-3xl sm:text-5xl text-capo-black tracking-tightest uppercase">
             {currentCategoryMeta.name}

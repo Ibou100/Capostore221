@@ -375,7 +375,7 @@ export const CartDrawer: React.FC = () => {
                   Commande validée avec succès !
                 </h3>
                 <p className="text-xs text-zinc-600 max-w-sm mx-auto mb-6 leading-relaxed">
-                  Merci <strong>{customerName}</strong>. Notre concierge CAPO221 va vous contacter au <strong>{customerPhone}</strong> pour coordonner la livraison express à {customerCity}.
+                  Merci <strong>{customerName}</strong>. Notre concierge CAPOSTORE221 va vous contacter au <strong>{customerPhone}</strong> pour coordonner la livraison express à {customerCity}.
                 </p>
                 <div className="p-4 bg-zinc-50 rounded text-xs text-zinc-700 mb-6 text-left space-y-1">
                   <p><strong>Total de la commande :</strong> {formatFCFA(total)}</p>

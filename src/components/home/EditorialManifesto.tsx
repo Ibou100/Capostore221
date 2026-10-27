@@ -16,7 +16,7 @@ export const EditorialManifesto: React.FC = () => {
             <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-zinc-900">
               <img
                 src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1200&q=85"
-                alt="Manifeste Éditorial CAPO221"
+                alt="Manifeste Éditorial CAPOSTORE221"
                 className="w-full h-full object-cover object-center filter grayscale contrast-125"
                 loading="lazy"
               />
@@ -25,7 +25,7 @@ export const EditorialManifesto: React.FC = () => {
               {/* Badge on image */}
               <div className="absolute bottom-6 left-6 right-6">
                 <span className="text-[10px] tracking-widest uppercase text-capo-accent font-semibold block mb-1">
-                  Édition Limitée • Dakar 221
+                  Édition Limitée • CAPOSTORE221
                 </span>
                 <p className="font-display font-medium text-lg text-white">
                   L'assurance d'une allure qui n'a pas besoin de crier pour être remarquée.
@@ -37,7 +37,7 @@ export const EditorialManifesto: React.FC = () => {
             <div className="hidden sm:block absolute -bottom-6 -right-6 w-48 h-48 bg-zinc-900/90 backdrop-blur-md border border-zinc-800 p-5 rounded-sm shadow-2xl">
               <Quote className="w-8 h-8 text-capo-accent mb-2 opacity-80" />
               <p className="text-xs text-zinc-300 leading-relaxed font-light">
-                « Ni suiveur, ni imitateur. CAPO221 impose son propre rythme sur le bitume dakarois. »
+                « Ni suiveur, ni imitateur. CAPOSTORE221 impose son propre rythme sur le bitume dakarois. »
               </p>
             </div>
           </div>
@@ -54,7 +54,7 @@ export const EditorialManifesto: React.FC = () => {
             </h2>
 
             <p className="text-zinc-300 text-sm sm:text-base leading-relaxed">
-              CAPO221 est né d'une conviction simple : la mode dakaroise mérite des pièces à la hauteur de son énergie culturelle. Nous fusionnons la structure intemporelle du tailoring haut de gamme avec l'urgence brute du streetwear international.
+              CAPOSTORE221 est né d'une conviction simple : la mode dakaroise mérite des pièces à la hauteur de son énergie culturelle. Nous fusionnons la structure intemporelle du tailoring haut de gamme avec l'urgence brute du streetwear international.
             </p>
 
             <p className="text-zinc-400 text-sm leading-relaxed">

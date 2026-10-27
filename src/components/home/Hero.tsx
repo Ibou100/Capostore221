@@ -11,7 +11,7 @@ export const Hero: React.FC = () => {
       <div className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=2000&q=85"
-          alt="Éditorial Mode CAPO221 Dakar"
+          alt="Éditorial Mode CAPOSTORE221 Dakar"
           className="w-full h-full object-cover object-center brightness-[0.75] contrast-[1.05] scale-100 hover:scale-105 transition-transform duration-1000 ease-out"
         />
         {/* Editorial gradient shadows for readability */}
@@ -25,7 +25,7 @@ export const Hero: React.FC = () => {
           {/* Subtle badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs uppercase tracking-widest text-zinc-200 mb-6 animate-fade-in">
             <Sparkles className="w-3.5 h-3.5 text-capo-accent" />
-            <span>Maison Contemporaine • Dakar, Sénégal</span>
+            <span>CAPOSTORE221 • Dakar, Sénégal</span>
           </div>
 
           {/* Main Title */}

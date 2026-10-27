@@ -1,5 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
   <rect width="100" height="100" rx="20" fill="#0A0A0C"/>
-  <path d="M68 34C64 30 58 28 50 28C36 28 27 38 27 50C27 62 36 72 50 72C58 72 64 70 68 66" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
-  <circle cx="76" cy="50" r="4" fill="#D4AF37"/>
+  <!-- C -->
+  <path d="M42 34C38 30 33 28 26 28C14 28 8 38 8 50C8 62 14 72 26 72C33 72 38 70 42 66" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+  <!-- S -->
+  <path d="M72 35C68 30 60 28 53 31C47 34 47 41 53 44L61 48C68 51 68 59 62 63C55 67 46 65 42 60" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+  <!-- 221 accent dot -->
+  <circle cx="86" cy="50" r="4.5" fill="#D4AF37"/>
 </svg>

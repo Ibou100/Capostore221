@@ -63,12 +63,12 @@ export const Footer: React.FC = () => {
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-capo-black font-display font-bold text-sm tracking-tighter">
-                <span>C</span>
-                <span className="text-capo-accent text-[10px] ml-0.5">221</span>
+              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-capo-black font-display font-bold text-xs tracking-tighter">
+                <span>CS</span>
+                <span className="text-capo-accent text-[9px] ml-0.5">221</span>
               </div>
               <span className="font-display font-extrabold text-2xl tracking-tightest text-white">
-                CAPO<span className="text-zinc-500 font-light text-xl ml-0.5">221</span>
+                CAPOSTORE<span className="text-zinc-500 font-light text-xl ml-0.5">221</span>
               </span>
             </div>
             <p className="text-sm text-zinc-400 max-w-sm leading-relaxed">
@@ -76,7 +76,7 @@ export const Footer: React.FC = () => {
             </p>
             <div className="pt-2 text-xs text-zinc-400 space-y-1">
               <p><strong className="text-zinc-300 font-medium">Boutique & Showroom :</strong> Dakar, Sénégal (Horaires 10h - 20h)</p>
-              <p><strong className="text-zinc-300 font-medium">Service Client :</strong> contact@capo221.com</p>
+              <p><strong className="text-zinc-300 font-medium">Service Client :</strong> contact@capostore221.com</p>
             </div>
           </div>
 
@@ -114,7 +114,7 @@ export const Footer: React.FC = () => {
 
           {/* Maison & Brand */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Maison CAPO221</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Maison CAPOSTORE221</h4>
             <ul className="space-y-2 text-sm text-zinc-400">
               <li>
                 <button onClick={goToEditorial} className="hover:text-white transition-colors">
@@ -149,21 +149,21 @@ export const Footer: React.FC = () => {
             <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Réseaux Sociaux</h4>
             <div className="flex flex-wrap gap-2 text-xs">
               <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
-                Instagram @capo221
+                Instagram @capostore221
               </span>
               <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
-                TikTok @capo221
+                TikTok @capostore221
               </span>
               <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
-                Snapchat @capo221sn
+                Snapchat @capostore221
               </span>
               <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
-                Facebook /capo221
+                Facebook /capostore221
               </span>
             </div>
 
             <div className="pt-2">
-              <p className="text-xs text-zinc-400 mb-2 font-medium">Rejoindre le cercle privé CAPO221 :</p>
+              <p className="text-xs text-zinc-400 mb-2 font-medium">Rejoindre le cercle privé CAPOSTORE221 :</p>
               {newsletterSubmitted ? (
                 <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 p-2.5 rounded-lg">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
@@ -194,7 +194,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
-          <p>© {CURRENT_YEAR} CAPO221. Tous droits réservés. Dakar, Sénégal.</p>
+          <p>© {CURRENT_YEAR} CAPOSTORE221. Tous droits réservés. Dakar, Sénégal.</p>
           <div className="flex items-center gap-6">
             <span>Devise : FCFA (XOF)</span>
             <span>Made for Dakar & the World</span>

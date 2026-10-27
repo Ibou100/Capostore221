@@ -22,7 +22,7 @@ export const EditorialStoryView: React.FC = () => {
         <div className="space-y-4 mb-12">
           <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">
             <Sparkles className="w-3.5 h-3.5 text-capo-accent" />
-            <span>Maison CAPO221 • Dakar, Sénégal</span>
+            <span>Maison CAPOSTORE221 • Dakar, Sénégal</span>
           </div>
 
           <h1 className="font-display font-black text-4xl sm:text-6xl text-capo-black tracking-tightest leading-tight uppercase">
@@ -39,7 +39,7 @@ export const EditorialStoryView: React.FC = () => {
         <div className="aspect-[16/9] bg-zinc-900 rounded-sm overflow-hidden mb-12">
           <img
             src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1600&q=85"
-            alt="Maison CAPO221 Dakar Shooting"
+            alt="Maison CAPOSTORE221 Dakar Shooting"
             className="w-full h-full object-cover object-center grayscale contrast-110"
           />
         </div>
@@ -51,7 +51,7 @@ export const EditorialStoryView: React.FC = () => {
           </p>
 
           <p>
-            Fondée avec l'ambition d'élever le vestiaire urbain au rang de haute confection accessible, <strong className="font-semibold text-capo-black">CAPO221</strong> puise sa force dans une équation précise : la structure des coupes tailleur européennes rencontre la générosité des volumes décontractés et les exigences thermiques tropicales.
+            Fondée avec l'ambition d'élever le vestiaire urbain au rang de haute confection accessible, <strong className="font-semibold text-capo-black">CAPOSTORE221</strong> puise sa force dans une équation précise : la structure des coupes tailleur européennes rencontre la générosité des volumes décontractés et les exigences thermiques tropicales.
           </p>
 
           {/* Quote Block */}
@@ -60,7 +60,7 @@ export const EditorialStoryView: React.FC = () => {
               « Le luxe contemporain ne réside pas dans l'ostentation d'un logo, mais dans la justesse d'une ligne, la densité d'un textile et l'assurance avec laquelle vous traversez la ville. »
             </p>
             <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-              — Direction de Création CAPO221
+              — Direction de Création CAPOSTORE221
             </span>
           </div>
 

@@ -15,7 +15,7 @@ export const NewsletterSection: React.FC = () => {
       return;
     }
     setIsSubscribed(true);
-    showToast('Bienvenue dans le cercle privé CAPO221.', 'success');
+    showToast('Bienvenue dans le cercle privé CAPOSTORE221.', 'success');
   };
 
   return (
@@ -29,7 +29,7 @@ export const NewsletterSection: React.FC = () => {
         </div>
 
         <p className="text-xs uppercase tracking-widest text-zinc-400 font-semibold mb-3">
-          Le Cercle CAPO221
+          Le Cercle CAPOSTORE221
         </p>
 
         <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-white tracking-tightest mb-4">

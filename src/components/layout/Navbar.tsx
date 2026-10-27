@@ -74,16 +74,16 @@ export const Navbar: React.FC = () => {
             <button
               onClick={goToHome}
               className="group flex items-center gap-2.5 text-left focus:outline-none"
-              aria-label="CAPO221 - Accueil"
+              aria-label="CAPOSTORE221 - Accueil"
             >
               {/* Minimalist Monogram icon */}
-              <div className="w-8 h-8 rounded-lg bg-capo-black flex items-center justify-center text-white font-display font-bold text-sm tracking-tighter group-hover:scale-105 transition-transform duration-200">
-                <span className="text-white">C</span>
-                <span className="text-capo-accent text-[10px] font-mono ml-0.5">221</span>
+              <div className="w-8 h-8 rounded-lg bg-capo-black flex items-center justify-center text-white font-display font-bold text-xs tracking-tighter group-hover:scale-105 transition-transform duration-200">
+                <span className="text-white">CS</span>
+                <span className="text-capo-accent text-[9px] font-mono ml-0.5">221</span>
               </div>
               <div className="flex flex-col">
                 <span className="font-display font-extrabold tracking-tightest text-xl sm:text-2xl text-capo-black leading-none">
-                  CAPO<span className="text-zinc-400 font-light tracking-normal text-lg ml-0.5">221</span>
+                  CAPOSTORE<span className="text-zinc-400 font-light tracking-normal text-lg ml-0.5">221</span>
                 </span>
                 <span className="text-[9px] tracking-widest uppercase text-zinc-500 font-medium">
                   Maison de Mode • Dakar
@@ -180,10 +180,10 @@ export const Navbar: React.FC = () => {
             <div>
               <div className="flex items-center justify-between pb-6 border-b border-zinc-100">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded bg-capo-black flex items-center justify-center text-white font-bold text-xs">
-                    C<span className="text-capo-accent text-[9px]">221</span>
+                  <div className="w-7 h-7 rounded bg-capo-black flex items-center justify-center text-white font-bold text-[10px]">
+                    CS<span className="text-capo-accent text-[8px]">221</span>
                   </div>
-                  <span className="font-display font-extrabold text-lg tracking-tight">CAPO221</span>
+                  <span className="font-display font-extrabold text-lg tracking-tight">CAPOSTORE221</span>
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -235,7 +235,7 @@ export const Navbar: React.FC = () => {
 
             {/* Mobile drawer footer */}
             <div className="pt-6 border-t border-zinc-100 text-xs text-zinc-500">
-              <p className="font-semibold text-zinc-800 uppercase tracking-wider mb-1">Maison CAPO221</p>
+              <p className="font-semibold text-zinc-800 uppercase tracking-wider mb-1">Maison CAPOSTORE221</p>
               <p>Dakar, Sénégal • Service Client 7j/7</p>
               <p className="mt-2 text-zinc-400">Devise : FCFA (XOF)</p>
             </div>
