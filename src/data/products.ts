@@ -119,6 +119,82 @@ export const INITIAL_PRODUCTS: Product[] = [
     createdAt: '2026-10-25'
   },
   {
+    id: 'capo-client-004',
+    name: 'Jean Brut Carpenter Délavé « Dakar Denim 221 »',
+    slug: 'jean-brut-carpenter-delave-dakar-denim-221',
+    category: 'vetements',
+    subCategory: 'Pantalons',
+    gender: 'homme',
+    price: 35000,
+    images: [
+      '/products/jean-carpenter-denim.jpg'
+    ],
+    description: 'Jean denim carpenter de caractère, confectionné dans une toile 100% coton 14 oz avec délavage vintage indigo intense. Poche utilitaire latérale sur la cuisse droite, poches arrière plaquées avec broderie rouge distinctive et étiquette cuir au dos.',
+    details: [
+      'Coupe droite authentique carpenter streetwear',
+      'Toile denim lourd 14 oz résistant',
+      'Poche outil latérale droite surpiquée',
+      'Broderie rouge contrastée artisanale sur la poche arrière',
+      'Étiquette jacron en cuir patiné à la ceinture'
+    ],
+    materials: '100% Denim coton lourd prélavé',
+    availableSizes: ['S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Indigo Brut Délavé', hex: '#2B394A' }
+    ],
+    variants: [
+      { id: 'vc14', size: 'S', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 4 },
+      { id: 'vc15', size: 'M', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 7 },
+      { id: 'vc16', size: 'L', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 5 },
+      { id: 'vc17', size: 'XL', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 2 },
+    ],
+    stock: 18,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-25'
+  },
+  {
+    id: 'capo-client-005',
+    name: 'Chemise Tartan Madras Col Boutonné « Plateau »',
+    slug: 'chemise-tartan-madras-col-boutonne-plateau',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 29000,
+    compareAtPrice: 34000,
+    images: [
+      '/products/chemise-carreaux-burton.jpg'
+    ],
+    description: 'Chemise casual chic en popeline de coton fine et légère. Carreaux tartan madras harmonieux ocre ambré, bleu marine, blanc et écru. Col boutonné américain souple, poche poitrine plaquée et poignets ajustables à deux boutons.',
+    details: [
+      'Coupe ajustée moderne sans entrave',
+      'Popeline de coton aérée 100% respirante',
+      'Col boutonné américain (Button-down collar)',
+      'Poche plaquée sur la poitrine',
+      'Boutons nacrés gravés cousus croisés'
+    ],
+    materials: '100% Coton peigné haute finesse',
+    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    availableColors: [
+      { name: 'Madras Ambré & Marine', hex: '#B86F36' }
+    ],
+    variants: [
+      { id: 'vc18', size: 'S', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 4 },
+      { id: 'vc19', size: 'M', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 9 },
+      { id: 'vc20', size: 'L', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 6 },
+      { id: 'vc21', size: 'XL', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 4 },
+      { id: 'vc22', size: 'XXL', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 2 },
+    ],
+    stock: 25,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-25'
+  },
+  {
     id: 'capo-client-006',
     name: 'Chemise Popeline Rayée Rose & Craie « Fann Résidence »',
     slug: 'chemise-popeline-rayee-rose-craie-fann-residence',
@@ -270,80 +346,191 @@ export const INITIAL_PRODUCTS: Product[] = [
     createdAt: '2026-10-27'
   },
   {
-    id: 'capo-client-004',
-    name: 'Jean Brut Carpenter Délavé « Dakar Denim 221 »',
-    slug: 'jean-brut-carpenter-delave-dakar-denim-221',
+    id: 'capo-client-010',
+    name: 'Jean Droit Brut Indigo Pur « Terrou Bi »',
+    slug: 'jean-droit-brut-indigo-pur-terrou-bi',
     category: 'vetements',
     subCategory: 'Pantalons',
     gender: 'homme',
     price: 35000,
+    compareAtPrice: 42000,
     images: [
-      '/products/jean-carpenter-denim.jpg'
+      '/products/jean-droit-brut-indigo.png'
     ],
-    description: 'Jean denim carpenter de caractère, confectionné dans une toile 100% coton 14 oz avec délavage vintage indigo intense. Poche utilitaire latérale sur la cuisse droite, poches arrière plaquées avec broderie rouge distinctive et étiquette cuir au dos.',
+    description: 'Confectionné dans une authentique toile denim 100% coton lourd au bleu indigo profond sans artifice. Coupe droite épurée, surpiqûres ton-sur-ton raffinées, bouton noir mat gravé, grandes poches arrière plaquées à double surpiqûre géométrique.',
     details: [
-      'Coupe droite authentique carpenter streetwear',
-      'Toile denim lourd 14 oz résistant',
-      'Poche outil latérale droite surpiquée',
-      'Broderie rouge contrastée artisanale sur la poche arrière',
-      'Étiquette jacron en cuir patiné à la ceinture'
+      'Coupe droite moderne regular fit',
+      'Denim lourd 13,5 oz 100% coton brut non lavé',
+      'Poches arrière plaquées architecturales avec double couture',
+      'Bouton métallique noir mat et braguette zippée robuste',
+      'Finition bas de jambe droit net'
     ],
-    materials: '100% Denim coton lourd prélavé',
+    materials: '100% Coton denim brut haute qualité',
     availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
-      { name: 'Indigo Brut Délavé', hex: '#2B394A' }
+      { name: 'Indigo Brut Profond', hex: '#1E2C3D' }
     ],
     variants: [
-      { id: 'vc14', size: 'S', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 4 },
-      { id: 'vc15', size: 'M', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 7 },
-      { id: 'vc16', size: 'L', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 5 },
-      { id: 'vc17', size: 'XL', color: { name: 'Indigo Brut Délavé', hex: '#2B394A' }, stock: 2 },
+      { id: 'vc40', size: 'S', color: { name: 'Indigo Brut Profond', hex: '#1E2C3D' }, stock: 4 },
+      { id: 'vc41', size: 'M', color: { name: 'Indigo Brut Profond', hex: '#1E2C3D' }, stock: 9 },
+      { id: 'vc42', size: 'L', color: { name: 'Indigo Brut Profond', hex: '#1E2C3D' }, stock: 6 },
+      { id: 'vc43', size: 'XL', color: { name: 'Indigo Brut Profond', hex: '#1E2C3D' }, stock: 3 },
+    ],
+    stock: 22,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-011',
+    name: 'Chemisette Popeline Micro-Vichy Rouge & Craie « Ngor Beach »',
+    slug: 'chemisette-popeline-micro-vichy-rouge-craie-ngor-beach',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 28000,
+    compareAtPrice: 34000,
+    images: [
+      '/products/chemisette-vichy-rouge.jpg'
+    ],
+    description: 'Chemisette estivale manches courtes en popeline de coton fine et ultra-respirante. Motif micro-vichy rouge framboise et blanc craie, col boutonné classique américain, broderie prestigieuse contrastée sur la poche poitrine plaquée et hirondelles de renfort écrues.',
+    details: [
+      'Coupe droite décontractée manches courtes',
+      'Popeline 100% coton ultra-fraîche',
+      'Col boutonné américain (button-down)',
+      'Poche plaquée poitrine avec broderie rouge relief',
+      'Hirondelles de renfort écrues à la base'
+    ],
+    materials: '100% Coton peigné haute finesse',
+    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    availableColors: [
+      { name: 'Vichy Rouge & Craie', hex: '#D23E4B' }
+    ],
+    variants: [
+      { id: 'vc44', size: 'S', color: { name: 'Vichy Rouge & Craie', hex: '#D23E4B' }, stock: 5 },
+      { id: 'vc45', size: 'M', color: { name: 'Vichy Rouge & Craie', hex: '#D23E4B' }, stock: 10 },
+      { id: 'vc46', size: 'L', color: { name: 'Vichy Rouge & Craie', hex: '#D23E4B' }, stock: 7 },
+      { id: 'vc47', size: 'XL', color: { name: 'Vichy Rouge & Craie', hex: '#D23E4B' }, stock: 4 },
+    ],
+    stock: 26,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-012',
+    name: 'Sacoche Bandoulière Nylon & Cuir Sable « Dakar Crossbody »',
+    slug: 'sacoche-bandouliere-nylon-cuir-sable-dakar-crossbody',
+    category: 'accessoires',
+    subCategory: 'Sacs & Maroquinerie',
+    gender: 'unisexe',
+    price: 29000,
+    compareAtPrice: 35000,
+    images: [
+      '/products/sacoche-bandouliere-sable.png'
+    ],
+    description: 'Sacoche urbaine compacte et fonctionnelle en nylon ripstop déperlant coloris sable minéral. Compartiment principal à fermeture zippée double curseur avec tirettes cordons, poche zippée avant et arrière, écusson en cuir naturel gravé et bandoulière en sangle coton épaisse réglable.',
+    details: [
+      'Toile nylon technique déperlante et anti-déchirure',
+      'Fermetures zippées fluides avec doubles tirettes cordons',
+      'Compartiment principal spacieux + 2 poches zippées extérieures',
+      'Écusson en cuir véritable surpiqué à l\'avant',
+      'Bandoulière en toile sangle robuste avec boucle de réglage métal',
+      'Dimensions : 24 cm x 17 cm x 7 cm'
+    ],
+    materials: 'Nylon ripstop imperméable, sangle coton & finitions cuir véritable',
+    availableColors: [
+      { name: 'Sable Minéral', hex: '#E2D7C5' }
+    ],
+    variants: [
+      { id: 'vc48', color: { name: 'Sable Minéral', hex: '#E2D7C5' }, stock: 18 }
     ],
     stock: 18,
     isNew: true,
     isFeatured: true,
     isPopular: true,
     published: true,
-    createdAt: '2026-10-25'
+    createdAt: '2026-10-27'
   },
   {
-    id: 'capo-client-005',
-    name: 'Chemise Tartan Madras Col Boutonné « Plateau »',
-    slug: 'chemise-tartan-madras-col-boutonne-plateau',
+    id: 'capo-client-013',
+    name: 'Bermuda Chino Technique Graphite « Almadies Golf Club »',
+    slug: 'bermuda-chino-technique-graphite-almadies-golf-club',
     category: 'vetements',
-    subCategory: 'T-shirts & Hauts',
+    subCategory: 'Pantalons',
     gender: 'homme',
-    price: 29000,
-    compareAtPrice: 34000,
+    price: 30000,
+    compareAtPrice: 38000,
     images: [
-      '/products/chemise-carreaux-burton.jpg'
+      '/products/bermuda-technique-graphite.png'
     ],
-    description: 'Chemise casual chic en popeline de coton fine et légère. Carreaux tartan madras harmonieux ocre ambré, bleu marine, blanc et écru. Col boutonné américain souple, poche poitrine plaquée et poignets ajustables à deux boutons.',
+    description: 'Bermuda chino technique haute performance en tissu stretch respirant anti-froissement gris graphite. Finition taille élastiquée intérieure siglée, poches italiennes avec poche zippée invisible, poches arrière passepoilées avec broderie discrète et bouton noir mat.',
     details: [
-      'Coupe ajustée moderne sans entrave',
-      'Popeline de coton aérée 100% respirante',
-      'Col boutonné américain (Button-down collar)',
-      'Poche plaquée sur la poitrine',
-      'Boutons nacrés gravés cousus croisés'
+      'Coupe chino bermuda au tombé droit au-dessus du genou',
+      'Tissu technique bi-stretch respirant séchage rapide',
+      'Ceinture intérieure antidérapante siglée',
+      'Double poche arrière passepoilée avec surpiqûres de renfort',
+      'Idéal en ville comme pour les activités de plein air à Dakar'
     ],
-    materials: '100% Coton peigné haute finesse',
-    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    materials: '88% Polyamide technique micro-aéré, 12% Élasthanne',
+    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
-      { name: 'Madras Ambré & Marine', hex: '#B86F36' }
+      { name: 'Gris Graphite Technique', hex: '#4B4B52' }
     ],
     variants: [
-      { id: 'vc18', size: 'S', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 4 },
-      { id: 'vc19', size: 'M', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 9 },
-      { id: 'vc20', size: 'L', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 6 },
-      { id: 'vc21', size: 'XL', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 4 },
-      { id: 'vc22', size: 'XXL', color: { name: 'Madras Ambré & Marine', hex: '#B86F36' }, stock: 2 },
+      { id: 'vc49', size: 'S', color: { name: 'Gris Graphite Technique', hex: '#4B4B52' }, stock: 5 },
+      { id: 'vc50', size: 'M', color: { name: 'Gris Graphite Technique', hex: '#4B4B52' }, stock: 9 },
+      { id: 'vc51', size: 'L', color: { name: 'Gris Graphite Technique', hex: '#4B4B52' }, stock: 6 },
+      { id: 'vc52', size: 'XL', color: { name: 'Gris Graphite Technique', hex: '#4B4B52' }, stock: 4 },
     ],
-    stock: 25,
+    stock: 24,
     isNew: true,
     isFeatured: true,
     isPopular: true,
     published: true,
-    createdAt: '2026-10-25'
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-014',
+    name: 'Chemise Oxford Rayures Brique & Craie « Médina Chic »',
+    slug: 'chemise-oxford-rayures-brique-craie-medina-chic',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 32000,
+    compareAtPrice: 38000,
+    images: [
+      '/products/chemise-oxford-brique.jpg'
+    ],
+    description: 'Chemise oxford en coton peigné durable aux rayures fines brique terracotta et blanc cassé. Col boutonné souple, poche poitrine avec broderie bleu marine de créateur, pli creux central au dos pour une liberté de mouvement totale et poignets boutonnés avec renfort.',
+    details: [
+      'Tissage Oxford lourd en pur coton peigné',
+      'Col boutonné américain intemporel',
+      'Poche poitrine plaquée ornée d\'une broderie marine',
+      'Pli rond d\'aisance au dos avec patte d\'accrochage',
+      'Boutons cousus croisés haute résistance'
+    ],
+    materials: '100% Coton peigné Oxford 220 g/m²',
+    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    availableColors: [
+      { name: 'Rayures Brique & Craie', hex: '#B35848' }
+    ],
+    variants: [
+      { id: 'vc53', size: 'S', color: { name: 'Rayures Brique & Craie', hex: '#B35848' }, stock: 4 },
+      { id: 'vc54', size: 'M', color: { name: 'Rayures Brique & Craie', hex: '#B35848' }, stock: 8 },
+      { id: 'vc55', size: 'L', color: { name: 'Rayures Brique & Craie', hex: '#B35848' }, stock: 5 },
+      { id: 'vc56', size: 'XL', color: { name: 'Rayures Brique & Craie', hex: '#B35848' }, stock: 3 },
+    ],
+    stock: 20,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
   },
 
   // --- VÊTEMENTS DE CRÉATION & VESTIAIRE ---
@@ -839,9 +1026,9 @@ export const CATEGORIES_META = [
   {
     id: 'accessoires',
     name: 'Accessoires',
-    tagline: 'Sacs holster étanches, casquettes structurées & argent 925',
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=1200&q=85',
-    description: 'Les détails qui font la différence. Maroquinerie d\'action et bijoux massifs contemporains.'
+    tagline: 'Sacoches bandoulière nylon & cuir, maroquinerie fonctionnelle',
+    image: '/products/sacoche-bandouliere-sable.png',
+    description: 'Les détails qui font la différence. Maroquinerie d\'action dakaroise et accessoires de caractère.'
   }
 ] as const;
 
@@ -875,15 +1062,15 @@ export const HOME_COLLECTIONS = [
     subtitle: 'Volumes audacieux & cuirs pleine fleur',
     filterType: 'all',
     category: 'chaussures',
-    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1000&q=85',
+    image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1000&q=85',
     cta: 'Voir les Chaussures'
   },
   {
-    title: 'Accessoires & Bijoux',
-    subtitle: 'Maroquinerie fonctionnelle & argent massif 925',
+    title: 'Accessoires & Maroquinerie',
+    subtitle: 'Sacoches bandoulière nylon sable & maroquinerie urbaine',
     filterType: 'all',
     category: 'accessoires',
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=1000&q=85',
+    image: '/products/sacoche-bandouliere-sable.png',
     cta: 'Voir les Accessoires'
   }
 ];
