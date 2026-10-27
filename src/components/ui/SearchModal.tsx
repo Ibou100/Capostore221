@@ -98,7 +98,7 @@ export const SearchModal: React.FC = () => {
               Recherches fréquentes à Dakar :
             </p>
             <div className="flex flex-wrap gap-2">
-              {['Prince de Galles', 'Bermuda Cargo', 'Pantalon Cargo', 'Jean Carpenter', 'Chemise Tartan', 'Sneakers'].map((kw) => (
+              {['Prince de Galles', 'Bermuda Cargo', 'Pantalon Cargo', 'Jean Bleached', 'Chemise Rose', 'Polo Grenat', 'Jean Carpenter'].map((kw) => (
                 <button
                   key={kw}
                   onClick={() => handleQuickKeyword(kw)}

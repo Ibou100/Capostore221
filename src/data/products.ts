@@ -12,7 +12,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 32000,
     compareAtPrice: 38000,
     images: [
-      '/products/pantalon-prince-galles.jpg'
+      '/products/pantalon-prince-galles.jpg',
+      '/products/pantalon-prince-galles-alt.jpg'
     ],
     description: 'Pantalon chino tailleur à la coupe moderne fuselée, confectionné dans un sergé souple au motif Prince de Galles gris chiné et noir. Bouton gravé, taille semi-élastiquée pour un confort irréprochable et détail liseré tricolore discret à la poche cavalière.',
     details: [
@@ -116,6 +117,157 @@ export const INITIAL_PRODUCTS: Product[] = [
     isPopular: true,
     published: true,
     createdAt: '2026-10-25'
+  },
+  {
+    id: 'capo-client-006',
+    name: 'Chemise Popeline Rayée Rose & Craie « Fann Résidence »',
+    slug: 'chemise-popeline-rayee-rose-craie-fann-residence',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 30000,
+    compareAtPrice: 36000,
+    images: [
+      '/products/chemise-rayee-rose-craie.jpg'
+    ],
+    description: 'Chemise moderne chic à rayures bâtonnets rose framboise et blanc craie sur une popeline 100% coton aérée. Col classique structuré avec intérieur contrasté, patte de boutonnage américaine, poche poitrine plaquée et poignets biseautés ajustables avec élégant parement blanc.',
+    details: [
+      'Coupe regular contemporaine droite',
+      'Popeline de coton respirante au toucher soyeux',
+      'Col avec doublure blanche intérieure de propreté',
+      'Poche poitrine plaquée surpiquée',
+      'Poignets de manche ajustables à double boutonnerie'
+    ],
+    materials: '100% Coton peigné haute densité',
+    availableSizes: ['S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Rayures Rose & Craie', hex: '#E05A74' }
+    ],
+    variants: [
+      { id: 'vc23', size: 'S', color: { name: 'Rayures Rose & Craie', hex: '#E05A74' }, stock: 4 },
+      { id: 'vc24', size: 'M', color: { name: 'Rayures Rose & Craie', hex: '#E05A74' }, stock: 8 },
+      { id: 'vc25', size: 'L', color: { name: 'Rayures Rose & Craie', hex: '#E05A74' }, stock: 5 },
+      { id: 'vc26', size: 'XL', color: { name: 'Rayures Rose & Craie', hex: '#E05A74' }, stock: 3 },
+    ],
+    stock: 20,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-007',
+    name: 'Jean Droit Regular Stone Washed « Mermoz Vintage »',
+    slug: 'jean-droit-regular-stone-washed-mermoz-vintage',
+    category: 'vetements',
+    subCategory: 'Pantalons',
+    gender: 'homme',
+    price: 34000,
+    images: [
+      '/products/jean-droit-stone-washed.jpg'
+    ],
+    description: 'Jean denim vintage authentique à coupe droite regular en toile de coton lourd. Délavage texturé stone washed sur les cuisses, braguette zippée avec bouton en laiton patiné, poches arrière à double surpiqûre horizontale et jacron noir contemporain.',
+    details: [
+      'Coupe droite intemporelle regular fit',
+      'Denim 100% coton lourd stone washed',
+      'Surpiqûres ambrées renforcées',
+      'Poches arrière à détails graphiques surpiqués',
+      'Jacron noir siglé à la ceinture au dos'
+    ],
+    materials: '100% Coton denim lavé',
+    availableSizes: ['S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Bleu Denim Stone Washed', hex: '#4A6984' }
+    ],
+    variants: [
+      { id: 'vc27', size: 'S', color: { name: 'Bleu Denim Stone Washed', hex: '#4A6984' }, stock: 5 },
+      { id: 'vc28', size: 'M', color: { name: 'Bleu Denim Stone Washed', hex: '#4A6984' }, stock: 9 },
+      { id: 'vc29', size: 'L', color: { name: 'Bleu Denim Stone Washed', hex: '#4A6984' }, stock: 5 },
+      { id: 'vc30', size: 'XL', color: { name: 'Bleu Denim Stone Washed', hex: '#4A6984' }, stock: 3 },
+    ],
+    stock: 22,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-008',
+    name: 'Jean Droit Bleached Denim « Almadies Sky »',
+    slug: 'jean-droit-bleached-denim-almadies-sky',
+    category: 'vetements',
+    subCategory: 'Pantalons',
+    gender: 'unisexe',
+    price: 36000,
+    compareAtPrice: 42000,
+    images: [
+      '/products/jean-droit-bleached.png'
+    ],
+    description: 'Denim clair estival inspiré par le ciel dakaroise et les embruns des Almadies. Toile de coton résistante au tombé net et fluide, rivets en laiton cuivré, surpiqûres ambrées contrastées et finitions de cheville idéales pour mettre en valeur vos sneakers.',
+    details: [
+      'Coupe droite décontractée unisexe',
+      'Toile denim délavée bleached wash lumineuse',
+      'Rivets métalliques cuivrés anti-arrachement',
+      'Poche ticket avant et poches cavalières traditionnelles',
+      'Ourlet inférieur renforcé'
+    ],
+    materials: '100% Coton denim haute tenue',
+    availableSizes: ['XS', 'S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Bleu Céleste Décoloré', hex: '#8BA9C6' }
+    ],
+    variants: [
+      { id: 'vc31', size: 'XS', color: { name: 'Bleu Céleste Décoloré', hex: '#8BA9C6' }, stock: 3 },
+      { id: 'vc32', size: 'S', color: { name: 'Bleu Céleste Décoloré', hex: '#8BA9C6' }, stock: 6 },
+      { id: 'vc33', size: 'M', color: { name: 'Bleu Céleste Décoloré', hex: '#8BA9C6' }, stock: 7 },
+      { id: 'vc34', size: 'L', color: { name: 'Bleu Céleste Décoloré', hex: '#8BA9C6' }, stock: 4 },
+    ],
+    stock: 20,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-009',
+    name: 'Polo Manches Longues Piqué Flammé « Corniche Grenat »',
+    slug: 'polo-manches-longues-pique-flamme-corniche-grenat',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 32000,
+    images: [
+      '/products/polo-manches-longues-grenat.jpg'
+    ],
+    description: 'Une alliance d\'élégance parisienne et de décontraction dakaroise. Confectionné en piqué de coton chiné flammé grenat profond. Col polo franc avec liséré intérieur bordeaux, patte de boutonnage 3 boutons foncés nacrés et poignets finition chemise.',
+    details: [
+      'Coupe droite décontractée haut de gamme',
+      'Maille piquée de coton flammée chinée respirante',
+      'Col polo structuré à revers soigné',
+      'Patte 3 boutons noirs nacrés cousus croix',
+      'Bas de corps légèrement arrondi'
+    ],
+    materials: '100% Coton piqué flammé chiné',
+    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    availableColors: [
+      { name: 'Grenat Flammé Chiné', hex: '#8B1E28' }
+    ],
+    variants: [
+      { id: 'vc35', size: 'S', color: { name: 'Grenat Flammé Chiné', hex: '#8B1E28' }, stock: 4 },
+      { id: 'vc36', size: 'M', color: { name: 'Grenat Flammé Chiné', hex: '#8B1E28' }, stock: 8 },
+      { id: 'vc37', size: 'L', color: { name: 'Grenat Flammé Chiné', hex: '#8B1E28' }, stock: 6 },
+      { id: 'vc38', size: 'XL', color: { name: 'Grenat Flammé Chiné', hex: '#8B1E28' }, stock: 4 },
+      { id: 'vc39', size: 'XXL', color: { name: 'Grenat Flammé Chiné', hex: '#8B1E28' }, stock: 2 },
+    ],
+    stock: 24,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-27'
   },
   {
     id: 'capo-client-004',
