@@ -30,7 +30,7 @@ interface CartContextType {
 }
 
 const CART_STORAGE_KEY = 'capo221_cart_items_v1';
-const FREE_SHIPPING_THRESHOLD = 75000; // Free shipping over 75 000 FCFA
+const FREE_SHIPPING_THRESHOLD = 25000; // Free shipping over 25 000 FCFA
 const STANDARD_SHIPPING = 2500; // 2 500 FCFA standard delivery fee
 
 const CartContext = createContext<CartContextType | undefined>(undefined);

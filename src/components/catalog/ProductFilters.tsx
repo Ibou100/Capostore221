@@ -37,7 +37,7 @@ export const ProductFilters: React.FC = () => {
     (filters.category !== 'tous' ? 1 : 0) +
     (filters.gender !== 'all' ? 1 : 0) +
     (filters.inStockOnly ? 1 : 0) +
-    (filters.maxPrice < 150000 ? 1 : 0) +
+    (filters.maxPrice < 10000 ? 1 : 0) +
     filters.sizes.length +
     filters.colors.length +
     (filters.searchQuery ? 1 : 0);
@@ -116,9 +116,9 @@ export const ProductFilters: React.FC = () => {
         </div>
         <input
           type="range"
-          min={20000}
-          max={150000}
-          step={5000}
+          min={2000}
+          max={10000}
+          step={1000}
           value={filters.maxPrice}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, maxPrice: Number(e.target.value) }))
@@ -126,8 +126,8 @@ export const ProductFilters: React.FC = () => {
           className="w-full accent-capo-black cursor-pointer"
         />
         <div className="flex justify-between text-[11px] text-zinc-500 mt-1">
-          <span>0 FCFA</span>
-          <span>150 000 FCFA</span>
+          <span>2 000 FCFA</span>
+          <span>10 000 FCFA</span>
         </div>
       </div>
 
@@ -292,11 +292,11 @@ export const ProductFilters: React.FC = () => {
             </span>
           )}
 
-          {filters.maxPrice < 150000 && (
+          {filters.maxPrice < 10000 && (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-100 text-zinc-800 text-xs rounded-full">
               Max : {formatFCFA(filters.maxPrice)}
               <button
-                onClick={() => setFilters((prev) => ({ ...prev, maxPrice: 150000 }))}
+                onClick={() => setFilters((prev) => ({ ...prev, maxPrice: 10000 }))}
                 className="hover:text-black"
               >
                 <X className="w-3 h-3" />

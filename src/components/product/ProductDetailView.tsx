@@ -383,7 +383,7 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                   <Truck className="w-4 h-4 text-capo-black shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-zinc-900 block">Livraison Rapide à Domicile :</strong>
-                    Vous passez commande en ligne, nous validons et expédions directement votre colis (2 500 FCFA ou offerte dès 75 000 FCFA).
+                    Vous passez commande en ligne, nous validons et expédions directement votre colis (2 500 FCFA ou offerte dès 25 000 FCFA).
                   </div>
                 </div>
 
