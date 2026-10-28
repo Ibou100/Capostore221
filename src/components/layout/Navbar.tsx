@@ -85,7 +85,7 @@ export const Navbar: React.FC = () => {
                   CAPOSTORE<span className="text-[#B85D19] font-semibold text-lg ml-0.5">221</span>
                 </span>
                 <span className="text-[9px] tracking-widest uppercase text-[#7A3E12] font-bold">
-                  Boutique Dakaroise • Dakar 221
+                  Boutique en Ligne • Tu commandes, on te livre
                 </span>
               </div>
             </button>
@@ -235,7 +235,7 @@ export const Navbar: React.FC = () => {
             {/* Mobile drawer footer */}
             <div className="pt-6 border-t border-zinc-100 text-xs text-zinc-500">
               <p className="font-semibold text-zinc-800 uppercase tracking-wider mb-1">Maison CAPOSTORE221</p>
-              <p>Dakar, Sénégal • Service Client 7j/7</p>
+              <p>Boutique en Ligne Officielle • Service Client 7j/7</p>
               <p className="mt-2 text-zinc-400">Devise : FCFA (XOF)</p>
             </div>
           </div>

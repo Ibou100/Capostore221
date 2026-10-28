@@ -87,7 +87,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           ) : (
             <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[#141210] text-white rounded-full shadow-sm flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] inline-block animate-pulse" />
-              <span>En stock Dakar</span>
+              <span>En stock</span>
             </span>
           )}
 

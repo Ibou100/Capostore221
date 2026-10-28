@@ -31,7 +31,7 @@ interface CartContextType {
 
 const CART_STORAGE_KEY = 'capo221_cart_items_v1';
 const FREE_SHIPPING_THRESHOLD = 75000; // Free shipping over 75 000 FCFA
-const STANDARD_SHIPPING_DAKAR = 2500; // 2 500 FCFA standard delivery in Dakar
+const STANDARD_SHIPPING = 2500; // 2 500 FCFA standard delivery fee
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -189,7 +189,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0 ? 0 : STANDARD_SHIPPING_DAKAR;
+  const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0 ? 0 : STANDARD_SHIPPING;
   const total = subtotal + shippingFee;
 
   return (

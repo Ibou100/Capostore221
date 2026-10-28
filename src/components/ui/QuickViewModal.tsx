@@ -110,7 +110,7 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
                 </span>
               )}
               <span className="ml-auto text-xs font-semibold text-[#1F7A3F] bg-[#E8F5E9] px-2 py-0.5 rounded">
-                En stock à Dakar
+                En stock disponible
               </span>
             </div>
 
@@ -133,7 +133,7 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
                   <span className="text-xs font-bold uppercase tracking-wider text-[#141210]">
                     Sélectionner la Taille :
                   </span>
-                  <span className="text-[11px] text-[#B85226] font-semibold">Taille standard sénégalaise</span>
+                  <span className="text-[11px] text-[#B85226] font-semibold">Guide des tailles standards</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {product.availableSizes.map((size) => (
@@ -205,10 +205,10 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
               <span>Ajouter au panier du site</span>
             </button>
 
-            {/* Dakar Local Delivery Promise */}
+            {/* Delivery Promise */}
             <div className="p-3 bg-[#FAF8F5] rounded border border-[#EDE7DF] flex items-center gap-2.5 text-xs text-[#524B43]">
               <Truck className="w-4 h-4 text-[#B85226] shrink-0" />
-              <span>Livraison 24h à Dakar • Paiement Wave, OM ou Espèces au livreur</span>
+              <span>Tu commandes, on te livre • Paiement Wave, OM ou Espèces à la livraison</span>
             </div>
 
             {/* Link to Full Product Page */}

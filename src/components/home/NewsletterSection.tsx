@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle2, ArrowRight, MessageCircle } from 'lucide-react';
-import { isValidEmail, DAKAR_WHATSAPP_PHONE } from '../../utils/format';
+import { isValidEmail, STORE_WHATSAPP_PHONE } from '../../utils/format';
 import { useStore } from '../../context/StoreContext';
 
 export const NewsletterSection: React.FC = () => {
@@ -24,8 +24,8 @@ export const NewsletterSection: React.FC = () => {
         
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#241F1A] border border-[#3E352C] text-xs font-bold uppercase tracking-widest text-[#D49A3D] mb-4">
-          <span className="text-sm">🇸🇳</span>
-          <span>Le Cercle Privé Dakar 221</span>
+          <span className="text-sm">✨</span>
+          <span>Le Cercle Privé CAPOSTORE221</span>
         </div>
 
         <h2 className="font-display font-black text-2xl sm:text-4xl text-white tracking-tight mb-3">
@@ -33,7 +33,7 @@ export const NewsletterSection: React.FC = () => {
         </h2>
 
         <p className="text-[#A89E90] text-xs sm:text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-          Nos pièces sont sélectionnées en séries limitées et s'épuisent rapidement. Recevez les photos des nouvelles pièces en avant-première à Dakar.
+          Nos pièces sont sélectionnées en séries limitées et s'épuisent rapidement. Recevez les photos des nouvelles pièces en avant-première dès leur mise en ligne.
         </p>
 
         {isSubscribed ? (
@@ -67,7 +67,7 @@ export const NewsletterSection: React.FC = () => {
         {/* WhatsApp VIP Club */}
         <div className="pt-4 flex items-center justify-center gap-2">
           <a
-            href={`https://wa.me/${DAKAR_WHATSAPP_PHONE}?text=${encodeURIComponent("Bonjour CAPOSTORE221 ! Je souhaite intégrer votre liste de diffusion WhatsApp VIP pour recevoir les nouveaux arrivages.")}`}
+            href={`https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent("Bonjour CAPOSTORE221 ! Je souhaite intégrer votre liste de diffusion WhatsApp VIP pour recevoir les nouveaux arrivages.")}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-xs font-bold text-[#25D366] hover:text-white transition-colors py-1"

@@ -20,17 +20,17 @@ export const Hero: React.FC = () => {
   const featuredItems: FeaturedHeroItem[] = [
     {
       id: 'capo-client-001',
-      name: 'Pantalon Tailleur Prince de Galles « Almadies »',
+      name: 'Pantalon Tailleur Prince de Galles « Signature »',
       category: 'Pantalons Tailleur',
       tagline: 'Coupe fuselée contemporaine en sergé souple Prince de Galles gris chiné et liseré signature.',
       price: 32000,
       image: '/products/pantalon-prince-galles.jpg',
       material: 'Viscose & Coton Peigné',
-      badge: 'Pièce Iconique Dakar',
+      badge: 'Best-Seller',
     },
     {
       id: 'capo-client-003',
-      name: 'Pantalon Cargo Large Carpenter Écru « Gorée »',
+      name: 'Pantalon Cargo Large Carpenter Écru « Heritage »',
       category: 'Streetwear & Carpenter',
       tagline: 'Coupe droite relax skate/streetwear en sergé de coton écru 340 g/m² et doubles genoux surpiqués.',
       price: 38000,
@@ -40,7 +40,7 @@ export const Hero: React.FC = () => {
     },
     {
       id: 'capo-client-016',
-      name: 'Chemise Oxford Slim Fit Bleu Azur « Fann »',
+      name: 'Chemise Oxford Slim Fit Bleu Azur « Oxford Prestige »',
       category: 'Chemises & Hauts',
       tagline: 'Tissage Oxford lourd en pur coton azur éclatant, col boutonné classique et broderie marine de prestige.',
       price: 34000,
@@ -50,7 +50,7 @@ export const Hero: React.FC = () => {
     },
     {
       id: 'capo-client-018',
-      name: 'Monture Optique Acétate Sculpté « Almadies »',
+      name: 'Monture Optique Acétate Sculpté « Optique Prestige »',
       category: 'Lunettes de Créateur',
       tagline: 'Acétate italien biseauté prune et reflets écaille, armatures métalliques ciselées en filigrane.',
       price: 42000,
@@ -101,16 +101,16 @@ export const Hero: React.FC = () => {
         {/* Top Editorial Ribbon */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6 sm:mb-8 pb-4 border-b border-[#EAE5DC]">
           <div className="flex items-center gap-2">
-            <span className="text-base">🇸🇳</span>
+            <span className="text-base">🛍️</span>
             <span className="text-xs font-bold uppercase tracking-widest text-[#B85226]">
-              CAPOSTORE221 • Dakar, Sénégal
+              CAPOSTORE221 • Vente en Ligne
             </span>
           </div>
 
           <div className="hidden sm:flex items-center gap-6 text-xs text-[#6B645A] font-medium">
             <span className="flex items-center gap-1.5">
               <Truck className="w-3.5 h-3.5 text-[#B85226]" />
-              Livraison 24h à Dakar
+              Tu commandes, on te livre
             </span>
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-[#B85226]" />
@@ -118,7 +118,7 @@ export const Hero: React.FC = () => {
             </span>
             <span className="flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-[#D49A3D]" />
-              Paiement Wave, OM & Espèces
+              Paiement Wave, OM & à la livraison
             </span>
           </div>
         </div>
@@ -162,7 +162,7 @@ export const Hero: React.FC = () => {
                     {formatFCFA(currentItem.price)}
                   </span>
                   <span className="text-xs font-bold text-[#1F7A3F] bg-[#E8F5E9] px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    En stock immédiat à Dakar
+                    En stock disponible
                   </span>
                 </div>
               </div>

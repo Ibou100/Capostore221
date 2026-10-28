@@ -57,7 +57,7 @@ export const CollectionsGrid: React.FC = () => {
             </h2>
           </div>
           <p className="text-xs sm:text-sm text-[#666057] max-w-md">
-            Des sélections réelles et vérifiées, prêtes à être expédiées immédiatement à Dakar et partout au Sénégal.
+            Des sélections réelles et vérifiées. Vous commandez en ligne, nous préparons votre colis et organisons la livraison chez vous.
           </p>
         </div>
 

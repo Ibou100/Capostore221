@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
-import { formatFCFA, DAKAR_WHATSAPP_PHONE } from '../../utils/format';
+import { formatFCFA, STORE_WHATSAPP_PHONE } from '../../utils/format';
 
 export const CartDrawer: React.FC = () => {
   const { 
@@ -18,7 +18,7 @@ export const CartDrawer: React.FC = () => {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
-  const [customerCity, setCustomerCity] = useState('Dakar');
+  const [customerCity, setCustomerCity] = useState('');
   const [orderCompleted, setOrderCompleted] = useState(false);
 
   if (!isOpen) return null;
@@ -78,7 +78,7 @@ export const CartDrawer: React.FC = () => {
                 <div className="flex justify-between text-xs text-zinc-600 mb-1.5">
                   {amountRemainingForFreeShipping === 0 ? (
                     <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                      <Truck className="w-3.5 h-3.5" /> Livraison express offerte à Dakar !
+                      <Truck className="w-3.5 h-3.5" /> Livraison express offerte !
                     </span>
                   ) : (
                     <span>
@@ -206,7 +206,7 @@ export const CartDrawer: React.FC = () => {
                   <span className="font-medium text-zinc-900">{formatFCFA(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Livraison Dakar estimée</span>
+                  <span>Frais de livraison estimés</span>
                   <span className="font-medium text-zinc-900">
                     {shippingFee === 0 ? 'Offerte (Gratuit)' : formatFCFA(shippingFee)}
                   </span>
@@ -220,10 +220,10 @@ export const CartDrawer: React.FC = () => {
               {/* Order checkout CTAs */}
               <div className="space-y-2.5">
                 <a
-                  href={`https://wa.me/${DAKAR_WHATSAPP_PHONE}?text=${encodeURIComponent(
-                    `Bonjour CAPOSTORE221 ! 🇸🇳\nJe souhaite valider ma commande avec les articles suivants :\n\n` +
+                  href={`https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(
+                    `Bonjour CAPOSTORE221 ! 🛍️\nJe souhaite valider ma commande avec les articles suivants :\n\n` +
                     items.map(i => `• ${i.quantity}x ${i.product.name}${i.selectedSize ? ` (Taille ${i.selectedSize})` : ''} - ${formatFCFA(i.unitPrice * i.quantity)}`).join('\n') +
-                    `\n\nTotal : ${formatFCFA(total)}\n\nMerci de me contacter pour la livraison à Dakar !`
+                    `\n\nTotal : ${formatFCFA(total)}\n\nMerci de me contacter pour organiser ma livraison !`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -268,7 +268,7 @@ export const CartDrawer: React.FC = () => {
                     <h3 className="font-display font-extrabold text-lg text-capo-black uppercase tracking-tight">
                       Récapitulatif de votre commande
                     </h3>
-                    <p className="text-xs text-zinc-500">Expédition Dakar & Régions</p>
+                    <p className="text-xs text-zinc-500">Expédition & Livraison à Domicile</p>
                   </div>
                   <button
                     onClick={() => setIsCheckoutModalOpen(false)}
@@ -329,19 +329,16 @@ export const CartDrawer: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-1">
-                        Ville / Région
+                        Ville / Localité
                       </label>
-                      <select
+                      <input
+                        type="text"
+                        required
                         value={customerCity}
                         onChange={(e) => setCustomerCity(e.target.value)}
+                        placeholder="Votre ville ou commune"
                         className="w-full text-xs px-3 py-2.5 border border-zinc-300 rounded focus:border-black focus:outline-none bg-white"
-                      >
-                        <option value="Dakar">Dakar (Plateau, Almadies, Mermoz...)</option>
-                        <option value="Thiès">Thiès</option>
-                        <option value="Saint-Louis">Saint-Louis</option>
-                        <option value="Mbour / Saly">Mbour / Saly</option>
-                        <option value="Autre Région">Autre Région du Sénégal</option>
-                      </select>
+                      />
                     </div>
                   </div>
 
@@ -391,7 +388,7 @@ export const CartDrawer: React.FC = () => {
                   Commande validée avec succès !
                 </h3>
                 <p className="text-xs text-zinc-600 max-w-sm mx-auto mb-6 leading-relaxed">
-                  Merci <strong>{customerName}</strong>. Notre concierge CAPOSTORE221 va vous contacter au <strong>{customerPhone}</strong> pour coordonner la livraison express à {customerCity}.
+                  Merci <strong>{customerName}</strong>. Le vendeur CAPOSTORE221 va vous contacter au <strong>{customerPhone}</strong> pour coordonner la livraison express de votre commande ({customerCity}).
                 </p>
                 <div className="p-4 bg-zinc-50 rounded text-xs text-zinc-700 mb-6 text-left space-y-1">
                   <p><strong>Total de la commande :</strong> {formatFCFA(total)}</p>

@@ -31,12 +31,12 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
- * WhatsApp order helper for Dakar e-commerce
+ * WhatsApp order helper for e-commerce
  */
-export const DAKAR_WHATSAPP_PHONE = '221770000000';
+export const STORE_WHATSAPP_PHONE = '221770000000';
 
 export function getWhatsAppOrderLink(productName: string, price: number, size?: string): string {
   const sizeText = size ? `\n• Taille souhaitée : ${size}` : '';
-  const message = `Bonjour CAPOSTORE221 ! 🇸🇳\nJe souhaite commander cet article vu sur votre boutique en ligne :\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}\n\nEst-il disponible pour une livraison à Dakar ? Merci !`;
-  return `https://wa.me/${DAKAR_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
+  const message = `Bonjour CAPOSTORE221 ! 🛍️\nJe souhaite passer commande pour cet article vu sur votre boutique en ligne :\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}\n\nMerci de me confirmer la disponibilité et les modalités de livraison !`;
+  return `https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
 }

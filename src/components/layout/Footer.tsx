@@ -30,8 +30,8 @@ export const Footer: React.FC = () => {
               <Truck className="w-5 h-5 text-capo-accent" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Livraison Dakar Express 24h</h3>
-              <p className="text-xs text-zinc-400 mt-1">Expédition rapide à Dakar & dans toutes les régions du Sénégal.</p>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Livraison Rapide à Domicile</h3>
+              <p className="text-xs text-zinc-400 mt-1">Tu commandes, nous validons et assurons la livraison directe chez toi.</p>
             </div>
           </div>
 
@@ -72,10 +72,10 @@ export const Footer: React.FC = () => {
               </span>
             </div>
             <p className="text-sm text-zinc-400 max-w-sm leading-relaxed">
-              Maison de mode contemporaine ancrée à Dakar. Prêt-à-porter de créateur, streetwear d'avant-garde, solaires et accessoires d'exception en Francs CFA (XOF).
+              Boutique en ligne officielle de mode contemporaine. Prêt-à-porter de créateur, streetwear d'avant-garde, solaires et accessoires en Francs CFA (XOF). Tu commandes, on te livre.
             </p>
             <div className="pt-2 text-xs text-zinc-400 space-y-1">
-              <p><strong className="text-zinc-300 font-medium">Boutique & Showroom :</strong> Dakar, Sénégal (Horaires 10h - 20h)</p>
+              <p><strong className="text-zinc-300 font-medium">Vente en Ligne Exclusive :</strong> Commandes 24h/24 & 7j/7</p>
               <p><strong className="text-zinc-300 font-medium">Service Client :</strong> contact@capostore221.com</p>
             </div>
           </div>
@@ -118,7 +118,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button onClick={goToHome} className="hover:text-white transition-colors">
-                  L'Atelier Dakar
+                  Notre Concept
                 </button>
               </li>
               <li>
@@ -189,10 +189,10 @@ export const Footer: React.FC = () => {
 
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
-          <p>© {CURRENT_YEAR} CAPOSTORE221. Tous droits réservés. Dakar, Sénégal.</p>
+          <p>© {CURRENT_YEAR} CAPOSTORE221. Boutique en ligne officielle. Tous droits réservés.</p>
           <div className="flex items-center gap-6">
             <span>Devise : FCFA (XOF)</span>
-            <span>Made for Dakar & the World</span>
+            <span>Vente en ligne • Tu commandes, on te livre</span>
           </div>
         </div>
       </div>

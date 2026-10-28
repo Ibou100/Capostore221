@@ -22,7 +22,7 @@ export const EditorialStoryView: React.FC = () => {
         <div className="space-y-4 mb-12">
           <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-zinc-500">
             <Sparkles className="w-3.5 h-3.5 text-capo-accent" />
-            <span>Maison CAPOSTORE221 • Dakar, Sénégal</span>
+            <span>Maison CAPOSTORE221 • Vente en Ligne</span>
           </div>
 
           <h1 className="font-display font-black text-4xl sm:text-6xl text-capo-black tracking-tightest leading-tight uppercase">
@@ -31,7 +31,7 @@ export const EditorialStoryView: React.FC = () => {
           </h1>
 
           <p className="text-lg text-zinc-600 font-light leading-relaxed max-w-2xl">
-            L'histoire d'un vestiaire audacieux qui refuse les compromis entre l'élégance formelle et l'énergie brute de la jeunesse ouest-africaine.
+            L'histoire d'un vestiaire audacieux qui refuse les compromis entre l'élégance formelle et l'énergie brute de la modernité.
           </p>
         </div>
 
@@ -39,7 +39,7 @@ export const EditorialStoryView: React.FC = () => {
         <div className="aspect-[16/9] bg-[#EDE5D8] rounded-sm overflow-hidden mb-12 border border-[#D9CEBE]">
           <img
             src="/products/pantalon-cargo-ecru.jpg"
-            alt="Maison CAPOSTORE221 Dakar Atelier"
+            alt="Maison CAPOSTORE221"
             className="w-full h-full object-cover object-center"
           />
         </div>
@@ -47,11 +47,11 @@ export const EditorialStoryView: React.FC = () => {
         {/* Text Sections */}
         <div className="space-y-8 text-zinc-800 leading-relaxed font-light text-base sm:text-lg">
           <p>
-            <strong className="font-semibold text-capo-black">Dakar ne dort jamais vraiment.</strong> Entre la brise atlantique des Almadies, la ferveur créative du Plateau et l'agitation vibrante de la Médina, un nouveau langage vestimentaire s'est imposé. Ni purement traditionnel, ni simple reflet des tendances importées : un streetwear d'auteur, pensé avec rigueur.
+            <strong className="font-semibold text-capo-black">Tu commandes, on te livre.</strong> Notre modèle est pensé pour vous simplifier la vie : vous explorez le catalogue en ligne, vous choisissez vos pièces coups de cœur, et nous assurons la validation, la préparation et la livraison rapide directement à votre adresse.
           </p>
 
           <p>
-            Fondée avec l'ambition d'élever le vestiaire urbain au rang de haute confection accessible, <strong className="font-semibold text-capo-black">CAPOSTORE221</strong> puise sa force dans une équation précise : la structure des coupes tailleur européennes rencontre la générosité des volumes décontractés et les exigences thermiques tropicales.
+            Fondée avec l'ambition d'offrir des vêtements de haute confection accessibles à tous sans contrainte de magasin physique, <strong className="font-semibold text-capo-black">CAPOSTORE221</strong> puise sa force dans une sélection rigoureuse : des coupes impeccables, des cotons denses et des matières adaptées au quotidien.
           </p>
 
           {/* Quote Block */}

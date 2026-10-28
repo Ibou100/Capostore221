@@ -147,7 +147,7 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                 ) : (
                   <span className="px-3 py-1 bg-[#141210] text-white text-[11px] font-bold uppercase tracking-wider rounded-full shadow-sm flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] inline-block animate-pulse" />
-                    <span>En stock à Dakar</span>
+                    <span>En stock disponible</span>
                   </span>
                 )}
               </div>
@@ -305,7 +305,7 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                 ) : (
                   <div className="flex items-center gap-2 text-xs text-emerald-800 font-medium">
                     <Check className="w-4 h-4 text-emerald-600" />
-                    <span>En stock à notre atelier de Dakar — Prêt pour expédition express</span>
+                    <span>En stock — Prêt pour validation et expédition rapide</span>
                   </div>
                 )}
               </div>
@@ -382,16 +382,16 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                 <div className="flex items-start gap-3 p-3 bg-zinc-50 rounded">
                   <Truck className="w-4 h-4 text-capo-black shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-zinc-900 block">Livraison Express Dakar 24h :</strong>
-                    Courseur dédié pour Dakar (2 500 FCFA ou offerte dès 75 000 FCFA). Expédition sous 48h dans les régions (Thiès, Saint-Louis, Mbour, Ziguinchor).
+                    <strong className="text-zinc-900 block">Livraison Rapide à Domicile :</strong>
+                    Vous passez commande en ligne, nous validons et expédions directement votre colis (2 500 FCFA ou offerte dès 75 000 FCFA).
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 p-3 bg-zinc-50 rounded">
                   <ShieldCheck className="w-4 h-4 text-capo-black shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-zinc-900 block">Paiement Flexible :</strong>
-                    Règlement sécurisé par Wave, Orange Money ou paiement comptant à la livraison à Dakar.
+                    <strong className="text-zinc-900 block">Paiement Sécurisé :</strong>
+                    Règlement simple par Wave, Orange Money ou paiement comptant à la livraison.
                   </div>
                 </div>
 

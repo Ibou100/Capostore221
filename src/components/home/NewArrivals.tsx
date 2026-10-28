@@ -43,7 +43,7 @@ export const NewArrivals: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#B85226] mb-1.5">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Inventaire Réel • Disponible à Dakar</span>
+              <span>Boutique en Ligne • Tu commandes, on te livre</span>
             </div>
             <h2 className="font-display font-black text-2xl sm:text-4xl text-[#141210] tracking-tight">
               La Sélection CAPOSTORE221

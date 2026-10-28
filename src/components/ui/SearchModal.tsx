@@ -95,7 +95,7 @@ export const SearchModal: React.FC = () => {
         {!searchTerm && (
           <div className="p-6 bg-zinc-50 border-b border-zinc-100">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-3">
-              Recherches fréquentes à Dakar :
+              Recherches fréquentes :
             </p>
             <div className="flex flex-wrap gap-2">
               {['Prince de Galles', 'Bermuda Cargo', 'Pantalon Cargo', 'Jean Bleached', 'Chemise Rose', 'Polo Grenat', 'Jean Carpenter'].map((kw) => (

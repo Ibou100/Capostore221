@@ -4,8 +4,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   // --- NOUVELLE SÉLECTION CLIENT CAPOSTORE221 (PHOTOS RÉELLES) ---
   {
     id: 'capo-client-001',
-    name: 'Pantalon Tailleur Prince de Galles « Almadies »',
-    slug: 'pantalon-tailleur-prince-de-galles-almadies',
+    name: 'Pantalon Tailleur Prince de Galles « Signature »',
+    slug: 'pantalon-tailleur-prince-de-galles-signature',
     category: 'vetements',
     subCategory: 'Pantalons',
     gender: 'homme',
@@ -43,8 +43,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-002',
-    name: 'Bermuda Cargo Poches Zippées Écru « Ngor »',
-    slug: 'bermuda-cargo-poches-zippees-ecru-ngor',
+    name: 'Bermuda Cargo Poches Zippées Écru « Nomad »',
+    slug: 'bermuda-cargo-poches-zippees-ecru-nomad',
     category: 'vetements',
     subCategory: 'Pantalons',
     gender: 'homme',
@@ -53,7 +53,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     images: [
       '/products/bermuda-cargo-ecru.jpg'
     ],
-    description: 'Bermuda utilitaire estival en sergé de coton écru délavé ultra-robuste. Multiples rangements ergonomiques avec doubles poches cargo à rabat et poche zippée technique en métal vieilli sur la cuisse droite. Idéal pour la saison chaude dakaroise.',
+    description: 'Bermuda utilitaire estival en sergé de coton écru délavé ultra-robuste. Multiples rangements ergonomiques avec doubles poches cargo à rabat et poche zippée technique en métal vieilli sur la cuisse droite. Idéal par temps chaud pour un confort respirant au quotidien.',
     details: [
       'Coupe regular cargo au-dessus du genou',
       'Toile de coton peigné lourd délavé vintage',
@@ -81,8 +81,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-003',
-    name: 'Pantalon Cargo Large Carpenter Écru « Gorée »',
-    slug: 'pantalon-cargo-large-carpenter-ecru-goree',
+    name: 'Pantalon Cargo Large Carpenter Écru « Heritage »',
+    slug: 'pantalon-cargo-large-carpenter-ecru-heritage',
     category: 'vetements',
     subCategory: 'Pantalons',
     gender: 'unisexe',
@@ -120,8 +120,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-004',
-    name: 'Jean Brut Carpenter Délavé « Dakar Denim 221 »',
-    slug: 'jean-brut-carpenter-delave-dakar-denim-221',
+    name: 'Jean Brut Carpenter Délavé « Édition 221 »',
+    slug: 'jean-brut-carpenter-delave-edition-221',
     category: 'vetements',
     subCategory: 'Pantalons',
     gender: 'homme',
@@ -157,8 +157,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-005',
-    name: 'Chemise Tartan Madras Col Boutonné « Plateau »',
-    slug: 'chemise-tartan-madras-col-boutonne-plateau',
+    name: 'Chemise Tartan Madras Col Boutonné « Classic »',
+    slug: 'chemise-tartan-madras-col-boutonne-classic',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
@@ -196,8 +196,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-006',
-    name: 'Chemise Popeline Rayée Rose & Craie « Fann Résidence »',
-    slug: 'chemise-popeline-rayee-rose-craie-fann-residence',
+    name: 'Chemise Popeline Rayée Rose & Craie « Riviera »',
+    slug: 'chemise-popeline-rayee-rose-craie-riviera',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
@@ -234,8 +234,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-007',
-    name: 'Jean Droit Regular Stone Washed « Mermoz Vintage »',
-    slug: 'jean-droit-regular-stone-washed-mermoz-vintage',
+    name: 'Jean Droit Regular Stone Washed « Authentic Vintage »',
+    slug: 'jean-droit-regular-stone-washed-authentic-vintage',
     category: 'vetements',
     subCategory: 'Pantalons',
     gender: 'homme',
@@ -271,8 +271,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-008',
-    name: 'Jean Droit Bleached Denim « Almadies Sky »',
-    slug: 'jean-droit-bleached-denim-almadies-sky',
+    name: 'Jean Droit Bleached Denim « Pure Sky »',
+    slug: 'jean-droit-bleached-denim-pure-sky',
     category: 'vetements',
     subCategory: 'Pantalons',
     gender: 'unisexe',
@@ -281,7 +281,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     images: [
       '/products/jean-droit-bleached.png'
     ],
-    description: 'Denim clair estival inspiré par le ciel dakaroise et les embruns des Almadies. Toile de coton résistante au tombé net et fluide, rivets en laiton cuivré, surpiqûres ambrées contrastées et finitions de cheville idéales pour mettre en valeur vos sneakers.',
+    description: 'Denim clair estival à la coupe décontractée et soignée. Toile de coton résistante au tombé net et fluide, rivets en laiton cuivré, surpiqûres ambrées contrastées et finitions de cheville idéales pour mettre en valeur vos sneakers.',
     details: [
       'Coupe droite décontractée unisexe',
       'Toile denim délavée bleached wash lumineuse',
@@ -318,7 +318,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     images: [
       '/products/polo-manches-longues-grenat.jpg'
     ],
-    description: 'Une alliance d\'élégance parisienne et de décontraction dakaroise. Confectionné en piqué de coton chiné flammé grenat profond. Col polo franc avec liséré intérieur bordeaux, patte de boutonnage 3 boutons foncés nacrés et poignets finition chemise.',
+    description: 'Une alliance d\'élégance intemporelle et de décontraction contemporaine. Confectionné en piqué de coton chiné flammé grenat profond. Col polo franc avec liséré intérieur bordeaux, patte de boutonnage 3 boutons foncés nacrés et poignets finition chemise.',
     details: [
       'Coupe droite décontractée haut de gamme',
       'Maille piquée de coton flammée chinée respirante',
@@ -347,8 +347,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-010',
-    name: 'Jean Droit Brut Indigo Pur « Terrou Bi »',
-    slug: 'jean-droit-brut-indigo-pur-terrou-bi',
+    name: 'Jean Droit Brut Indigo Pur « Deep Indigo »',
+    slug: 'jean-droit-brut-indigo-pur-deep-indigo',
     category: 'vetements',
     subCategory: 'Pantalons',
     gender: 'homme',
@@ -385,8 +385,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-011',
-    name: 'Chemisette Popeline Micro-Vichy Rouge & Craie « Ngor Beach »',
-    slug: 'chemisette-popeline-micro-vichy-rouge-craie-ngor-beach',
+    name: 'Chemisette Popeline Micro-Vichy Rouge & Craie « Resort Club »',
+    slug: 'chemisette-popeline-micro-vichy-rouge-craie-resort-club',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
@@ -423,8 +423,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-012',
-    name: 'Sacoche Bandoulière Nylon & Cuir Sable « Dakar Crossbody »',
-    slug: 'sacoche-bandouliere-nylon-cuir-sable-dakar-crossbody',
+    name: 'Sacoche Bandoulière Nylon & Cuir Sable « Urban Crossbody »',
+    slug: 'sacoche-bandouliere-nylon-cuir-sable-urban-crossbody',
     category: 'accessoires',
     subCategory: 'Sacs & Maroquinerie',
     gender: 'unisexe',
@@ -458,8 +458,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-013',
-    name: 'Bermuda Chino Technique Graphite « Almadies Golf Club »',
-    slug: 'bermuda-chino-technique-graphite-almadies-golf-club',
+    name: 'Bermuda Chino Technique Graphite « Executive Sport »',
+    slug: 'bermuda-chino-technique-graphite-executive-sport',
     category: 'vetements',
     subCategory: 'Pantalons',
     gender: 'homme',
@@ -474,7 +474,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Tissu technique bi-stretch respirant séchage rapide',
       'Ceinture intérieure antidérapante siglée',
       'Double poche arrière passepoilée avec surpiqûres de renfort',
-      'Idéal en ville comme pour les activités de plein air à Dakar'
+      'Idéal pour les sorties quotidiennes comme pour les moments de détente'
     ],
     materials: '88% Polyamide technique micro-aéré, 12% Élasthanne',
     availableSizes: ['S', 'M', 'L', 'XL'],
@@ -544,7 +544,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     images: [
       '/products/tshirt-henley-gris-chine.jpg'
     ],
-    description: 'T-shirt manches courtes style henley à col tunisien en jersey de coton flammé chiné gris perle. Patte de boutonnage 2 boutons contrastés noirs mats, bord-côte extensible au col ras-du-cou et tombé droit fluide ultra-confortable pour les journées chaudes dakaroises.',
+    description: 'T-shirt manches courtes style henley à col tunisien en jersey de coton flammé chiné gris perle. Patte de boutonnage 2 boutons contrastés noirs mats, bord-côte extensible au col ras-du-cou et tombé droit fluide ultra-confortable pour les journées chaudes et ensoleillées.',
     details: [
       'Coupe droite décontractée contemporaine',
       'Jersey 100% coton flammé chiné respirant 200 g/m²',
@@ -572,8 +572,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-016',
-    name: 'Chemise Oxford Slim Fit Bleu Azur « Fann Corniche »',
-    slug: 'chemise-oxford-slim-fit-bleu-azur-fann-corniche',
+    name: 'Chemise Oxford Slim Fit Bleu Azur « Oxford Prestige »',
+    slug: 'chemise-oxford-slim-fit-bleu-azur-oxford-prestige',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
@@ -649,8 +649,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-018',
-    name: 'Monture Optique Acétate Sculpté Prune & Écaille « Almadies Eyewear »',
-    slug: 'monture-optique-acetate-sculpte-prune-ecaille-almadies-eyewear',
+    name: 'Monture Optique Acétate Sculpté Prune & Écaille « Optique Prestige »',
+    slug: 'monture-optique-acetate-sculpte-prune-ecaille-optique-prestige',
     category: 'lunettes',
     subCategory: 'Lunettes',
     gender: 'unisexe',
@@ -723,8 +723,8 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-020',
-    name: 'Chemise Popeline Coton Ciel Épurée « Plateau Business »',
-    slug: 'chemise-popeline-coton-ciel-epuree-plateau-business',
+    name: 'Chemise Popeline Coton Ciel Épurée « Business Élégance »',
+    slug: 'chemise-popeline-coton-ciel-epuree-business-elegance',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
@@ -802,21 +802,21 @@ export const CATEGORIES_META = [
   {
     id: 'tous',
     name: 'Tout le Catalogue',
-    description: 'L\'ensemble des 21 pièces exclusives réelles CAPOSTORE221 disponibles à Dakar.'
+    description: 'L\'ensemble des 21 pièces réelles CAPOSTORE221 disponibles en ligne. Tu commandes, on te livre.'
   },
   {
     id: 'vetements',
     name: 'Vêtements',
     tagline: 'Chinos Prince de Galles, cargos écru, jeans carpenter & chemises',
     image: '/products/pantalon-cargo-ecru.jpg',
-    description: 'Coupes impeccables, finitions soignées et matières denses sélectionnées pour l\'élégance urbaine dakaroise.'
+    description: 'Coupes impeccables, finitions soignées et matières denses sélectionnées pour une allure élégante et moderne.'
   },
   {
     id: 'lunettes',
     name: 'Lunettes & Optique',
     tagline: 'Montures sculptées biseautées en acétate & armatures gravées',
     image: '/products/monture-lunettes-acetate-bordeaux.jpg',
-    description: 'Pièces d\'optique de caractère pour affronter la lumière dakaroise avec prestance.'
+    description: 'Pièces d\'optique de caractère pour affronter la lumière avec style et prestance.'
   },
   {
     id: 'accessoires',
