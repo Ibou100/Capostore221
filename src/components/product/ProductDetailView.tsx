@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Heart, ShoppingBag, Truck, ShieldCheck, 
-  RotateCcw, Check, AlertCircle, Share2 
+  RotateCcw, Check, AlertCircle, Share2, MessageCircle, Sparkles
 } from 'lucide-react';
 import type { Product, ProductColor } from '../../types';
-import { formatFCFA } from '../../utils/format';
+import { formatFCFA, getWhatsAppOrderLink } from '../../utils/format';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useStore } from '../../context/StoreContext';
@@ -130,48 +130,55 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
               </div>
             )}
 
-            {/* Main Stage Image */}
-            <div className="flex-1 relative aspect-[3/4] overflow-hidden rounded-sm bg-zinc-100">
+            {/* Main Stage Image - 100% Uncropped & Showcased */}
+            <div className="flex-1 relative aspect-[4/5] overflow-hidden rounded-md bg-[#FAF8F5] border border-[#EBE7DF] flex items-center justify-center p-4 sm:p-6">
               <img
                 src={product.images[selectedImageIndex] || product.images[0]}
                 alt={product.name}
-                className="w-full h-full object-cover object-center transition-all duration-300"
+                className="w-full h-full max-h-[520px] object-contain drop-shadow-md transition-all duration-300"
               />
 
               {/* Status Badges */}
               <div className="absolute top-4 left-4 flex flex-col gap-2">
                 {isOutOfStock ? (
-                  <span className="px-3 py-1 bg-zinc-900 text-white text-[11px] font-bold uppercase tracking-wider">
+                  <span className="px-3 py-1 bg-[#141210] text-[#E8DFD5] text-[11px] font-bold uppercase tracking-wider rounded-full shadow-sm">
                     Épuisé
                   </span>
-                ) : product.isNew ? (
-                  <span className="px-3 py-1 bg-capo-black text-white text-[11px] font-bold uppercase tracking-wider">
-                    Nouvelle Pièce
+                ) : (
+                  <span className="px-3 py-1 bg-[#141210] text-white text-[11px] font-bold uppercase tracking-wider rounded-full shadow-sm flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] inline-block animate-pulse" />
+                    <span>En stock à Dakar</span>
                   </span>
-                ) : null}
+                )}
               </div>
 
               {/* Action buttons on image */}
               <div className="absolute top-4 right-4 flex flex-col gap-2">
                 <button
                   onClick={() => toggleWishlist(product.id)}
-                  className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-capo-black shadow-md hover:scale-110 transition-transform"
+                  className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-[#141210] shadow-md hover:scale-110 transition-transform border border-[#E0D9CE]"
                   aria-label="Ajouter aux favoris"
                 >
                   <Heart
                     className={`w-5 h-5 ${
-                      isFavorited ? 'fill-capo-black text-capo-black' : 'text-zinc-600'
+                      isFavorited ? 'fill-[#B85226] text-[#B85226]' : 'text-[#666057]'
                     }`}
                   />
                 </button>
 
                 <button
                   onClick={handleShare}
-                  className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-capo-black shadow-md hover:scale-110 transition-transform"
+                  className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-[#141210] shadow-md hover:scale-110 transition-transform border border-[#E0D9CE]"
                   aria-label="Partager la fiche produit"
                 >
-                  <Share2 className="w-4 h-4 text-zinc-600" />
+                  <Share2 className="w-4 h-4 text-[#666057]" />
                 </button>
+              </div>
+
+              {/* Real photo seal */}
+              <div className="absolute bottom-4 left-4 bg-white/90 text-[#141210] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm border border-[#E0D9CE] flex items-center gap-1.5">
+                <Sparkles className="w-3 h-3 text-[#B85226]" />
+                <span>Photo Réelle de l'Article</span>
               </div>
             </div>
           </div>
@@ -311,50 +318,63 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                 </div>
               )}
 
-              {/* Quantity Stepper & Add to Cart */}
-              <div className="pt-4 flex flex-col sm:flex-row gap-3">
-                {/* Quantity selector */}
-                {!isOutOfStock && (
-                  <div className="inline-flex items-center border border-zinc-300 rounded-none bg-white">
-                    <button
-                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      disabled={quantity <= 1}
-                      className="px-3.5 py-3 text-zinc-600 hover:text-black disabled:opacity-30"
-                      aria-label="Diminuer la quantité"
-                    >
-                      -
-                    </button>
-                    <span className="w-10 text-center font-bold text-xs text-zinc-900">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => setQuantity((q) => Math.min(currentStock, q + 1))}
-                      disabled={quantity >= currentStock}
-                      className="px-3.5 py-3 text-zinc-600 hover:text-black disabled:opacity-30"
-                      aria-label="Augmenter la quantité"
-                    >
-                      +
-                    </button>
-                  </div>
-                )}
+              {/* Quantity Stepper & Add to Cart & WhatsApp */}
+              <div className="pt-4 space-y-3">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {/* Quantity selector */}
+                  {!isOutOfStock && (
+                    <div className="inline-flex items-center border border-[#D9CEBE] rounded bg-white">
+                      <button
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        disabled={quantity <= 1}
+                        className="px-3.5 py-3 text-zinc-600 hover:text-black disabled:opacity-30 font-bold"
+                        aria-label="Diminuer la quantité"
+                      >
+                        -
+                      </button>
+                      <span className="w-10 text-center font-bold text-xs text-zinc-900">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity((q) => Math.min(currentStock, q + 1))}
+                        disabled={quantity >= currentStock}
+                        className="px-3.5 py-3 text-zinc-600 hover:text-black disabled:opacity-30 font-bold"
+                        aria-label="Augmenter la quantité"
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
 
-                {/* Primary Add to Cart Button */}
-                <button
-                  onClick={handleAddToCart}
-                  disabled={isOutOfStock || currentStock <= 0}
-                  className={`flex-1 py-4 px-6 text-xs font-display font-bold uppercase tracking-widest flex items-center justify-center gap-3 transition-all duration-300 ${
-                    isOutOfStock || currentStock <= 0
-                      ? 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
-                      : 'bg-capo-black hover:bg-zinc-800 text-white shadow-xl hover:shadow-2xl'
-                  }`}
+                  {/* Primary Add to Cart Button */}
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={isOutOfStock || currentStock <= 0}
+                    className={`flex-1 py-4 px-6 text-xs font-display font-bold uppercase tracking-widest flex items-center justify-center gap-3 rounded transition-all duration-300 ${
+                      isOutOfStock || currentStock <= 0
+                        ? 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+                        : 'bg-[#141210] hover:bg-[#2C2723] text-white shadow-md hover:shadow-lg'
+                    }`}
+                  >
+                    <ShoppingBag className="w-4 h-4" />
+                    <span>
+                      {isOutOfStock || currentStock <= 0
+                        ? 'Pièce Indisponible'
+                        : `Ajouter au Panier • ${formatFCFA(product.price * quantity)}`}
+                    </span>
+                  </button>
+                </div>
+
+                {/* Direct WhatsApp Order Button */}
+                <a
+                  href={getWhatsAppOrderLink(product.name, product.price, selectedSize)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-6 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded shadow-sm hover:shadow-md transition-all"
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                  <span>
-                    {isOutOfStock || currentStock <= 0
-                      ? 'Pièce Indisponible'
-                      : `Ajouter au Panier • ${formatFCFA(product.price * quantity)}`}
-                  </span>
-                </button>
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Commander immédiatement sur WhatsApp</span>
+                </a>
               </div>
 
               {/* Delivery Accordions & Guarantees */}

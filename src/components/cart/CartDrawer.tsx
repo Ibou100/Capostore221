@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { 
   X, ShoppingBag, Trash2, ArrowRight, ShieldCheck, 
-  Truck, ChevronRight, PackageCheck 
+  Truck, ChevronRight, PackageCheck, MessageCircle 
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
-import { formatFCFA } from '../../utils/format';
+import { formatFCFA, DAKAR_WHATSAPP_PHONE } from '../../utils/format';
 
 export const CartDrawer: React.FC = () => {
   const { 
@@ -106,7 +106,7 @@ export const CartDrawer: React.FC = () => {
                   <img
                     src={item.product.images[0]}
                     alt={item.product.name}
-                    className="w-20 h-24 object-cover object-center rounded-sm bg-zinc-100 shrink-0"
+                    className="w-20 h-24 object-contain p-1.5 bg-[#FAF8F5] border border-[#EAE5DC] rounded shrink-0"
                   />
 
                   {/* Info */}
@@ -217,17 +217,33 @@ export const CartDrawer: React.FC = () => {
                 </div>
               </div>
 
-              {/* Order checkout CTA */}
-              <button
-                onClick={() => setIsCheckoutModalOpen(true)}
-                className="w-full bg-capo-black hover:bg-zinc-800 text-white py-4 px-6 text-xs font-display font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-colors"
-              >
-                <span>Finaliser la commande</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
+              {/* Order checkout CTAs */}
+              <div className="space-y-2.5">
+                <a
+                  href={`https://wa.me/${DAKAR_WHATSAPP_PHONE}?text=${encodeURIComponent(
+                    `Bonjour CAPOSTORE221 ! 🇸🇳\nJe souhaite valider ma commande avec les articles suivants :\n\n` +
+                    items.map(i => `• ${i.quantity}x ${i.product.name}${i.selectedSize ? ` (Taille ${i.selectedSize})` : ''} - ${formatFCFA(i.unitPrice * i.quantity)}`).join('\n') +
+                    `\n\nTotal : ${formatFCFA(total)}\n\nMerci de me contacter pour la livraison à Dakar !`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-4 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 rounded shadow-sm transition-all"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Commander ce panier sur WhatsApp</span>
+                </a>
 
-              <div className="flex items-center justify-center gap-2 text-[11px] text-zinc-500 pt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
+                <button
+                  onClick={() => setIsCheckoutModalOpen(true)}
+                  className="w-full bg-[#141210] hover:bg-[#2C2723] text-white py-3.5 px-4 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 rounded shadow-sm transition-colors"
+                >
+                  <span>Formulaire de livraison en ligne</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-center gap-2 text-[11px] text-[#7A7163] pt-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#B85226]" />
                 <span>Paiement à la livraison ou Wave / Orange Money</span>
               </div>
             </div>

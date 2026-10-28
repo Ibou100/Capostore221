@@ -131,7 +131,7 @@ export const SearchModal: React.FC = () => {
                     <img
                       src={product.images[0]}
                       alt={product.name}
-                      className="w-14 h-16 object-cover object-center rounded bg-zinc-100 shrink-0"
+                      className="w-14 h-16 object-contain p-1 rounded bg-[#FAF8F5] border border-[#EAE5DC] shrink-0"
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-[10px] uppercase tracking-wider text-zinc-500">

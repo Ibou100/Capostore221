@@ -67,25 +67,24 @@ export const CollectionsGrid: React.FC = () => {
             <div
               key={dept.id}
               onClick={() => goToCatalog({ category: dept.category })}
-              className="group relative overflow-hidden rounded-sm cursor-pointer bg-[#F5EFE6] border border-[#E0D5C3] hover:border-[#B85D19] transition-all duration-300 shadow-sm hover:shadow-md"
+              className="group relative overflow-hidden rounded-lg cursor-pointer bg-white border border-[#EAE5DC] hover:border-[#B85226] transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)]"
             >
-              {/* Image Container with clean aspect ratio */}
-              <div className="aspect-[4/3] w-full overflow-hidden bg-white relative">
+              {/* Image Container with clean studio aspect ratio */}
+              <div className="aspect-[4/5] w-full bg-[#FAF8F5] p-4 overflow-hidden relative flex items-center justify-center border-b border-[#EAE5DC]">
                 <img
                   src={dept.image}
                   alt={dept.title}
-                  className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+                  className="w-full h-full object-contain drop-shadow-sm transition-transform duration-500 ease-out group-hover:scale-105"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
                 
                 {/* Count badge */}
-                <span className="absolute top-3 right-3 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 bg-[#141210]/90 text-white border border-[#D9CEBE]/30">
+                <span className="absolute top-3 right-3 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 bg-[#141210] text-white rounded-full shadow-sm">
                   {dept.count}
                 </span>
 
                 {/* Arrow indicator */}
-                <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 text-[#141210] flex items-center justify-center transition-transform group-hover:rotate-45 duration-300">
+                <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white text-[#141210] border border-[#E0D9CE] flex items-center justify-center transition-transform group-hover:rotate-45 duration-300 shadow-sm">
                   <ArrowUpRight className="w-4 h-4" />
                 </div>
               </div>

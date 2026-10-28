@@ -13,24 +13,24 @@ export const CatalogView: React.FC = () => {
   ) || CATEGORIES_META[0];
 
   return (
-    <div className="bg-capo-offwhite min-h-screen py-10">
+    <div className="bg-[#FAF8F5] min-h-screen py-8 lg:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Editorial Catalog Header */}
-        <div className="pb-8 mb-8 border-b border-zinc-200">
-          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-2">
-            Collection CAPOSTORE221 • Dakar
+        <div className="pb-6 mb-8 border-b border-[#EAE5DC] text-left">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#B85226] mb-1.5">
+            Boutique CAPOSTORE221 • Dakar
           </p>
-          <h1 className="font-display font-extrabold text-3xl sm:text-5xl text-capo-black tracking-tightest uppercase">
+          <h1 className="font-display font-black text-3xl sm:text-4xl lg:text-5xl text-[#141210] tracking-tight">
             {currentCategoryMeta.name}
           </h1>
-          <p className="text-sm sm:text-base text-zinc-600 max-w-2xl mt-3 font-light leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#666057] max-w-2xl mt-2 leading-relaxed">
             {currentCategoryMeta.description}
           </p>
         </div>
 
         {/* Layout: Sidebar + Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-10 items-start">
           
           {/* Desktop Left Sidebar for Filters */}
           <div className="lg:col-span-1">
@@ -40,7 +40,7 @@ export const CatalogView: React.FC = () => {
           {/* Right Product Grid */}
           <div className="lg:col-span-3">
             {filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
