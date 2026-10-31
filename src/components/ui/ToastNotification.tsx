@@ -15,7 +15,7 @@ export const ToastNotification: React.FC = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 animate-fade-in max-w-sm">
-      <div className="bg-capo-black text-white px-4 py-3 rounded-none shadow-2xl border border-zinc-800 flex items-center gap-3">
+      <div className="bg-[#141210] text-white px-4 py-3 rounded-sm shadow-2xl border border-zinc-800 flex items-center gap-3">
         {icons[toast.type]}
         <span className="text-xs font-medium tracking-wide leading-snug">
           {toast.message}

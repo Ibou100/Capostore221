@@ -8,23 +8,23 @@ import { NewsletterSection } from './NewsletterSection';
 
 export const HomeView: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-[#FAF7F2]">
-      {/* 1. Hero Section - Warm, African, Simple with 100% Real Client Photos */}
+    <div className="flex flex-col min-h-screen bg-[#FAF8F5]">
+      {/* 1. Hero Showcase */}
       <Hero />
 
-      {/* 2. Teranga Dakar Reassurances (Livraison 24h, WhatsApp, Wave/OM, Essayage) */}
+      {/* 2. Reassurances & Operating Model */}
       <TerangaServices />
 
-      {/* 3. 3 Real Departments (Vêtements, Lunettes, Accessoires) */}
+      {/* 3. 3 Core Departments */}
       <CollectionsGrid />
 
-      {/* 4. Complete Real Catalog with Instant Filter Pills */}
+      {/* 4. Complete Catalog */}
       <NewArrivals />
 
-      {/* 5. Editorial African Identity & Teranga Dakar */}
+      {/* 5. Editorial Manifesto */}
       <EditorialManifesto />
 
-      {/* 6. Newsletter Subscription */}
+      {/* 6. Newsletter & Contact */}
       <NewsletterSection />
     </div>
   );

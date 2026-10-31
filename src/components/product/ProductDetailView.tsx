@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeft, Heart, ShoppingBag, Truck, ShieldCheck, 
-  RotateCcw, Check, AlertCircle, Share2, MessageCircle, Sparkles
+  RotateCcw, Check, AlertCircle, Share2, MessageCircle
 } from 'lucide-react';
 import type { Product, ProductColor } from '../../types';
 import { formatFCFA, getWhatsAppOrderLink } from '../../utils/format';
@@ -131,23 +131,22 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
             )}
 
             {/* Main Stage Image - 100% Uncropped & Showcased */}
-            <div className="flex-1 relative aspect-[4/5] overflow-hidden rounded-md bg-[#FAF8F5] border border-[#EBE7DF] flex items-center justify-center p-4 sm:p-6">
+            <div className="flex-1 relative aspect-[4/5] overflow-hidden rounded-sm bg-[#FAF8F5] border border-[#E7E2D9] flex items-center justify-center p-4 sm:p-6">
               <img
                 src={product.images[selectedImageIndex] || product.images[0]}
                 alt={product.name}
-                className="w-full h-full max-h-[520px] object-contain drop-shadow-md transition-all duration-300"
+                className="w-full h-full max-h-[520px] object-contain drop-shadow-sm transition-all duration-300"
               />
 
               {/* Status Badges */}
               <div className="absolute top-4 left-4 flex flex-col gap-2">
                 {isOutOfStock ? (
-                  <span className="px-3 py-1 bg-[#141210] text-[#E8DFD5] text-[11px] font-bold uppercase tracking-wider rounded-full shadow-sm">
+                  <span className="px-2.5 py-1 bg-zinc-900 text-white text-[10px] font-semibold uppercase tracking-wider rounded-sm shadow-sm">
                     Épuisé
                   </span>
                 ) : (
-                  <span className="px-3 py-1 bg-[#141210] text-white text-[11px] font-bold uppercase tracking-wider rounded-full shadow-sm flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] inline-block animate-pulse" />
-                    <span>En stock disponible</span>
+                  <span className="px-2.5 py-1 bg-white/95 text-zinc-900 border border-zinc-200 text-[10px] font-semibold uppercase tracking-wider rounded-sm shadow-sm">
+                    En stock
                   </span>
                 )}
               </div>
@@ -156,29 +155,23 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
               <div className="absolute top-4 right-4 flex flex-col gap-2">
                 <button
                   onClick={() => toggleWishlist(product.id)}
-                  className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-[#141210] shadow-md hover:scale-110 transition-transform border border-[#E0D9CE]"
+                  className="w-9 h-9 rounded-full bg-white/95 flex items-center justify-center text-zinc-700 hover:text-black shadow-sm transition-transform hover:scale-105 border border-zinc-200"
                   aria-label="Ajouter aux favoris"
                 >
                   <Heart
-                    className={`w-5 h-5 ${
-                      isFavorited ? 'fill-[#B85226] text-[#B85226]' : 'text-[#666057]'
+                    className={`w-4 h-4 ${
+                      isFavorited ? 'fill-[#B85D19] text-[#B85D19]' : 'text-zinc-600'
                     }`}
                   />
                 </button>
 
                 <button
                   onClick={handleShare}
-                  className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center text-[#141210] shadow-md hover:scale-110 transition-transform border border-[#E0D9CE]"
+                  className="w-9 h-9 rounded-full bg-white/95 flex items-center justify-center text-zinc-700 hover:text-black shadow-sm transition-transform hover:scale-105 border border-zinc-200"
                   aria-label="Partager la fiche produit"
                 >
-                  <Share2 className="w-4 h-4 text-[#666057]" />
+                  <Share2 className="w-3.5 h-3.5 text-zinc-600" />
                 </button>
-              </div>
-
-              {/* Real photo seal */}
-              <div className="absolute bottom-4 left-4 bg-white/90 text-[#141210] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm border border-[#E0D9CE] flex items-center gap-1.5">
-                <Sparkles className="w-3 h-3 text-[#B85226]" />
-                <span>Photo Réelle de l'Article</span>
               </div>
             </div>
           </div>
@@ -189,27 +182,22 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
               
               {/* Category & Title */}
               <div>
-                <div className="flex items-center justify-between text-xs text-zinc-500 uppercase tracking-widest font-semibold mb-2">
+                <div className="flex items-center justify-between text-[11px] text-zinc-500 uppercase tracking-widest font-semibold mb-2">
                   <span>{product.subCategory}</span>
                   <span className="capitalize">{product.gender}</span>
                 </div>
-                <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-capo-black tracking-tightest leading-tight">
+                <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-zinc-900 tracking-tight leading-tight">
                   {product.name}
                 </h1>
               </div>
 
               {/* Pricing in FCFA */}
               <div className="flex items-baseline gap-3 pb-5 border-b border-zinc-100">
-                <span className="font-display font-extrabold text-2xl sm:text-3xl text-capo-black">
+                <span className="font-display font-bold text-2xl sm:text-3xl text-zinc-900">
                   {formatFCFA(product.price)}
                 </span>
-                {product.compareAtPrice && (
-                  <span className="text-base text-zinc-400 line-through">
-                    {formatFCFA(product.compareAtPrice)}
-                  </span>
-                )}
-                <span className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full font-medium ml-auto">
-                  TTC • Facturation FCFA
+                <span className="text-xs text-zinc-500 ml-auto font-medium">
+                  Livraison directe à domicile
                 </span>
               </div>
 
@@ -350,10 +338,10 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                   <button
                     onClick={handleAddToCart}
                     disabled={isOutOfStock || currentStock <= 0}
-                    className={`flex-1 py-4 px-6 text-xs font-display font-bold uppercase tracking-widest flex items-center justify-center gap-3 rounded transition-all duration-300 ${
+                    className={`flex-1 py-3.5 px-6 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 rounded-sm transition-colors ${
                       isOutOfStock || currentStock <= 0
                         ? 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
-                        : 'bg-[#141210] hover:bg-[#2C2723] text-white shadow-md hover:shadow-lg'
+                        : 'bg-[#141210] hover:bg-[#2C2723] text-white shadow-sm'
                     }`}
                   >
                     <ShoppingBag className="w-4 h-4" />
@@ -370,35 +358,35 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                   href={getWhatsAppOrderLink(product.name, product.price, selectedSize)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-6 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded shadow-sm hover:shadow-md transition-all"
+                  className="w-full bg-white hover:bg-zinc-50 border border-zinc-300 text-zinc-900 py-3 px-6 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 rounded-sm transition-colors"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Commander immédiatement sur WhatsApp</span>
+                  <MessageCircle className="w-4 h-4 text-emerald-600" />
+                  <span>Commander directement sur WhatsApp</span>
                 </a>
               </div>
 
               {/* Delivery Accordions & Guarantees */}
-              <div className="pt-6 border-t border-zinc-100 space-y-3 text-xs text-zinc-600">
-                <div className="flex items-start gap-3 p-3 bg-zinc-50 rounded">
-                  <Truck className="w-4 h-4 text-capo-black shrink-0 mt-0.5" />
+              <div className="pt-6 border-t border-zinc-100 space-y-2.5 text-xs text-zinc-600">
+                <div className="flex items-start gap-3 p-3 bg-zinc-50 rounded-sm border border-zinc-200/70">
+                  <Truck className="w-4 h-4 text-zinc-800 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-zinc-900 block">Livraison Rapide à Domicile :</strong>
-                    Vous passez commande en ligne, nous validons et expédions directement votre colis (2 500 FCFA ou offerte dès 25 000 FCFA).
+                    <strong className="text-zinc-900 block font-semibold">Livraison Directe à Domicile :</strong>
+                    Vous passez commande en ligne, nous validons et organisons la livraison directement chez vous.
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-zinc-50 rounded">
-                  <ShieldCheck className="w-4 h-4 text-capo-black shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-zinc-50 rounded-sm border border-zinc-200/70">
+                  <ShieldCheck className="w-4 h-4 text-zinc-800 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-zinc-900 block">Paiement Sécurisé :</strong>
-                    Règlement simple par Wave, Orange Money ou paiement comptant à la livraison.
+                    <strong className="text-zinc-900 block font-semibold">Paiement Sécurisé :</strong>
+                    Règlement par Wave, Orange Money ou paiement en espèces à la livraison.
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-zinc-50 rounded">
-                  <RotateCcw className="w-4 h-4 text-capo-black shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-zinc-50 rounded-sm border border-zinc-200/70">
+                  <RotateCcw className="w-4 h-4 text-zinc-800 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-zinc-900 block">Échanges Gratuits 7 Jours :</strong>
+                    <strong className="text-zinc-900 block font-semibold">Échanges 7 Jours :</strong>
                     Si la taille ne convient pas, nous procédons à l'échange rapidement.
                   </div>
                 </div>

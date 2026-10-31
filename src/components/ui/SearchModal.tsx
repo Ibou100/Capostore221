@@ -72,7 +72,7 @@ export const SearchModal: React.FC = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Rechercher une pièce, catégorie ou matière (ex: Aviateur, Lunettes, Sneakers)..."
+            placeholder="Rechercher une pièce ou matière (ex: Pantalon, Chemise, Lunettes)..."
             className="w-full text-sm sm:text-base text-zinc-900 placeholder-zinc-400 focus:outline-none"
           />
           {searchTerm && (

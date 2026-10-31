@@ -49,6 +49,6 @@ export const TIKTOK_URL = 'https://www.tiktok.com/@capostore.221';
 
 export function getWhatsAppOrderLink(productName: string, price: number, size?: string): string {
   const sizeText = size ? `\n• Taille souhaitée : ${size}` : '';
-  const message = `Bonjour CAPOSTORE221 ! 🛍️\nJe souhaite passer commande pour cet article vu sur votre boutique en ligne :\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}\n\nMerci de me confirmer la disponibilité et les modalités de livraison !`;
+  const message = `Bonjour CAPOSTORE221,\nJe souhaite passer commande pour cet article vu sur votre boutique en ligne :\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}\n\nMerci de me confirmer la disponibilité et les modalités de livraison.`;
   return `https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Eye, MessageCircle, ShoppingBag } from 'lucide-react';
+import { Heart, MessageCircle, ShoppingBag } from 'lucide-react';
 import type { Product } from '../../types';
 import { formatFCFA, getWhatsAppOrderLink } from '../../utils/format';
 import { useWishlist } from '../../context/WishlistContext';
@@ -26,8 +26,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    // If product has size or color choices, open quick view
+
+    // If product has size choices, open quick view
     const hasRequiredSizes = product.availableSizes && product.availableSizes.length > 0;
     const hasRequiredColors = product.availableColors && product.availableColors.length > 1;
 
@@ -48,52 +48,45 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const whatsappLink = getWhatsAppOrderLink(product.name, product.price);
 
   return (
-    <div
-      className="group relative flex flex-col bg-white rounded-lg border border-[#EAE5DC] hover:border-[#B85226] shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 overflow-hidden cursor-pointer"
+    <article
+      className="group relative flex flex-col bg-white border border-[#E7E2D9] hover:border-[#141210] rounded-sm transition-all duration-300 overflow-hidden cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
     >
-      {/* 1. Generous Studio Image Frame (Respects 100% of the photo details) */}
-      <div className="relative aspect-[4/5] w-full bg-[#FAF8F5] overflow-hidden flex items-center justify-center p-3 sm:p-4 border-b border-[#F0ECE4]">
-        {/* Main image - object-contain ensures zero crop on collars, buttons or zoom insets */}
+      {/* 1. Studio Image Stage - Uncropped 4/5 Aspect Ratio */}
+      <div className="relative aspect-[4/5] w-full bg-[#FAF8F5] overflow-hidden flex items-center justify-center p-3 sm:p-4 border-b border-[#EFECE5]">
+        {/* Primary Image */}
         <img
           src={product.images[0]}
           alt={product.name}
-          className={`h-full w-full object-contain transition-all duration-500 ease-out drop-shadow-sm ${
+          className={`h-full w-full object-contain transition-all duration-500 ease-out ${
             isHovered && hasMultipleImages ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
           }`}
           loading="lazy"
         />
 
-        {/* Secondary hover image if available */}
+        {/* Secondary Alternative Image */}
         {hasMultipleImages && (
           <img
             src={product.images[1]}
-            alt={`${product.name} vue alternative`}
-            className={`absolute inset-0 h-full w-full object-contain p-3 sm:p-4 transition-all duration-500 ease-out drop-shadow-sm ${
+            alt={`${product.name} - vue détail`}
+            className={`absolute inset-0 h-full w-full object-contain p-3 sm:p-4 transition-all duration-500 ease-out ${
               isHovered ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
             }`}
             loading="lazy"
           />
         )}
 
-        {/* Top Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+        {/* Minimalist Badges */}
+        <div className="absolute top-2.5 left-2.5 z-10">
           {isOutOfStock ? (
-            <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[#141210] text-[#E8DFD5] rounded-full shadow-sm">
+            <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-zinc-900 text-white rounded-sm">
               Épuisé
             </span>
           ) : (
-            <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[#141210] text-white rounded-full shadow-sm flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] inline-block animate-pulse" />
-              <span>En stock</span>
-            </span>
-          )}
-
-          {product.compareAtPrice && !isOutOfStock && (
-            <span className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-[#B85226] text-white rounded-full">
-              Prix Club
+            <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-white/95 text-zinc-900 border border-zinc-200/90 rounded-sm">
+              En stock
             </span>
           )}
         </div>
@@ -108,88 +101,69 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               'info'
             );
           }}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-[#141210] flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+          className="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-zinc-700 hover:text-black flex items-center justify-center border border-zinc-200 shadow-sm transition-transform hover:scale-105"
           aria-label={isFavorited ? 'Retirer des favoris' : 'Ajouter aux favoris'}
         >
           <Heart
-            className={`w-4 h-4 transition-colors ${
-              isFavorited ? 'fill-[#B85226] text-[#B85226]' : 'text-[#666057]'
+            className={`w-3.5 h-3.5 transition-colors ${
+              isFavorited ? 'fill-[#B85D19] text-[#B85D19]' : 'text-zinc-600'
             }`}
           />
         </button>
-
-        {/* Quick View Button on Hover */}
-        <div
-          className={`absolute bottom-3 inset-x-3 z-10 transition-all duration-300 hidden sm:block ${
-            isHovered ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0 pointer-events-none'
-          }`}
-        >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              openQuickView(product);
-            }}
-            className="w-full bg-[#141210]/95 hover:bg-[#141210] text-white py-2 px-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 rounded shadow-lg backdrop-blur-sm"
-          >
-            <Eye className="w-3.5 h-3.5" />
-            <span>Aperçu & Tailles</span>
-          </button>
-        </div>
       </div>
 
-      {/* 2. Product Details & Purchase Actions */}
-      <div className="p-4 flex flex-col flex-1 justify-between text-left">
+      {/* 2. Product Details */}
+      <div className="p-3.5 sm:p-4 flex flex-col flex-1 justify-between text-left">
         <div>
-          {/* Subcategory & Gender */}
-          <div className="flex items-center justify-between text-[11px] text-[#8C8273] uppercase tracking-wider mb-1 font-semibold">
+          {/* Subcategory & Fabric Tag */}
+          <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-zinc-500 uppercase tracking-wider mb-1 font-medium">
             <span>{product.subCategory}</span>
-            <span>{product.materials ? product.materials.split(',')[0] : 'Qualité Supérieure'}</span>
+            <span className="truncate max-w-[120px] text-zinc-400">
+              {product.materials ? product.materials.split(',')[0] : 'Qualité garantie'}
+            </span>
           </div>
 
           {/* Product Title */}
-          <h3 className="font-display font-bold text-sm sm:text-base text-[#141210] group-hover:text-[#B85226] transition-colors line-clamp-1 mb-2">
+          <h3 className="font-display font-medium text-xs sm:text-sm text-zinc-900 group-hover:text-[#B85D19] transition-colors line-clamp-1 mb-2">
             {product.name}
           </h3>
 
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-3">
-            <span className="font-display font-black text-base sm:text-lg text-[#141210]">
+            <span className="font-display font-bold text-sm sm:text-base text-zinc-900">
               {formatFCFA(product.price)}
             </span>
-            {product.compareAtPrice && (
-              <span className="text-xs text-[#9E9587] line-through font-normal">
-                {formatFCFA(product.compareAtPrice)}
-              </span>
-            )}
           </div>
         </div>
 
-        {/* 3. Direct Actions: WhatsApp Order (King in Senegal) + Cart Button */}
-        <div className="pt-2 border-t border-[#F2EDE4] flex items-center gap-2">
+        {/* 3. Action Row */}
+        <div className="pt-2 border-t border-[#F0ECE5] flex items-center gap-2">
+          {/* Quick Add / Select Size Button */}
+          <button
+            onClick={handleQuickAdd}
+            disabled={isOutOfStock}
+            className="flex-1 bg-[#141210] hover:bg-[#2C2723] disabled:bg-zinc-200 disabled:text-zinc-400 text-white py-2 px-3 rounded-sm text-[11px] font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors"
+          >
+            <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">
+              {product.availableSizes && product.availableSizes.length > 0 ? 'Choisir taille' : 'Ajouter'}
+            </span>
+          </button>
+
           {/* Direct WhatsApp Ordering */}
           <a
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="flex-1 bg-[#25D366] hover:bg-[#20BA5A] text-white py-2.5 px-3 rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors shadow-sm"
-            title="Commander directement cet article sur WhatsApp"
+            className="w-8 h-8 rounded-sm border border-zinc-200 hover:border-emerald-600 text-zinc-700 hover:text-emerald-700 hover:bg-emerald-50 transition-colors flex items-center justify-center shrink-0"
+            title="Commander directement sur WhatsApp"
+            aria-label="Commander sur WhatsApp"
           >
-            <MessageCircle className="w-4 h-4 shrink-0" />
-            <span className="truncate">WhatsApp</span>
+            <MessageCircle className="w-4 h-4" />
           </a>
-
-          {/* Quick Cart Action */}
-          <button
-            onClick={handleQuickAdd}
-            className="bg-[#141210] hover:bg-[#2E2824] text-white p-2.5 rounded transition-colors shadow-sm shrink-0 flex items-center justify-center"
-            title="Ajouter au panier du site"
-            aria-label="Ajouter au panier"
-          >
-            <ShoppingBag className="w-4 h-4" />
-          </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
