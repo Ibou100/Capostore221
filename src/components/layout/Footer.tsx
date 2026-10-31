@@ -9,7 +9,8 @@ import {
   STORE_WHATSAPP_PHONE, 
   STORE_CALL_PHONE, 
   STORE_PHONE_WHATSAPP_DISPLAY, 
-  STORE_PHONE_CALL_DISPLAY 
+  STORE_PHONE_CALL_DISPLAY,
+  STORE_EMAIL
 } from '../../utils/format';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -127,7 +128,15 @@ export const Footer: React.FC = () => {
                   {STORE_PHONE_CALL_DISPLAY}
                 </a>
               </p>
-              <p><strong className="text-zinc-300 font-medium">Email :</strong> contact@capostore221.com</p>
+              <p>
+                <strong className="text-zinc-300 font-medium">Email :</strong>{' '}
+                <a
+                  href={`mailto:${STORE_EMAIL}`}
+                  className="text-zinc-200 hover:text-white hover:underline font-semibold"
+                >
+                  {STORE_EMAIL}
+                </a>
+              </p>
               <div className="pt-2 flex flex-col gap-1.5">
                 <a
                   href={FACEBOOK_URL}

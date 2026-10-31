@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ArrowRight, MessageCircle, Phone } from 'lucide-react';
+import { CheckCircle2, ArrowRight, MessageCircle, Phone, Mail } from 'lucide-react';
 import { 
   isValidEmail, 
   STORE_WHATSAPP_PHONE, 
   STORE_CALL_PHONE, 
   STORE_PHONE_WHATSAPP_DISPLAY, 
   STORE_PHONE_CALL_DISPLAY, 
+  STORE_EMAIL,
   FACEBOOK_URL,
   INSTAGRAM_URL,
   TIKTOK_URL
@@ -93,6 +94,16 @@ export const NewsletterSection: React.FC = () => {
           >
             <Phone className="w-3.5 h-3.5 shrink-0" />
             <span>Appel : {STORE_PHONE_CALL_DISPLAY}</span>
+          </a>
+
+          <span className="hidden sm:inline text-zinc-600">•</span>
+
+          <a
+            href={`mailto:${STORE_EMAIL}`}
+            className="inline-flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors py-1"
+          >
+            <Mail className="w-3.5 h-3.5 shrink-0" />
+            <span>Email : {STORE_EMAIL}</span>
           </a>
 
           <span className="hidden sm:inline text-zinc-600">•</span>

@@ -10,7 +10,8 @@ import {
   STORE_WHATSAPP_PHONE, 
   STORE_CALL_PHONE, 
   STORE_PHONE_WHATSAPP_DISPLAY, 
-  STORE_PHONE_CALL_DISPLAY 
+  STORE_PHONE_CALL_DISPLAY,
+  STORE_EMAIL
 } from '../../utils/format';
 import type { CategoryId } from '../../types';
 
@@ -348,6 +349,12 @@ export const Navbar: React.FC = () => {
                   className="font-semibold text-zinc-800 hover:underline flex items-center gap-1.5"
                 >
                   <span>📞 Appel direct : {STORE_PHONE_CALL_DISPLAY}</span>
+                </a>
+                <a
+                  href={`mailto:${STORE_EMAIL}`}
+                  className="font-semibold text-zinc-700 hover:underline flex items-center gap-1.5"
+                >
+                  <span>✉️ Email : {STORE_EMAIL}</span>
                 </a>
               </div>
               <p className="pt-2 text-zinc-400">Devise : FCFA (XOF)</p>

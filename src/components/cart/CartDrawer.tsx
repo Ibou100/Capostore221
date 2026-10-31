@@ -9,7 +9,8 @@ import {
   formatFCFA, 
   STORE_WHATSAPP_PHONE, 
   STORE_PHONE_WHATSAPP_DISPLAY, 
-  STORE_PHONE_CALL_DISPLAY 
+  STORE_PHONE_CALL_DISPLAY,
+  STORE_EMAIL
 } from '../../utils/format';
 
 export const CartDrawer: React.FC = () => {
@@ -356,7 +357,7 @@ export const CartDrawer: React.FC = () => {
                       required
                       value={customerAddress}
                       onChange={(e) => setCustomerAddress(e.target.value)}
-                      placeholder="Ex: Almadies, en face de la pharmacie..."
+                      placeholder="Ex: En face de la pharmacie, rue 12..."
                       className="w-full text-xs px-3 py-2.5 border border-zinc-300 rounded focus:border-black focus:outline-none"
                     />
                   </div>
@@ -393,7 +394,7 @@ export const CartDrawer: React.FC = () => {
                   Commande validée avec succès !
                 </h3>
                 <p className="text-xs text-zinc-600 max-w-sm mx-auto mb-6 leading-relaxed">
-                  Merci <strong>{customerName}</strong>. Le vendeur CAPOSTORE221 va vous contacter au <strong>{customerPhone}</strong> pour coordonner la livraison express de votre commande ({customerCity}). Pour toute question : <strong>{STORE_PHONE_WHATSAPP_DISPLAY}</strong> (WhatsApp) ou <strong>{STORE_PHONE_CALL_DISPLAY}</strong> (Appel).
+                  Merci <strong>{customerName}</strong>. Le vendeur CAPOSTORE221 va vous contacter au <strong>{customerPhone}</strong> pour coordonner la livraison express de votre commande ({customerCity}). Pour toute question : <strong>{STORE_PHONE_WHATSAPP_DISPLAY}</strong> (WhatsApp), <strong>{STORE_PHONE_CALL_DISPLAY}</strong> (Appel) ou par email à <strong>{STORE_EMAIL}</strong>.
                 </p>
                 <div className="p-4 bg-zinc-50 rounded text-xs text-zinc-700 mb-6 text-left space-y-1">
                   <p><strong>Total de la commande :</strong> {formatFCFA(total)}</p>

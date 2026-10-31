@@ -31,13 +31,14 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
- * Contact phone numbers for e-commerce
+ * Contact phone numbers & email for e-commerce
  */
 export const STORE_WHATSAPP_PHONE = '221768321157'; // WhatsApp officiel (+221 76 832 11 57)
 export const STORE_CALL_PHONE = '221772563990'; // Ligne d'appel direct (+221 77 256 39 90)
 
 export const STORE_PHONE_WHATSAPP_DISPLAY = '+221 76 832 11 57';
 export const STORE_PHONE_CALL_DISPLAY = '+221 77 256 39 90';
+export const STORE_EMAIL = 'capostore221@gmail.com'; // Email officiel du vendeur
 
 /**
  * Official Social Media links
