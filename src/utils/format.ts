@@ -40,9 +40,11 @@ export const STORE_PHONE_WHATSAPP_DISPLAY = '+221 76 832 11 57';
 export const STORE_PHONE_CALL_DISPLAY = '+221 77 256 39 90';
 
 /**
- * Official Facebook page link
+ * Official Social Media links
  */
 export const FACEBOOK_URL = 'https://www.facebook.com/share/1Edu4vsdUn/?mibextid=wwXIfr';
+export const INSTAGRAM_URL = 'https://www.instagram.com/capostore221?rpxt=OTBydGo5MW81NGtx&utm_source=qr';
+export const TIKTOK_URL = 'https://www.tiktok.com/@capostore.221';
 
 export function getWhatsAppOrderLink(productName: string, price: number, size?: string): string {
   const sizeText = size ? `\n• Taille souhaitée : ${size}` : '';
