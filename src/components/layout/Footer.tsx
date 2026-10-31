@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { CheckCircle2, ShieldCheck, Truck, RefreshCw, ExternalLink } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { isValidEmail, FACEBOOK_URL } from '../../utils/format';
+import { 
+  isValidEmail, 
+  FACEBOOK_URL, 
+  STORE_WHATSAPP_PHONE, 
+  STORE_CALL_PHONE, 
+  STORE_PHONE_WHATSAPP_DISPLAY, 
+  STORE_PHONE_CALL_DISPLAY 
+} from '../../utils/format';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -86,7 +93,27 @@ export const Footer: React.FC = () => {
             </p>
             <div className="pt-2 text-xs text-zinc-400 space-y-1.5">
               <p><strong className="text-zinc-300 font-medium">Vente en Ligne Exclusive :</strong> Commandes 24h/24 & 7j/7</p>
-              <p><strong className="text-zinc-300 font-medium">Service Client :</strong> contact@capostore221.com</p>
+              <p>
+                <strong className="text-zinc-300 font-medium">WhatsApp Commande :</strong>{' '}
+                <a
+                  href={`https://wa.me/${STORE_WHATSAPP_PHONE}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-emerald-400 hover:underline font-semibold"
+                >
+                  {STORE_PHONE_WHATSAPP_DISPLAY}
+                </a>
+              </p>
+              <p>
+                <strong className="text-zinc-300 font-medium">Ligne Téléphonique / Appel :</strong>{' '}
+                <a
+                  href={`tel:+${STORE_CALL_PHONE}`}
+                  className="text-zinc-200 hover:text-white hover:underline font-semibold"
+                >
+                  {STORE_PHONE_CALL_DISPLAY}
+                </a>
+              </p>
+              <p><strong className="text-zinc-300 font-medium">Email :</strong> contact@capostore221.com</p>
               <p className="pt-1">
                 <a
                   href={FACEBOOK_URL}

@@ -5,7 +5,12 @@ import {
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
-import { formatFCFA, STORE_WHATSAPP_PHONE } from '../../utils/format';
+import { 
+  formatFCFA, 
+  STORE_WHATSAPP_PHONE, 
+  STORE_PHONE_WHATSAPP_DISPLAY, 
+  STORE_PHONE_CALL_DISPLAY 
+} from '../../utils/format';
 
 export const CartDrawer: React.FC = () => {
   const { 
@@ -388,7 +393,7 @@ export const CartDrawer: React.FC = () => {
                   Commande validée avec succès !
                 </h3>
                 <p className="text-xs text-zinc-600 max-w-sm mx-auto mb-6 leading-relaxed">
-                  Merci <strong>{customerName}</strong>. Le vendeur CAPOSTORE221 va vous contacter au <strong>{customerPhone}</strong> pour coordonner la livraison express de votre commande ({customerCity}).
+                  Merci <strong>{customerName}</strong>. Le vendeur CAPOSTORE221 va vous contacter au <strong>{customerPhone}</strong> pour coordonner la livraison express de votre commande ({customerCity}). Pour toute question : <strong>{STORE_PHONE_WHATSAPP_DISPLAY}</strong> (WhatsApp) ou <strong>{STORE_PHONE_CALL_DISPLAY}</strong> (Appel).
                 </p>
                 <div className="p-4 bg-zinc-50 rounded text-xs text-zinc-700 mb-6 text-left space-y-1">
                   <p><strong>Total de la commande :</strong> {formatFCFA(total)}</p>

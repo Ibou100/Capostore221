@@ -12,9 +12,9 @@ export const AnnouncementBar: React.FC = () => {
         <div className="flex-1 flex items-center justify-center gap-2 text-center overflow-hidden">
           <span className="text-xs">🇸🇳</span>
           <p className="truncate">
-            <span className="font-bold text-[#D49A3D]">CAPOSTORE221 • OFFRE SPÉCIALE EN LIGNE</span>
-            <span className="text-[#E8DFD5]"> — PANTALONS, CHEMISES & T-SHIRTS À 5 000 FCFA • LUNETTES & SACS À 3 000 FCFA</span>
-            <span className="hidden md:inline text-[#A89E90]"> • TU COMMANDES, ON TE LIVRE • WAVE, OM & À LA LIVRAISON</span>
+            <span className="font-bold text-[#D49A3D]">CAPOSTORE221</span>
+            <span className="text-[#E8DFD5]"> — PANTALONS & CHEMISES À 5 000 FCFA • LUNETTES & SACS À 3 000 FCFA</span>
+            <span className="hidden md:inline text-[#A89E90]"> • WHATSAPP : 76 832 11 57 • APPEL : 77 256 39 90</span>
           </p>
         </div>
         <button

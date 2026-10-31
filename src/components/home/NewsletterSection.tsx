@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ArrowRight, MessageCircle } from 'lucide-react';
-import { isValidEmail, STORE_WHATSAPP_PHONE, FACEBOOK_URL } from '../../utils/format';
+import { CheckCircle2, ArrowRight, MessageCircle, Phone } from 'lucide-react';
+import { 
+  isValidEmail, 
+  STORE_WHATSAPP_PHONE, 
+  STORE_CALL_PHONE, 
+  STORE_PHONE_WHATSAPP_DISPLAY, 
+  STORE_PHONE_CALL_DISPLAY, 
+  FACEBOOK_URL 
+} from '../../utils/format';
 import { useStore } from '../../context/StoreContext';
 
 export const NewsletterSection: React.FC = () => {
@@ -64,16 +71,26 @@ export const NewsletterSection: React.FC = () => {
           </form>
         )}
 
-        {/* WhatsApp VIP Club & Facebook */}
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+        {/* WhatsApp VIP Club & Contact Numbers & Facebook */}
+        <div className="pt-4 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs font-bold">
           <a
             href={`https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent("Bonjour CAPOSTORE221 ! Je souhaite intégrer votre liste de diffusion WhatsApp VIP pour recevoir les nouveaux arrivages.")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs font-bold text-[#25D366] hover:text-white transition-colors py-1"
+            className="inline-flex items-center gap-2 text-[#25D366] hover:text-white transition-colors py-1"
           >
             <MessageCircle className="w-4 h-4 shrink-0" />
-            <span>Rejoindre notre statut WhatsApp VIP</span>
+            <span>WhatsApp : {STORE_PHONE_WHATSAPP_DISPLAY}</span>
+          </a>
+
+          <span className="hidden sm:inline text-zinc-600">•</span>
+
+          <a
+            href={`tel:+${STORE_CALL_PHONE}`}
+            className="inline-flex items-center gap-2 text-zinc-300 hover:text-white transition-colors py-1"
+          >
+            <Phone className="w-3.5 h-3.5 shrink-0" />
+            <span>Appel direct : {STORE_PHONE_CALL_DISPLAY}</span>
           </a>
 
           <span className="hidden sm:inline text-zinc-600">•</span>
@@ -82,12 +99,12 @@ export const NewsletterSection: React.FC = () => {
             href={FACEBOOK_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs font-bold text-[#5B9DF8] hover:text-white transition-colors py-1"
+            className="inline-flex items-center gap-2 text-[#5B9DF8] hover:text-white transition-colors py-1"
           >
             <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true">
               <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
             </svg>
-            <span>Suivre notre page Facebook officielle</span>
+            <span>Facebook CAPOSTORE</span>
           </a>
         </div>
 

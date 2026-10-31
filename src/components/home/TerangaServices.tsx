@@ -33,7 +33,7 @@ export const TerangaServices: React.FC = () => {
                 Tu passes commande
               </h4>
               <p className="text-xs text-[#6B645A] mt-1 leading-relaxed">
-                Choisis ton article sur le catalogue et commande en 1 clic sur WhatsApp ou via le panier.
+                Choisis ton article sur le catalogue et commande en 1 clic sur WhatsApp (76 832 11 57) ou par appel (77 256 39 90).
               </p>
             </div>
           </div>

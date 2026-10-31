@@ -3,7 +3,13 @@ import { Search, ShoppingBag, Heart, Menu, X, ArrowUpRight } from 'lucide-react'
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useStore } from '../../context/StoreContext';
-import { FACEBOOK_URL } from '../../utils/format';
+import { 
+  FACEBOOK_URL, 
+  STORE_WHATSAPP_PHONE, 
+  STORE_CALL_PHONE, 
+  STORE_PHONE_WHATSAPP_DISPLAY, 
+  STORE_PHONE_CALL_DISPLAY 
+} from '../../utils/format';
 import type { CategoryId } from '../../types';
 
 export const Navbar: React.FC = () => {
@@ -135,6 +141,18 @@ export const Navbar: React.FC = () => {
               </kbd>
             </button>
 
+            {/* Desktop Quick WhatsApp Link */}
+            <a
+              href={`https://wa.me/${STORE_WHATSAPP_PHONE}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-colors border border-emerald-200"
+              title={`Commander sur WhatsApp : ${STORE_PHONE_WHATSAPP_DISPLAY}`}
+            >
+              <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
+              <span>WhatsApp : {STORE_PHONE_WHATSAPP_DISPLAY}</span>
+            </a>
+
             {/* Facebook Link */}
             <a
               href={FACEBOOK_URL}
@@ -259,10 +277,26 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Mobile drawer footer */}
-            <div className="pt-6 border-t border-zinc-100 text-xs text-zinc-500">
+            <div className="pt-6 border-t border-zinc-100 text-xs text-zinc-500 space-y-1.5">
               <p className="font-semibold text-zinc-800 uppercase tracking-wider mb-1">Maison CAPOSTORE221</p>
               <p>Boutique en Ligne Officielle • Service Client 7j/7</p>
-              <p className="mt-2 text-zinc-400">Devise : FCFA (XOF)</p>
+              <div className="pt-2 flex flex-col gap-1.5 text-xs">
+                <a
+                  href={`https://wa.me/${STORE_WHATSAPP_PHONE}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-emerald-600 hover:underline flex items-center gap-1.5"
+                >
+                  <span>💬 WhatsApp : {STORE_PHONE_WHATSAPP_DISPLAY}</span>
+                </a>
+                <a
+                  href={`tel:+${STORE_CALL_PHONE}`}
+                  className="font-semibold text-zinc-800 hover:underline flex items-center gap-1.5"
+                >
+                  <span>📞 Appel direct : {STORE_PHONE_CALL_DISPLAY}</span>
+                </a>
+              </div>
+              <p className="pt-2 text-zinc-400">Devise : FCFA (XOF)</p>
             </div>
           </div>
         </div>
