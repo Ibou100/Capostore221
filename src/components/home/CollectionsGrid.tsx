@@ -20,7 +20,7 @@ export const CollectionsGrid: React.FC = () => {
       id: 'vetements',
       title: 'Vêtements & Vestiaire',
       subtitle: 'Pantalons Prince de Galles, cargos écru, chemises légères & polos',
-      count: '18 pièces',
+      count: '20 pièces',
       category: 'vetements',
       image: '/products/pantalon-cargo-ecru.jpg',
     },

@@ -74,7 +74,7 @@ export const EditorialManifesto: React.FC = () => {
                 onClick={() => goToCatalog({ category: 'tous' })}
                 className="bg-[#B85D19] hover:bg-[#A35014] text-white px-6 py-3 text-xs font-bold uppercase tracking-widest inline-flex items-center gap-2 transition-colors shadow-sm"
               >
-                <span>Explorer la boutique (21 pièces)</span>
+                <span>Explorer la boutique (23 pièces)</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

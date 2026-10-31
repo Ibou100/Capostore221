@@ -250,13 +250,13 @@ export const Hero: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Link to Browse All 21 Pieces */}
+        {/* Quick Link to Browse All 23 Pieces */}
         <div className="mt-8 text-center">
           <button
             onClick={() => goToCatalog({ category: 'tous' })}
             className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#B85226] hover:text-[#141210] transition-colors py-1"
           >
-            <span>Explorer l'ensemble des 21 pièces disponibles en stock</span>
+            <span>Explorer l'ensemble des 23 pièces disponibles en stock</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

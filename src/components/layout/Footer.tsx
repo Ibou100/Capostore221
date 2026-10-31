@@ -101,7 +101,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button onClick={() => goToCatalog({ category: 'tous' })} className="hover:text-white transition-colors">
-                  Voir toutes les 21 pièces
+                  Voir toutes les 23 pièces
                 </button>
               </li>
             </ul>

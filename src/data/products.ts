@@ -777,6 +777,83 @@ export const INITIAL_PRODUCTS: Product[] = [
     isPopular: true,
     published: true,
     createdAt: '2026-10-27'
+  },
+  {
+    id: 'capo-client-022',
+    name: 'Pantalon Tailleur Noir Coupe Droite « Sartorial Black »',
+    slug: 'pantalon-tailleur-noir-coupe-droite-sartorial-black',
+    category: 'vetements',
+    subCategory: 'Pantalons',
+    gender: 'homme',
+    price: 5000,
+    images: [
+      '/products/pantalon-tailleur-noir-pli.png'
+    ],
+    description: 'Pantalon tailleur noir habillé à pli marqué permanent et coupe droite contemporaine. Confectionné dans une étoffe souple et fluide au tombé impeccable, doté d\'une braguette zippée, d\'un bouton noir assorti, de passants de ceinture renforcés et de doubles poches arrière passepoilées à rabat.',
+    details: [
+      'Coupe droite fuselée avec pli central marqué permanent',
+      'Matière tailleur souple au tombé fluide et net',
+      'Ceinture à passants renforcés et intérieur doublé soigné',
+      'Doubles poches arrières passepoilées avec rabats tailleur',
+      'Bouton noir mat cousu croix et braguette zippée fluide',
+      'Polyvalent : chic formel au bureau ou décontracté avec des sneakers épurées'
+    ],
+    materials: 'Viscose peignée, Coton & Polyester technique infroissable',
+    availableSizes: ['S', 'M', 'L', 'XL'],
+    availableColors: [
+      { name: 'Noir Ébène Profond', hex: '#141414' }
+    ],
+    variants: [
+      { id: 'vc81', size: 'S', color: { name: 'Noir Ébène Profond', hex: '#141414' }, stock: 5 },
+      { id: 'vc82', size: 'M', color: { name: 'Noir Ébène Profond', hex: '#141414' }, stock: 9 },
+      { id: 'vc83', size: 'L', color: { name: 'Noir Ébène Profond', hex: '#141414' }, stock: 6 },
+      { id: 'vc84', size: 'XL', color: { name: 'Noir Ébène Profond', hex: '#141414' }, stock: 4 }
+    ],
+    stock: 24,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-31'
+  },
+  {
+    id: 'capo-client-023',
+    name: 'Chemise Oxford Slim Fit Lilas Parme « Heritage Club »',
+    slug: 'chemise-oxford-slim-fit-lilas-parme-heritage-club',
+    category: 'vetements',
+    subCategory: 'T-shirts & Hauts',
+    gender: 'homme',
+    price: 5000,
+    images: [
+      '/products/chemise-oxford-lilas-parme.png'
+    ],
+    description: 'Chemise Oxford iconique coupe slim fit en pur coton natté de teinte lilas parme pastel éclatante. Col américain à pointes boutonnées, broderie prestigieuse ton-sur-ton sur la poitrine, boutons blanc nacré cousus croix et poignets ajustables à double boutonnage.',
+    details: [
+      'Coupe slim fit moderne épousant naturellement la silhouette',
+      'Tissage Oxford natté 100% coton double retors respirant',
+      'Col américain classique boutonné à tenue irréprochable',
+      'Broderie signature ton-sur-ton raffinée sur la poitrine',
+      'Poignets biseautés ajustables avec double boutonnière',
+      'Ourlet inférieur incurvé adapté porté rentré ou sorti'
+    ],
+    materials: '100% Coton Oxford double retors haut grammage',
+    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    availableColors: [
+      { name: 'Lilas Parme Pastel', hex: '#A89BC7' }
+    ],
+    variants: [
+      { id: 'vc85', size: 'S', color: { name: 'Lilas Parme Pastel', hex: '#A89BC7' }, stock: 4 },
+      { id: 'vc86', size: 'M', color: { name: 'Lilas Parme Pastel', hex: '#A89BC7' }, stock: 8 },
+      { id: 'vc87', size: 'L', color: { name: 'Lilas Parme Pastel', hex: '#A89BC7' }, stock: 6 },
+      { id: 'vc88', size: 'XL', color: { name: 'Lilas Parme Pastel', hex: '#A89BC7' }, stock: 4 },
+      { id: 'vc89', size: 'XXL', color: { name: 'Lilas Parme Pastel', hex: '#A89BC7' }, stock: 2 }
+    ],
+    stock: 24,
+    isNew: true,
+    isFeatured: true,
+    isPopular: true,
+    published: true,
+    createdAt: '2026-10-31'
   }
 ];
 
@@ -784,7 +861,7 @@ export const CATEGORIES_META = [
   {
     id: 'tous',
     name: 'Tout le Catalogue',
-    description: 'L\'ensemble des 21 pièces réelles CAPOSTORE221 disponibles en ligne. Tu commandes, on te livre.'
+    description: 'L\'ensemble des 23 pièces réelles CAPOSTORE221 disponibles en ligne. Tu commandes, on te livre.'
   },
   {
     id: 'vetements',
