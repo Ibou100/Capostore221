@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Truck, RefreshCw, ExternalLink } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { isValidEmail } from '../../utils/format';
+import { isValidEmail, FACEBOOK_URL } from '../../utils/format';
 
 const CURRENT_YEAR = new Date().getFullYear();
+
+const FacebookIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fillRule="evenodd"
+      d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
 
 export const Footer: React.FC = () => {
   const { goToHome, goToCatalog, goToEditorial, showToast } = useStore();
@@ -74,9 +84,21 @@ export const Footer: React.FC = () => {
             <p className="text-sm text-zinc-400 max-w-sm leading-relaxed">
               Boutique en ligne officielle de mode contemporaine. Prêt-à-porter de créateur, streetwear d'avant-garde, solaires et accessoires en Francs CFA (XOF). Tu commandes, on te livre.
             </p>
-            <div className="pt-2 text-xs text-zinc-400 space-y-1">
+            <div className="pt-2 text-xs text-zinc-400 space-y-1.5">
               <p><strong className="text-zinc-300 font-medium">Vente en Ligne Exclusive :</strong> Commandes 24h/24 & 7j/7</p>
               <p><strong className="text-zinc-300 font-medium">Service Client :</strong> contact@capostore221.com</p>
+              <p className="pt-1">
+                <a
+                  href={FACEBOOK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[#5B9DF8] hover:text-white transition-colors font-medium"
+                >
+                  <FacebookIcon className="w-3.5 h-3.5" />
+                  <span>Suivez-nous sur Facebook</span>
+                  <ExternalLink className="w-3 h-3 ml-0.5 opacity-70" />
+                </a>
+              </p>
             </div>
           </div>
 
@@ -142,6 +164,19 @@ export const Footer: React.FC = () => {
           {/* Socials & Newsletter */}
           <div className="space-y-4">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-200">Réseaux Sociaux</h4>
+            
+            {/* Direct Official Facebook Button */}
+            <a
+              href={FACEBOOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded bg-[#1877F2] hover:bg-[#166FE5] text-white text-xs font-bold transition-all shadow-sm group w-full justify-center"
+            >
+              <FacebookIcon className="w-4 h-4" />
+              <span>Page Facebook Officielle</span>
+              <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </a>
+
             <div className="flex flex-wrap gap-2 text-xs">
               <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
                 Instagram @capostore221
@@ -151,9 +186,6 @@ export const Footer: React.FC = () => {
               </span>
               <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
                 Snapchat @capostore221
-              </span>
-              <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
-                Facebook /capostore221
               </span>
             </div>
 

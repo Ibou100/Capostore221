@@ -35,6 +35,11 @@ export function isValidEmail(email: string): boolean {
  */
 export const STORE_WHATSAPP_PHONE = '221770000000';
 
+/**
+ * Official Facebook page link
+ */
+export const FACEBOOK_URL = 'https://www.facebook.com/share/1Edu4vsdUn/?mibextid=wwXIfr';
+
 export function getWhatsAppOrderLink(productName: string, price: number, size?: string): string {
   const sizeText = size ? `\n• Taille souhaitée : ${size}` : '';
   const message = `Bonjour CAPOSTORE221 ! 🛍️\nJe souhaite passer commande pour cet article vu sur votre boutique en ligne :\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}\n\nMerci de me confirmer la disponibilité et les modalités de livraison !`;
