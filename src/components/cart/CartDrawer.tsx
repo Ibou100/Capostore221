@@ -10,7 +10,7 @@ import {
   STORE_WHATSAPP_PHONE, 
   STORE_PHONE_WHATSAPP_DISPLAY, 
   STORE_PHONE_CALL_DISPLAY,
-  STORE_EMAIL
+  getWhatsAppCheckoutLink
 } from '../../utils/format';
 
 export const CartDrawer: React.FC = () => {
@@ -26,6 +26,7 @@ export const CartDrawer: React.FC = () => {
   const [customerAddress, setCustomerAddress] = useState('');
   const [customerCity, setCustomerCity] = useState('');
   const [orderCompleted, setOrderCompleted] = useState(false);
+  const [lastWhatsAppUrl, setLastWhatsAppUrl] = useState('');
 
   if (!isOpen) return null;
 
@@ -34,13 +35,49 @@ export const CartDrawer: React.FC = () => {
 
   const handleOrderSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName || !customerPhone || !customerAddress || !customerCity) {
-      showToast('Veuillez remplir toutes les informations de livraison.', 'error');
+    const name = customerName.trim();
+    const phone = customerPhone.trim();
+    const address = customerAddress.trim();
+    const city = customerCity.trim();
+
+    if (!name || name.length < 2) {
+      showToast('Veuillez renseigner votre nom complet.', 'error');
       return;
     }
 
+    const digitsOnly = phone.replace(/\D/g, '');
+    if (digitsOnly.length < 7) {
+      showToast('Veuillez renseigner un numéro de téléphone valide.', 'error');
+      return;
+    }
+
+    if (!city || city.length < 2) {
+      showToast('Veuillez renseigner votre ville ou localité.', 'error');
+      return;
+    }
+
+    if (!address || address.length < 3) {
+      showToast('Veuillez préciser votre adresse de livraison.', 'error');
+      return;
+    }
+
+    const checkoutUrl = getWhatsAppCheckoutLink(items, total, {
+      name,
+      phone,
+      city,
+      address
+    });
+
+    setLastWhatsAppUrl(checkoutUrl);
     setOrderCompleted(true);
-    showToast('Commande enregistrée avec succès.', 'success');
+    showToast('Commande validée ! Redirection vers WhatsApp...', 'success');
+
+    // Open WhatsApp in new tab so owner receives the order directly
+    try {
+      window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
+    } catch {
+      // If browser blocks popup, user can click the button on the confirmation screen
+    }
   };
 
   const handleFinish = () => {
@@ -387,21 +424,40 @@ export const CartDrawer: React.FC = () => {
                   <CheckCircle2 className="w-7 h-7" />
                 </div>
                 <h3 className="font-display font-bold text-lg text-zinc-900 uppercase mb-2">
-                  Commande confirmée
+                  Commande validée
                 </h3>
-                <p className="text-xs text-zinc-600 max-w-sm mx-auto mb-6 leading-relaxed">
-                  Merci <strong>{customerName}</strong>. Le vendeur CAPOSTORE221 va vous contacter au <strong>{customerPhone}</strong> pour valider la livraison à <strong>{customerCity}</strong>. Pour toute question : <strong>{STORE_PHONE_WHATSAPP_DISPLAY}</strong> (WhatsApp), <strong>{STORE_PHONE_CALL_DISPLAY}</strong> (Appel) ou par email à <strong>{STORE_EMAIL}</strong>.
+                <p className="text-xs text-zinc-600 max-w-sm mx-auto mb-5 leading-relaxed">
+                  Merci <strong>{customerName}</strong>. Le récapitulatif complet de votre commande a été généré pour le vendeur <strong>CAPOSTORE221</strong>.
                 </p>
-                <div className="p-3.5 bg-zinc-50 rounded-sm text-xs text-zinc-700 mb-6 text-left space-y-1 border border-zinc-200">
-                  <p><strong>Total de la commande :</strong> {formatFCFA(total)}</p>
-                  <p><strong>Adresse indiquée :</strong> {customerAddress}, {customerCity}</p>
+
+                <div className="p-3.5 bg-zinc-50 rounded-sm text-xs text-zinc-700 mb-5 text-left space-y-1 border border-zinc-200">
+                  <p><strong>Destinataire :</strong> {customerName} ({customerPhone})</p>
+                  <p><strong>Lieu de livraison :</strong> {customerAddress}, {customerCity}</p>
+                  <p><strong>Total à régler :</strong> {formatFCFA(total)} (Paiement à la livraison ou Wave / OM)</p>
                 </div>
+
+                {lastWhatsAppUrl && (
+                  <a
+                    href={lastWhatsAppUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-4 rounded-sm text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 mb-2.5 transition-colors shadow-sm"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Envoyer la commande sur WhatsApp</span>
+                  </a>
+                )}
+
                 <button
                   onClick={handleFinish}
-                  className="w-full py-3.5 bg-[#141210] hover:bg-[#2C2723] text-white text-xs font-semibold uppercase tracking-wider rounded-sm"
+                  className="w-full py-3 bg-white hover:bg-zinc-100 border border-zinc-300 text-zinc-800 text-xs font-semibold uppercase tracking-wider rounded-sm transition-colors"
                 >
-                  Retourner à la boutique
+                  Fermer & Retourner à la boutique
                 </button>
+
+                <p className="text-[11px] text-zinc-400 pt-3">
+                  Service client : {STORE_PHONE_WHATSAPP_DISPLAY} (WhatsApp) • {STORE_PHONE_CALL_DISPLAY} (Appel)
+                </p>
               </div>
             )}
           </div>

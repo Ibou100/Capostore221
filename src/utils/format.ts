@@ -52,3 +52,17 @@ export function getWhatsAppOrderLink(productName: string, price: number, size?: 
   const message = `Bonjour CAPOSTORE221,\nJe souhaite passer commande pour cet article vu sur votre boutique en ligne :\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}\n\nMerci de me confirmer la disponibilité et les modalités de livraison.`;
   return `https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
 }
+
+export function getWhatsAppCheckoutLink(
+  items: Array<{ product: { name: string }; quantity: number; unitPrice: number; selectedSize?: string }>,
+  total: number,
+  customer: { name: string; phone: string; city: string; address: string }
+): string {
+  const itemsText = items.map(
+    (i) => `• ${i.quantity}x ${i.product.name}${i.selectedSize ? ` (Taille : ${i.selectedSize})` : ''} — ${formatFCFA(i.unitPrice * i.quantity)}`
+  ).join('\n');
+
+  const message = `Bonjour CAPOSTORE221,\nJe viens de valider une commande sur votre boutique en ligne :\n\n👤 Client : ${customer.name}\n📞 Téléphone : ${customer.phone}\n📍 Ville : ${customer.city}\n🏠 Adresse : ${customer.address}\n\n📦 Articles commandés :\n${itemsText}\n\n💰 Total : ${formatFCFA(total)}\n💳 Règlement : Espèces à la livraison / Wave / Orange Money\n\nMerci de me confirmer la livraison !`;
+
+  return `https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
+}
