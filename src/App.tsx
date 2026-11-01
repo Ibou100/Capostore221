@@ -17,6 +17,7 @@ import { CartDrawer } from './components/cart/CartDrawer';
 import { SearchModal } from './components/ui/SearchModal';
 import { QuickViewModal } from './components/ui/QuickViewModal';
 import { ToastNotification } from './components/ui/ToastNotification';
+import { MobileBottomNav } from './components/layout/MobileBottomNav';
 
 const AppContent: React.FC = () => {
   const { currentView } = useStore();
@@ -39,7 +40,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-capo-offwhite text-capo-black selection:bg-capo-black selection:text-white">
+    <div className="min-h-screen flex flex-col bg-capo-offwhite text-capo-black selection:bg-capo-black selection:text-white pb-16 lg:pb-0">
       {/* 1. Announcement Bar */}
       <AnnouncementBar />
 
@@ -54,7 +55,10 @@ const AppContent: React.FC = () => {
       {/* 4. Footer */}
       <Footer />
 
-      {/* 5. Global Interactive Modals & Drawers */}
+      {/* 5. Mobile Bottom Tab Bar (App Experience) */}
+      <MobileBottomNav />
+
+      {/* 6. Global Interactive Modals & Drawers */}
       <CartDrawer />
       <SearchModal />
       <QuickViewModal />

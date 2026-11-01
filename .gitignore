@@ -6,6 +6,7 @@ node_modules
 # Production build
 dist
 dist-ssr
+public/products_original
 
 # Environment and secrets (Never commit secrets to GitHub)
 .env

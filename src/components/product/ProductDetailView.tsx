@@ -355,13 +355,13 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
 
                 {/* Direct WhatsApp Order Button */}
                 <a
-                  href={getWhatsAppOrderLink(product.name, product.price, selectedSize)}
+                  href={getWhatsAppOrderLink(product.name, product.price, selectedSize, product.images[selectedImageIndex] || product.images[0])}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full bg-white hover:bg-zinc-50 border border-zinc-300 text-zinc-900 py-3 px-6 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 rounded-sm transition-colors"
                 >
                   <MessageCircle className="w-4 h-4 text-emerald-600" />
-                  <span>Commander directement sur WhatsApp</span>
+                  <span>Commander sur WhatsApp (avec photo)</span>
                 </a>
               </div>
 

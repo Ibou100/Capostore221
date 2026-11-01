@@ -45,7 +45,7 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
     }
   };
 
-  const whatsappLink = getWhatsAppOrderLink(product.name, product.price, selectedSize);
+  const whatsappLink = getWhatsAppOrderLink(product.name, product.price, selectedSize, product.images[0]);
 
   return (
     <div className="relative w-full max-w-3xl bg-white shadow-2xl rounded-sm overflow-hidden z-10 animate-fade-in border border-[#E7E2D9] max-h-[90vh] overflow-y-auto">

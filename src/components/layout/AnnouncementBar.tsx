@@ -19,14 +19,14 @@ export const AnnouncementBar: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Core Offer Message */}
-        <div className="flex-1 text-center sm:text-left flex items-center justify-center sm:justify-start gap-2 overflow-hidden truncate">
-          <span className="font-semibold text-white tracking-wider uppercase text-[10px] sm:text-[11px] bg-[#221F1C] px-2 py-0.5 rounded border border-[#38332E]">
-            Tarif Unique
+        <div className="flex-1 text-center sm:text-left flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 overflow-hidden truncate">
+          <span className="font-semibold text-white tracking-wider uppercase text-[9px] sm:text-[11px] bg-[#221F1C] px-1.5 sm:px-2 py-0.5 rounded border border-[#38332E]">
+            Prix Unique
           </span>
-          <p className="truncate text-zinc-300">
-            <span className="text-white font-medium">Pantalons & Chemises : 5 000 FCFA</span>
-            <span className="mx-1.5 text-zinc-600">•</span>
-            <span className="text-white font-medium">Lunettes & Sacs : 3 000 FCFA</span>
+          <p className="truncate text-zinc-300 text-[10px] sm:text-xs">
+            <span className="text-white font-medium">Vêtements 5 000 F</span>
+            <span className="mx-1 text-zinc-600">•</span>
+            <span className="text-white font-medium">Lunettes & Sacs 3 000 F</span>
             <span className="hidden md:inline text-zinc-400"> — Tu commandes, on te livre</span>
           </p>
         </div>

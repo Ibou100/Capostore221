@@ -47,22 +47,39 @@ export const FACEBOOK_URL = 'https://www.facebook.com/share/1Edu4vsdUn/?mibextid
 export const INSTAGRAM_URL = 'https://www.instagram.com/capostore221?rpxt=OTBydGo5MW81NGtx&utm_source=qr';
 export const TIKTOK_URL = 'https://www.tiktok.com/@capostore.221';
 
-export function getWhatsAppOrderLink(productName: string, price: number, size?: string): string {
-  const sizeText = size ? `\n• Taille souhaitée : ${size}` : '';
-  const message = `Bonjour CAPOSTORE221,\nJe souhaite passer commande pour cet article vu sur votre boutique en ligne :\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}\n\nMerci de me confirmer la disponibilité et les modalités de livraison.`;
+export function getWhatsAppOrderLink(
+  productName: string, 
+  price: number, 
+  size?: string,
+  imagePath?: string
+): string {
+  const origin = typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('localhost')
+    ? window.location.origin 
+    : 'https://capostore221.vercel.app';
+  const sizeText = size ? `\n• Taille : ${size}` : '';
+  const photoText = imagePath 
+    ? `\n\n📸 Photo de l'article :\n${origin}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}` 
+    : '';
+
+  const message = `Bonjour CAPOSTORE221,\nJe souhaite commander cet article vu sur votre boutique en ligne :\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}${photoText}\n\nMerci de me confirmer la disponibilité et la livraison.`;
   return `https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
 }
 
 export function getWhatsAppCheckoutLink(
-  items: Array<{ product: { name: string }; quantity: number; unitPrice: number; selectedSize?: string }>,
+  items: Array<{ product: { name: string; images?: string[] }; quantity: number; unitPrice: number; selectedSize?: string }>,
   total: number,
   customer: { name: string; phone: string; city: string; address: string }
 ): string {
-  const itemsText = items.map(
-    (i) => `• ${i.quantity}x ${i.product.name}${i.selectedSize ? ` (Taille : ${i.selectedSize})` : ''} — ${formatFCFA(i.unitPrice * i.quantity)}`
-  ).join('\n');
+  const origin = typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('localhost')
+    ? window.location.origin 
+    : 'https://capostore221.vercel.app';
 
-  const message = `Bonjour CAPOSTORE221,\nJe viens de valider une commande sur votre boutique en ligne :\n\n👤 Client : ${customer.name}\n📞 Téléphone : ${customer.phone}\n📍 Ville : ${customer.city}\n🏠 Adresse : ${customer.address}\n\n📦 Articles commandés :\n${itemsText}\n\n💰 Total : ${formatFCFA(total)}\n💳 Règlement : Espèces à la livraison / Wave / Orange Money\n\nMerci de me confirmer la livraison !`;
+  const itemsText = items.map((i) => {
+    const photo = i.product.images?.[0] ? `\n  📸 Photo : ${origin}${i.product.images[0]}` : '';
+    return `• ${i.quantity}x ${i.product.name}${i.selectedSize ? ` (Taille : ${i.selectedSize})` : ''} — ${formatFCFA(i.unitPrice * i.quantity)}${photo}`;
+  }).join('\n\n');
+
+  const message = `Bonjour CAPOSTORE221,\nNouvelle commande validée sur votre boutique en ligne :\n\n👤 Client : ${customer.name}\n📞 Téléphone : ${customer.phone}\n📍 Ville : ${customer.city}\n🏠 Adresse : ${customer.address}\n\n📦 Articles commandés :\n${itemsText}\n\n💰 Total : ${formatFCFA(total)}\n💳 Règlement : Espèces à la livraison / Wave / Orange Money\n\nMerci de me confirmer la prise en charge et la livraison !`;
 
   return `https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
 }
