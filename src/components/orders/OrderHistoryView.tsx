@@ -1,5 +1,5 @@
-import React from 'react';
-import { Package, MessageCircle, ShoppingBag, Eye } from 'lucide-react';
+import React, { useState } from 'react';
+import { Package, MessageCircle, ShoppingBag, Eye, Search, ShieldCheck } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
 import { 
@@ -10,22 +10,45 @@ import {
 } from '../../utils/format';
 
 export const OrderHistoryView: React.FC = () => {
-  const { orders } = useOrders();
-  const { goToCatalog, goToTracking } = useStore();
+  const { myOrders, getOrderById, addOrderToMyOrders } = useOrders();
+  const { goToCatalog, goToTracking, showToast } = useStore();
+
+  const [lookupId, setLookupId] = useState('');
+  const [lookupError, setLookupError] = useState<string | null>(null);
+
+  const handleLookupSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanId = lookupId.trim().toUpperCase();
+    if (!cleanId) return;
+
+    const order = getOrderById(cleanId);
+    if (order) {
+      addOrderToMyOrders(order.id);
+      showToast(`Commande ${order.id} retrouvée avec succès !`, 'success');
+      goToTracking(order.id);
+    } else {
+      setLookupError(`Aucune commande trouvée pour "${cleanId}". Vérifiez le numéro reçu sur votre reçu WhatsApp.`);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-200 mb-8">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-            Espace Client
-          </span>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+              Espace Client Privé & Confidentiel
+            </span>
+            <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <ShieldCheck className="w-3 h-3" /> Données protégées
+            </span>
+          </div>
           <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-zinc-900 tracking-tight">
             Historique de vos commandes
           </h1>
           <p className="text-xs sm:text-sm text-zinc-500 mt-1">
-            Retrouvez tous vos achats enregistrés sur CAPOSTORE221 et suivez l'avancement de vos livraisons.
+            Vos achats sont strictement confidentiels : seul vous sur cet appareil et le gérant CAPOSTORE221 pouvez voir vos commandes.
           </p>
         </div>
 
@@ -38,30 +61,71 @@ export const OrderHistoryView: React.FC = () => {
         </button>
       </div>
 
-      {/* Orders List */}
-      {orders.length === 0 ? (
-        <div className="bg-white rounded-2xl p-12 text-center border border-zinc-200 shadow-sm">
-          <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-400">
-            <Package className="w-8 h-8" />
+      {/* Orders List for THIS client */}
+      {myOrders.length === 0 ? (
+        <div className="space-y-6">
+          <div className="bg-white rounded-2xl p-8 sm:p-12 text-center border border-zinc-200 shadow-sm">
+            <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-400">
+              <Package className="w-8 h-8" />
+            </div>
+            <h2 className="font-display font-bold text-lg text-zinc-900">
+              Aucune commande passée sur cet appareil pour le moment
+            </h2>
+            <p className="text-xs text-zinc-500 mt-1.5 max-w-md mx-auto">
+              Par mesure de stricte confidentialité, seules les commandes passées par vous sur cet appareil s'affichent ici.
+            </p>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <button
+                onClick={() => goToCatalog({ category: 'tous' })}
+                className="px-6 py-3 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors shadow-md"
+              >
+                Découvrir la collection
+              </button>
+            </div>
           </div>
-          <h2 className="font-display font-bold text-lg text-zinc-900">
-            Aucune commande enregistrée pour le moment
-          </h2>
-          <p className="text-xs text-zinc-500 mt-1.5 max-w-sm mx-auto">
-            Dès que vous validez une commande via WhatsApp ou via le panier, elle apparaîtra ici avec son numéro de suivi pour suivre votre colis.
-          </p>
-          <div className="mt-6">
-            <button
-              onClick={() => goToCatalog({ category: 'tous' })}
-              className="px-6 py-3 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors shadow-md"
-            >
-              Découvrir la collection
-            </button>
+
+          {/* Lookup Box: If customer ordered from another phone or cleared browser data */}
+          <div className="bg-zinc-50 rounded-2xl p-6 sm:p-8 border border-zinc-200">
+            <div className="flex items-center gap-2 mb-2">
+              <Search className="w-4 h-4 text-zinc-500" />
+              <h3 className="font-display font-bold text-sm text-zinc-900">
+                Vous avez déjà passé commande avec un numéro de suivi ?
+              </h3>
+            </div>
+            <p className="text-xs text-zinc-500 mb-4">
+              Si vous avez commandé depuis un autre téléphone ou via WhatsApp, entrez votre référence unique (ex: <strong className="font-mono text-zinc-700">CAPO-8924</strong>) pour la rattacher en toute sécurité.
+            </p>
+
+            <form onSubmit={handleLookupSubmit} className="flex flex-col sm:flex-row gap-2.5 max-w-md">
+              <input
+                type="text"
+                value={lookupId}
+                onChange={(e) => {
+                  setLookupId(e.target.value);
+                  setLookupError(null);
+                }}
+                placeholder="Ex: CAPO-8924"
+                className="flex-1 px-4 py-2.5 text-xs font-mono uppercase bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+              />
+              <button
+                type="submit"
+                className="px-5 py-2.5 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl transition-colors shrink-0 shadow-xs"
+              >
+                Retrouver ma commande
+              </button>
+            </form>
+
+            {lookupError && (
+              <p className="text-xs text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200 mt-3">
+                {lookupError}
+              </p>
+            )}
           </div>
         </div>
       ) : (
         <div className="space-y-6">
-          {orders.map((order) => {
+          {myOrders.map((order) => {
             const statusConfig = (order.status && ORDER_STATUS_CONFIG[order.status]) || {
               label: 'Transmise',
               badgeClass: 'bg-zinc-100 text-zinc-800 border-zinc-200',
@@ -148,7 +212,7 @@ export const OrderHistoryView: React.FC = () => {
                     </div>
 
                     <div className="text-right">
-                      <span className="text-[11px] text-zinc-400 block">Total payé</span>
+                      <span className="text-[11px] text-zinc-400 block">Total</span>
                       <span className="font-display font-black text-base text-zinc-900">
                         {formatFCFA(order.total || 0)}
                       </span>
@@ -181,6 +245,28 @@ export const OrderHistoryView: React.FC = () => {
               </div>
             );
           })}
+
+          {/* Option to look up another order */}
+          <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <span className="text-zinc-600">
+              Vous avez une autre commande passée sur un autre appareil ?
+            </span>
+            <form onSubmit={handleLookupSubmit} className="flex items-center gap-2 w-full sm:w-auto">
+              <input
+                type="text"
+                value={lookupId}
+                onChange={(e) => setLookupId(e.target.value)}
+                placeholder="N° CAPO-XXXX"
+                className="px-3 py-1.5 text-xs font-mono uppercase bg-white border border-zinc-300 rounded-lg focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="px-3 py-1.5 bg-zinc-900 text-white rounded-lg text-xs font-semibold hover:bg-black shrink-0"
+              >
+                Ajouter
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

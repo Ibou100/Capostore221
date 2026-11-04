@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { Order, OrderItem, OrderStatus, PaymentMethod, Product } from '../types';
 import { generateOrderId } from '../utils/format';
 import { fetchCloudOrders, saveCloudOrders } from '../utils/cloudSync';
@@ -16,7 +16,12 @@ interface CreateOrderInput {
 }
 
 interface OrderContextType {
-  orders: Order[];
+  orders: Order[]; // Complete list (for Admin)
+  myOrders: Order[]; // Confidential list for the current client device ONLY
+  myOrderIds: string[];
+  addOrderToMyOrders: (orderId: string) => void;
+  isMyOrder: (orderId: string) => boolean;
+
   createOrder: (input: CreateOrderInput) => Order;
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
   deleteOrder: (orderId: string) => void;
@@ -36,6 +41,7 @@ interface OrderContextType {
 }
 
 const LOCAL_STORAGE_KEY = 'capostore_orders_v1';
+const MY_ORDER_IDS_KEY = 'capostore_my_order_ids_v1';
 
 export function sanitizeOrder(raw: any): Order | null {
   if (!raw || typeof raw !== 'object' || !raw.id) return null;
@@ -92,6 +98,44 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return [];
   });
 
+  // Client's private list of order IDs placed on THIS device
+  const [myOrderIds, setMyOrderIds] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const raw = localStorage.getItem(MY_ORDER_IDS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {}
+    return [];
+  });
+
+  // Persist client's private order IDs
+  useEffect(() => {
+    try {
+      localStorage.setItem(MY_ORDER_IDS_KEY, JSON.stringify(myOrderIds));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [myOrderIds]);
+
+  const addOrderToMyOrders = useCallback((orderId: string) => {
+    const clean = orderId.trim().toUpperCase();
+    if (!clean) return;
+    setMyOrderIds((prev) => (prev.includes(clean) ? prev : [clean, ...prev]));
+  }, []);
+
+  const isMyOrder = useCallback((orderId: string) => {
+    const clean = orderId.trim().toUpperCase();
+    return myOrderIds.map((id) => id.toUpperCase()).includes(clean);
+  }, [myOrderIds]);
+
+  // Confidential orders for the customer on this device
+  const myOrders = useMemo(() => {
+    return orders.filter((o) => myOrderIds.map((id) => id.toUpperCase()).includes(o.id.toUpperCase()));
+  }, [orders, myOrderIds]);
+
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
   const [quickOrderProduct, setQuickOrderProduct] = useState<{ product: Product; initialSize?: string } | null>(null);
@@ -113,8 +157,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [orders]);
 
   /**
-   * Bidirectional cloud synchronization:
-   * Merges cloud orders with local orders safely.
+   * Bidirectional cloud synchronization
    */
   const refreshOrders = useCallback(async () => {
     setIsSyncing(true);
@@ -127,21 +170,20 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const localOrders = ordersRef.current;
       const orderMap = new Map<string, Order>();
 
-      // Put sanitized cloud orders first
+      // Cloud orders
       cloudOrders.forEach((o) => {
         if (o && o.id) orderMap.set(o.id, o);
       });
 
       let hadLocalUnsynced = false;
 
-      // Merge local orders (if an order was created locally and not yet in cloud)
+      // Local orders
       localOrders.forEach((local) => {
         if (!local || !local.id) return;
         if (!orderMap.has(local.id)) {
           orderMap.set(local.id, local);
           hadLocalUnsynced = true;
         } else {
-          // Keep cloud unless local was updated very recently
           const cloud = orderMap.get(local.id)!;
           orderMap.set(local.id, cloud);
         }
@@ -159,7 +201,6 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
       setLastSyncTime(new Date());
 
-      // If we had local orders missing from the cloud, push the merged list back
       if (hadLocalUnsynced && merged.length > 0) {
         await saveCloudOrders(merged);
       }
@@ -197,6 +238,9 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       notes: input.notes,
     };
 
+    // Immediately record in this client's confidential device order history
+    setMyOrderIds((prev) => (prev.includes(newOrder.id) ? prev : [newOrder.id, ...prev]));
+
     setOrders((prev) => {
       const updated = [newOrder, ...prev.filter((o) => o.id !== newOrder.id)];
       try {
@@ -205,7 +249,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error(err);
       }
 
-      // Immediate Cloud push to make sure owner sees it right away across devices
+      // Immediate Cloud push
       (async () => {
         try {
           const rawCloud = await fetchCloudOrders();
@@ -241,7 +285,6 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error(e);
       }
 
-      // Sync updated status to cloud
       saveCloudOrders(updated).catch((err) =>
         console.warn('Could not sync status update to cloud', err)
       );
@@ -259,7 +302,6 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error(e);
       }
 
-      // Sync deletion to cloud
       saveCloudOrders(updated).catch((err) =>
         console.warn('Could not sync deletion to cloud', err)
       );
@@ -287,6 +329,10 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <OrderContext.Provider
       value={{
         orders,
+        myOrders,
+        myOrderIds,
+        addOrderToMyOrders,
+        isMyOrder,
         createOrder,
         updateOrderStatus,
         deleteOrder,

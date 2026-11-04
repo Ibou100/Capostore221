@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Package, Search, CheckCircle2, Clock, Truck, 
   MapPin, Phone, CreditCard, MessageCircle, ArrowLeft,
-  AlertCircle, ShieldCheck, Lock, KeyRound, X
+  AlertCircle, ShieldCheck, Lock, KeyRound, X, PlusCircle
 } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
@@ -28,7 +28,14 @@ const STEPS: { status: OrderStatus; label: string; icon: React.ElementType }[] =
 ];
 
 export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrderId }) => {
-  const { getOrderById, orders, updateOrderStatus } = useOrders();
+  const { 
+    getOrderById, 
+    myOrders, 
+    isMyOrder, 
+    addOrderToMyOrders, 
+    updateOrderStatus 
+  } = useOrders();
+
   const { goToHome, goToCatalog, goToOrders, goToAdmin, showToast } = useStore();
 
   const [searchQuery, setSearchQuery] = useState(initialOrderId || '');
@@ -42,13 +49,21 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<OrderStatus | null>(null);
 
+  // STRICT CONFIDENTIALITY:
+  // If an ID is explicitly searched/tracked, look it up.
+  // Otherwise, default ONLY to the user's OWN order on this device (NEVER to someone else's order!).
   const currentOrder = React.useMemo(() => {
     const id = searchedId.trim() || initialOrderId?.trim();
     if (id) {
       return getOrderById(id);
     }
-    return orders.length > 0 ? orders[0] : undefined;
-  }, [searchedId, initialOrderId, getOrderById, orders]);
+    // If the customer has placed an order on this device, show their latest one
+    if (myOrders.length > 0) {
+      return myOrders[0];
+    }
+    // Do NOT show other customers' orders to a stranger!
+    return undefined;
+  }, [searchedId, initialOrderId, getOrderById, myOrders]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,6 +127,24 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
   const currentStatusConfig = (currentOrder?.status && ORDER_STATUS_CONFIG[currentOrder.status]) || ORDER_STATUS_CONFIG['transmise'];
   const currentItems = Array.isArray(currentOrder?.items) ? currentOrder.items : [];
 
+  // Privacy checks:
+  // Is this the owner OR is this the customer's own device that made this purchase?
+  const isOwnerOrMine = isAdmin || (currentOrder ? isMyOrder(currentOrder.id) : false);
+
+  const displayClientName = isOwnerOrMine
+    ? currentOrder?.customerName
+    : currentOrder ? `${currentOrder.customerName.slice(0, 3)}••• (Client Privé)` : '';
+
+  const displayClientPhone = isOwnerOrMine
+    ? currentOrder?.customerPhone
+    : currentOrder?.customerPhone
+      ? currentOrder.customerPhone.replace(/(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 ••• •• $4')
+      : '••• ••• •• ••';
+
+  const displayClientAddress = isOwnerOrMine
+    ? `${currentOrder?.customerCity || 'Dakar'} - ${currentOrder?.customerAddress || ''}`
+    : `${currentOrder?.customerCity || 'Dakar'} (Adresse masquée par mesure de confidentialité)`;
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       {/* Top Breadcrumb & Navigation */}
@@ -127,7 +160,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
           onClick={goToOrders}
           className="text-xs font-semibold text-[#B85D19] hover:underline"
         >
-          Voir toutes mes commandes ({orders.length})
+          Mes commandes privées ({myOrders.length})
         </button>
       </div>
 
@@ -136,7 +169,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
         <div className="max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-400 text-[11px] font-mono tracking-wider uppercase mb-3">
             <Package className="w-3.5 h-3.5" />
-            <span>Suivi de Colis & Acheminement</span>
+            <span>Suivi Sécurisé de Colis</span>
           </div>
           <h1 className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight">
             Où en est votre colis CAPOSTORE221 ?
@@ -190,7 +223,10 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
               </div>
             ) : (
               <div className="mb-6 p-3 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-between text-xs text-zinc-600">
-                <span>Vous êtes le propriétaire du site ? Cliquez sur une étape pour modifier le statut du colis.</span>
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Suivi confidentiel client. Seul vous et CAPOSTORE221 accédez à ces détails.</span>
+                </div>
                 <button
                   onClick={() => {
                     setPendingStatus(null);
@@ -200,8 +236,8 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                   }}
                   className="font-bold text-[#B85D19] hover:underline flex items-center gap-1 shrink-0 ml-2"
                 >
-                  <Lock className="w-3.5 h-3.5" />
-                  <span>Activer la gestion</span>
+                  <Lock className="w-3 h-3" />
+                  <span>Accès Gérant</span>
                 </button>
               </div>
             )}
@@ -237,7 +273,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
               </div>
             </div>
 
-            {/* Stepper Steps (NOW FULLY CLICKABLE BY ADMIN/OWNER) */}
+            {/* Stepper Steps (CLICKABLE BY ADMIN/OWNER) */}
             <div className="pt-8">
               <div className="relative">
                 {/* Connecting Line */}
@@ -263,7 +299,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                         key={step.status}
                         onClick={() => handleStepClick(step.status)}
                         className="flex sm:flex-col items-center gap-3 sm:gap-2 sm:text-center relative z-10 group cursor-pointer p-2 rounded-2xl hover:bg-zinc-50 transition-all text-left sm:text-center"
-                        title={`Cliquer pour définir le statut sur "${step.label}"`}
+                        title={isAdmin ? `Cliquer pour définir le statut sur "${step.label}"` : `Étape ${stepNumber}: ${step.label}`}
                       >
                         <div
                           className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs shrink-0 transition-all group-hover:scale-110 ${
@@ -284,7 +320,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                             </span>
                           ) : (
                             <span className="text-[9px] text-zinc-400 group-hover:text-[#B85D19] font-medium block">
-                              {isAdmin ? 'Cliquer pour activer' : 'Modifier le statut'}
+                              {isAdmin ? 'Cliquer pour activer' : ''}
                             </span>
                           )}
                         </div>
@@ -304,6 +340,23 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
               </div>
             </div>
           </div>
+
+          {/* If the customer searched this order on another device, offer to link it */}
+          {!isMyOrder(currentOrder.id) && !isAdmin && (
+            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 flex items-center justify-between gap-3">
+              <span>C'est votre commande ? Vous pouvez la mémoriser sur cet appareil pour la retrouver à tout moment.</span>
+              <button
+                onClick={() => {
+                  addOrderToMyOrders(currentOrder.id);
+                  showToast('Commande ajoutée à votre historique personnel sur cet appareil !', 'success');
+                }}
+                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg shrink-0 flex items-center gap-1 transition-colors"
+              >
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>Mémoriser sur cet appareil</span>
+              </button>
+            </div>
+          )}
 
           {/* Order Details & Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -345,19 +398,21 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
               </div>
             </div>
 
-            {/* Col 3: Customer & Delivery Info */}
+            {/* Col 3: Customer & Delivery Info (PROTECTED WITH PRIVACY) */}
             <div className="bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm space-y-4">
-              <h3 className="font-display font-bold text-sm uppercase tracking-wider text-zinc-900 pb-2 border-b border-zinc-100">
-                Coordonnées & Paiement
-              </h3>
+              <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
+                <h3 className="font-display font-bold text-sm uppercase tracking-wider text-zinc-900">
+                  Coordonnées & Paiement
+                </h3>
+                <span className="text-[10px] text-zinc-400 font-mono">Confidentiel</span>
+              </div>
 
               <div className="space-y-3.5 text-xs">
                 <div className="flex items-start gap-2.5">
                   <MapPin className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
                   <div>
                     <span className="text-zinc-400 block text-[10px] uppercase font-bold">Lieu de livraison</span>
-                    <strong className="text-zinc-800">{currentOrder.customerCity || 'Dakar'}</strong>
-                    <p className="text-zinc-500 mt-0.5">{currentOrder.customerAddress || 'Adresse client'}</p>
+                    <strong className="text-zinc-800">{displayClientAddress}</strong>
                   </div>
                 </div>
 
@@ -375,8 +430,8 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                   <Phone className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
                   <div>
                     <span className="text-zinc-400 block text-[10px] uppercase font-bold">Client</span>
-                    <strong className="text-zinc-800">{currentOrder.customerName}</strong>
-                    <p className="text-zinc-500 font-mono mt-0.5">{currentOrder.customerPhone}</p>
+                    <strong className="text-zinc-800">{displayClientName}</strong>
+                    <p className="text-zinc-500 font-mono mt-0.5">{displayClientPhone}</p>
                   </div>
                 </div>
               </div>
@@ -401,10 +456,12 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
         <div className="bg-white rounded-2xl p-12 text-center border border-zinc-200 shadow-sm">
           <Package className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
           <h3 className="font-display font-bold text-base text-zinc-900">
-            {searchedId ? `Aucune commande trouvée pour "${searchedId}"` : 'Aucune commande enregistrée'}
+            {searchedId ? `Aucune commande trouvée pour "${searchedId}"` : 'Saisissez votre numéro de commande pour suivre votre colis'}
           </h3>
           <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
-            Vérifiez l'identifiant saisi ou consultez l'historique complet de vos commandes.
+            {searchedId 
+              ? 'Vérifiez la référence reçue lors de votre achat ou contactez notre service client.' 
+              : 'Votre commande s\'affichera uniquement à vous une fois votre numéro CAPO-XXXX saisi ci-dessus.'}
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <button
@@ -417,13 +474,13 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
               onClick={goToOrders}
               className="px-5 py-2.5 bg-[#B85D19] text-white rounded-xl text-xs font-semibold hover:bg-[#9E4D12] transition-colors"
             >
-              Toutes mes commandes
+              Mes commandes
             </button>
           </div>
         </div>
       )}
 
-      {/* ADMIN AUTH MODAL (Allows the owner to authenticate right from the tracking page) */}
+      {/* ADMIN AUTH MODAL */}
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#141210] text-white w-full max-w-sm rounded-3xl p-6 sm:p-8 shadow-2xl border border-zinc-800 animate-fadeIn">

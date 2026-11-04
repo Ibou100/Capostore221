@@ -9,7 +9,7 @@ export const MobileBottomNav: React.FC = () => {
   const { currentView, goToHome, goToCatalog, goToWishlist, goToOrders } = useStore();
   const { openCart, totalCount } = useCart();
   const { wishlistCount } = useWishlist();
-  const { orders } = useOrders();
+  const { myOrders } = useOrders();
 
   const isHome = currentView.type === 'home';
   const isCatalog = currentView.type === 'catalog';
@@ -51,9 +51,9 @@ export const MobileBottomNav: React.FC = () => {
         aria-label="Mes Commandes"
       >
         <Package className="w-5 h-5" />
-        {orders.length > 0 && (
+        {myOrders.length > 0 && (
           <span className="absolute top-0 right-1 min-w-4 h-4 px-1 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">
-            {orders.length}
+            {myOrders.length}
           </span>
         )}
         <span className="text-[10px] font-medium mt-0.5">Commandes</span>
