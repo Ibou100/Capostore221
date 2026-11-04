@@ -73,6 +73,21 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [currentView, setCurrentView] = useState<ViewState>(() => {
     if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '');
+      if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+        return { type: 'admin' };
+      }
+      if (pathname === '/commandes' || pathname === '/orders') {
+        return { type: 'orders' };
+      }
+      if (pathname === '/suivi' || pathname === '/tracking') {
+        const params = new URLSearchParams(window.location.search);
+        return { type: 'tracking', orderId: params.get('track') || undefined };
+      }
+      if (pathname === '/catalogue' || pathname === '/boutique') {
+        return { type: 'catalog' };
+      }
+
       const params = new URLSearchParams(window.location.search);
       const trackId = params.get('track');
       if (trackId) {
@@ -155,9 +170,35 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Listen to browser Back / Forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window === 'undefined') return;
+      const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '');
+      if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+        setCurrentView({ type: 'admin' });
+      } else if (pathname === '/commandes' || pathname === '/orders') {
+        setCurrentView({ type: 'orders' });
+      } else if (pathname === '/suivi' || pathname === '/tracking') {
+        const params = new URLSearchParams(window.location.search);
+        setCurrentView({ type: 'tracking', orderId: params.get('track') || undefined });
+      } else if (pathname === '/catalogue' || pathname === '/boutique') {
+        setCurrentView({ type: 'catalog' });
+      } else {
+        setCurrentView({ type: 'home' });
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   // Navigation handlers
   const goToHome = () => {
     setCurrentView({ type: 'home' });
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -176,6 +217,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       initialGender: params?.gender,
       query: params?.query,
     });
+    if (typeof window !== 'undefined' && window.location.pathname !== '/catalogue') {
+      window.history.pushState(null, '', '/catalogue');
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -201,16 +245,26 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const goToOrders = () => {
     setCurrentView({ type: 'orders' });
+    if (typeof window !== 'undefined' && window.location.pathname !== '/commandes') {
+      window.history.pushState(null, '', '/commandes');
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const goToTracking = (orderId?: string) => {
     setCurrentView({ type: 'tracking', orderId });
+    if (typeof window !== 'undefined') {
+      const url = orderId ? `/suivi?track=${encodeURIComponent(orderId)}` : '/suivi';
+      window.history.pushState(null, '', url);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const goToAdmin = () => {
     setCurrentView({ type: 'admin' });
+    if (typeof window !== 'undefined' && window.location.pathname !== '/admin') {
+      window.history.pushState(null, '', '/admin');
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
