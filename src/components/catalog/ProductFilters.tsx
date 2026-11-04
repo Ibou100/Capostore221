@@ -12,9 +12,8 @@ const CATEGORIES: { id: CategoryId; label: string }[] = [
 ];
 
 const GENDERS: { id: 'all' | ProductGender; label: string }[] = [
-  { id: 'all', label: 'Tous genres' },
+  { id: 'all', label: 'Tous' },
   { id: 'homme', label: 'Homme' },
-  { id: 'femme', label: 'Femme' },
   { id: 'unisexe', label: 'Unisexe' },
 ];
 

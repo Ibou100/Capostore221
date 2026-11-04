@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, ShieldCheck, RefreshCw, Phone, MessageCircle, Mail } from 'lucide-react';
+import { Truck, ShieldCheck, RefreshCw, Phone, MessageCircle, Mail, Package, Lock } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { 
   FACEBOOK_URL, 
@@ -15,7 +15,7 @@ import {
 const CURRENT_YEAR = new Date().getFullYear();
 
 export const Footer: React.FC = () => {
-  const { goToHome, goToCatalog } = useStore();
+  const { goToHome, goToCatalog, goToOrders, goToTracking, goToAdmin } = useStore();
 
   return (
     <footer className="bg-[#121110] text-[#D4CBBF] border-t border-[#262320]">
@@ -150,17 +150,41 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Col 3: Service Client */}
+          {/* Col 3: Service Client & Suivi */}
           <div className="space-y-3">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-white">
-              Engagements
+              Suivi & Commandes
             </h4>
             <ul className="space-y-2 text-xs text-zinc-400">
-              <li>Vente en ligne exclusive 7j/7</li>
-              <li>Validation personnalisée de chaque commande</li>
+              <li>
+                <button
+                  onClick={goToOrders}
+                  className="hover:text-amber-400 transition-colors text-left flex items-center gap-1.5"
+                >
+                  <Package className="w-3.5 h-3.5" />
+                  <span>Historique de mes commandes</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => goToTracking()}
+                  className="hover:text-amber-400 transition-colors text-left"
+                >
+                  Suivre mon colis en direct
+                </button>
+              </li>
               <li>Livraison à domicile express</li>
-              <li>Règlement à la livraison ou Wave / Orange Money</li>
+              <li>Règlement : Wave, Orange Money, Espèces ou Free</li>
               <li>Échange de taille sous 7 jours</li>
+              <li className="pt-2 border-t border-[#24211E]">
+                <button
+                  onClick={goToAdmin}
+                  className="text-zinc-500 hover:text-white transition-colors flex items-center gap-1.5 text-[11px]"
+                >
+                  <Lock className="w-3 h-3 text-zinc-600" />
+                  <span>Espace Propriétaire (Gestion)</span>
+                </button>
+              </li>
             </ul>
           </div>
 

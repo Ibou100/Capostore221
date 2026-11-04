@@ -3,7 +3,8 @@ import { X, ShoppingBag, Heart, MessageCircle, Truck } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
-import { formatFCFA, getWhatsAppOrderLink } from '../../utils/format';
+import { useOrders } from '../../context/OrderContext';
+import { formatFCFA } from '../../utils/format';
 import type { Product, ProductColor } from '../../types';
 
 interface QuickViewContentProps {
@@ -15,6 +16,7 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
   const { goToProduct, showToast } = useStore();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { openQuickOrder } = useOrders();
 
   const isFavorited = isInWishlist(product.id);
   const isOutOfStock = product.stock <= 0;
@@ -45,7 +47,10 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
     }
   };
 
-  const whatsappLink = getWhatsAppOrderLink(product.name, product.price, selectedSize, product.images[0]);
+  const handleQuickOrder = () => {
+    onClose();
+    openQuickOrder(product, selectedSize);
+  };
 
   return (
     <div className="relative w-full max-w-3xl bg-white shadow-2xl rounded-sm overflow-hidden z-10 animate-fade-in border border-[#E7E2D9] max-h-[90vh] overflow-y-auto">
@@ -180,15 +185,14 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
               <span>Ajouter au panier</span>
             </button>
 
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-white hover:bg-zinc-50 border border-zinc-300 text-zinc-800 py-2.5 px-4 rounded-sm text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors"
+            <button
+              type="button"
+              onClick={handleQuickOrder}
+              className="w-full bg-white hover:bg-zinc-50 border border-zinc-300 text-zinc-800 py-2.5 px-4 rounded-sm text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-2xs"
             >
               <MessageCircle className="w-4 h-4 text-emerald-600" />
-              <span>Commander sur WhatsApp</span>
-            </a>
+              <span>Commander sur WhatsApp (Suivi de colis & Paiement)</span>
+            </button>
 
             <div className="p-2.5 bg-[#FAF8F5] rounded-sm border border-[#E7E2D9] flex items-center gap-2 text-[11px] text-zinc-500">
               <Truck className="w-3.5 h-3.5 text-zinc-600 shrink-0" />

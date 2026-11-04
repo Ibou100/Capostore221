@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ArrowRight, MessageCircle, Check } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { formatFCFA, getWhatsAppOrderLink } from '../../utils/format';
+import { useOrders } from '../../context/OrderContext';
+import { formatFCFA } from '../../utils/format';
 
 interface FeaturedHeroItem {
   id: string;
@@ -14,7 +15,8 @@ interface FeaturedHeroItem {
 }
 
 export const Hero: React.FC = () => {
-  const { goToProduct, goToCatalog } = useStore();
+  const { goToProduct, goToCatalog, products } = useStore();
+  const { openQuickOrder } = useOrders();
 
   const featuredPieces: FeaturedHeroItem[] = [
     {
@@ -57,7 +59,30 @@ export const Hero: React.FC = () => {
 
   const [activePieceIndex, setActivePieceIndex] = useState(0);
   const currentPiece = featuredPieces[activePieceIndex];
-  const whatsappLink = getWhatsAppOrderLink(currentPiece.name, currentPiece.price, undefined, currentPiece.image);
+
+  const handleHeroQuickOrder = () => {
+    const matched = products.find((p) => p.id === currentPiece.id);
+    if (matched) {
+      openQuickOrder(matched);
+    } else {
+      openQuickOrder({
+        id: currentPiece.id,
+        name: currentPiece.name,
+        slug: currentPiece.id,
+        category: 'vetements',
+        subCategory: currentPiece.category,
+        gender: 'homme',
+        price: currentPiece.price,
+        images: [currentPiece.image],
+        description: currentPiece.material,
+        details: [],
+        variants: [],
+        stock: 10,
+        published: true,
+        createdAt: '2026-10-25',
+      });
+    }
+  };
 
   return (
     <section className="relative w-full bg-[#FAF8F5] border-b border-[#E7E2D9] overflow-hidden py-6 sm:py-10 lg:py-16">
@@ -115,15 +140,14 @@ export const Hero: React.FC = () => {
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
 
-              <a
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 sm:flex-initial bg-white hover:bg-zinc-50 text-zinc-900 border border-[#D9D3C7] px-3 sm:px-5 py-3 sm:py-3.5 rounded-sm text-[11px] sm:text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 sm:gap-2 transition-colors"
+              <button
+                type="button"
+                onClick={handleHeroQuickOrder}
+                className="flex-1 sm:flex-initial bg-white hover:bg-zinc-50 text-zinc-900 border border-[#D9D3C7] px-3 sm:px-5 py-3 sm:py-3.5 rounded-sm text-[11px] sm:text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 sm:gap-2 transition-colors shadow-2xs"
               >
                 <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700" />
-                <span>WhatsApp</span>
-              </a>
+                <span>Commander direct</span>
+              </button>
             </div>
 
             {/* Quick Reassurance Ticker */}

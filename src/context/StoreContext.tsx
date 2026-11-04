@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
-import type { Product, CategoryId, ProductGender, FilterState, ViewState } from '../types';
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import type { Product, CategoryId, ProductGender, FilterState, ViewState, ProductCustomOverride } from '../types';
 import { INITIAL_PRODUCTS } from '../data/products';
 
 interface StoreContextType {
   products: Product[];
   currentView: ViewState;
+  setCurrentView: React.Dispatch<React.SetStateAction<ViewState>>;
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
   resetFilters: () => void;
@@ -18,6 +19,14 @@ interface StoreContextType {
   goToEditorial: () => void;
   goToWishlist: () => void;
   goToCartPage: () => void;
+  goToOrders: () => void;
+  goToTracking: (orderId?: string) => void;
+  goToAdmin: () => void;
+  
+  // Product overrides (Owner customisations: name, price, available sizes, stock)
+  productOverrides: Record<string, ProductCustomOverride>;
+  updateProductOverride: (productId: string, override: ProductCustomOverride) => void;
+  resetProductOverrides: () => void;
   
   // Search Modal
   isSearchOpen: boolean;
@@ -46,15 +55,90 @@ const DEFAULT_FILTERS: FilterState = {
   searchQuery: '',
 };
 
+const OVERRIDES_STORAGE_KEY = 'capostore_product_overrides_v1';
+
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [currentView, setCurrentView] = useState<ViewState>({ type: 'home' });
+  const [productOverrides, setProductOverrides] = useState<Record<string, ProductCustomOverride>>(() => {
+    if (typeof window === 'undefined') return {};
+    try {
+      const stored = localStorage.getItem(OVERRIDES_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : {};
+    } catch (e) {
+      console.error('Failed to parse product overrides from localStorage', e);
+      return {};
+    }
+  });
+
+  const [currentView, setCurrentView] = useState<ViewState>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const trackId = params.get('track');
+      if (trackId) {
+        return { type: 'tracking', orderId: trackId };
+      }
+      if (params.get('admin') === '1' || params.get('espace') === 'proprietaire') {
+        return { type: 'admin' };
+      }
+      if (params.get('orders') === '1' || params.get('commandes') === '1') {
+        return { type: 'orders' };
+      }
+    }
+    return { type: 'home' };
+  });
+
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
+
+  // Sync overrides to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(productOverrides));
+    } catch (e) {
+      console.error('Failed to save product overrides', e);
+    }
+  }, [productOverrides]);
+
+  // Compute merged products
+  const products = useMemo(() => {
+    return INITIAL_PRODUCTS.map((baseProduct) => {
+      const override = productOverrides[baseProduct.id];
+      if (!override) return baseProduct;
+
+      return {
+        ...baseProduct,
+        name: override.name !== undefined && override.name.trim() !== '' ? override.name.trim() : baseProduct.name,
+        price: override.price !== undefined && override.price > 0 ? override.price : baseProduct.price,
+        availableSizes: override.availableSizes !== undefined ? override.availableSizes : baseProduct.availableSizes,
+        stock: override.stock !== undefined ? override.stock : baseProduct.stock,
+        published: override.published !== undefined ? override.published : baseProduct.published,
+      };
+    });
+  }, [productOverrides]);
+
+  const updateProductOverride = (productId: string, override: ProductCustomOverride) => {
+    setProductOverrides((prev) => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        ...override,
+      },
+    }));
+    showToast('Modifications du produit enregistrées avec succès !', 'success');
+  };
+
+  const resetProductOverrides = () => {
+    setProductOverrides({});
+    try {
+      localStorage.removeItem(OVERRIDES_STORAGE_KEY);
+    } catch (e) {
+      console.error(e);
+    }
+    showToast('Toutes les tenues ont été réinitialisées aux valeurs par défaut.', 'info');
+  };
 
   const showToast = (message: string, type: 'success' | 'info' | 'error' = 'info') => {
     setToast({ message, type });
@@ -112,6 +196,21 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const goToCartPage = () => {
     setCurrentView({ type: 'cart-page' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goToOrders = () => {
+    setCurrentView({ type: 'orders' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goToTracking = (orderId?: string) => {
+    setCurrentView({ type: 'tracking', orderId });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goToAdmin = () => {
+    setCurrentView({ type: 'admin' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -202,6 +301,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       value={{
         products,
         currentView,
+        setCurrentView,
         filters,
         setFilters,
         resetFilters,
@@ -213,6 +313,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         goToEditorial,
         goToWishlist,
         goToCartPage,
+        goToOrders,
+        goToTracking,
+        goToAdmin,
+        productOverrides,
+        updateProductOverride,
+        resetProductOverrides,
         isSearchOpen,
         openSearch,
         closeSearch,

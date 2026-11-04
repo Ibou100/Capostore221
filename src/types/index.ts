@@ -1,6 +1,43 @@
 export type CategoryId = 'tous' | 'vetements' | 'lunettes' | 'chaussures' | 'accessoires';
 
-export type ProductGender = 'homme' | 'femme' | 'unisexe';
+export type ProductGender = 'homme' | 'unisexe';
+
+export type PaymentMethod = 'wave' | 'orange_money' | 'especes' | 'free_money';
+
+export type OrderStatus = 'transmise' | 'confirmee' | 'en_preparation' | 'en_livraison' | 'livree';
+
+export interface OrderItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  size?: string;
+  color?: string;
+  image: string;
+}
+
+export interface Order {
+  id: string; // ex: 'CAPO-7241'
+  createdAt: string; // ISO date string
+  customerName: string;
+  customerPhone: string;
+  customerCity: string;
+  customerAddress: string;
+  paymentMethod: PaymentMethod;
+  items: OrderItem[];
+  total: number;
+  shippingFee: number;
+  status: OrderStatus;
+  notes?: string;
+}
+
+export interface ProductCustomOverride {
+  name?: string;
+  price?: number;
+  availableSizes?: string[];
+  stock?: number;
+  published?: boolean;
+}
 
 export interface ProductColor {
   name: string;
@@ -66,4 +103,7 @@ export type ViewState =
   | { type: 'product-detail'; productId: string }
   | { type: 'editorial' }
   | { type: 'wishlist' }
-  | { type: 'cart-page' };
+  | { type: 'cart-page' }
+  | { type: 'orders' }
+  | { type: 'tracking'; orderId?: string }
+  | { type: 'admin' };

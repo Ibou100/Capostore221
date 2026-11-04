@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { 
   X, ShoppingBag, Trash2, ShieldCheck, 
-  Truck, CheckCircle2, MessageCircle 
+  Truck, CheckCircle2, MessageCircle, PackageCheck 
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
+import { useOrders } from '../../context/OrderContext';
+import type { PaymentMethod } from '../../types';
 import { 
   formatFCFA, 
   STORE_WHATSAPP_PHONE, 
   STORE_PHONE_WHATSAPP_DISPLAY, 
   STORE_PHONE_CALL_DISPLAY,
-  getWhatsAppCheckoutLink
+  getWhatsAppCheckoutLink,
+  PAYMENT_METHODS_DATA,
+  getPaymentMethodLabel
 } from '../../utils/format';
 
 export const CartDrawer: React.FC = () => {
@@ -18,14 +22,17 @@ export const CartDrawer: React.FC = () => {
     items, isOpen, closeCart, removeFromCart, updateQuantity, 
     clearCart, totalCount, subtotal, shippingFee, total, freeShippingThreshold 
   } = useCart();
-  const { goToCatalog, showToast } = useStore();
+  const { goToCatalog, showToast, goToTracking, goToOrders } = useStore();
+  const { createOrder } = useOrders();
 
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
-  const [customerCity, setCustomerCity] = useState('');
+  const [customerCity, setCustomerCity] = useState('Dakar');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('wave');
   const [orderCompleted, setOrderCompleted] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
   const [lastWhatsAppUrl, setLastWhatsAppUrl] = useState('');
 
   if (!isOpen) return null;
@@ -61,18 +68,41 @@ export const CartDrawer: React.FC = () => {
       return;
     }
 
+    // 1. Enregistrer la commande sur la plateforme avec son N° de suivi unique
+    const newOrder = createOrder({
+      customerName: name,
+      customerPhone: phone,
+      customerCity: city,
+      customerAddress: address,
+      paymentMethod,
+      items: items.map((i) => ({
+        productId: i.product.id,
+        name: i.product.name,
+        price: i.unitPrice,
+        quantity: i.quantity,
+        size: i.selectedSize,
+        image: i.product.images[0] || '',
+      })),
+      total,
+      shippingFee,
+    });
+
+    // 2. Générer le lien WhatsApp complet incluant N° de suivi, téléphone, paiement et photos
     const checkoutUrl = getWhatsAppCheckoutLink(items, total, {
+      orderId: newOrder.id,
       name,
       phone,
       city,
-      address
+      address,
+      paymentMethod
     });
 
+    setCreatedOrderId(newOrder.id);
     setLastWhatsAppUrl(checkoutUrl);
     setOrderCompleted(true);
-    showToast('Commande validée ! Redirection vers WhatsApp...', 'success');
+    showToast(`Commande ${newOrder.id} validée ! Redirection vers WhatsApp...`, 'success');
 
-    // Open WhatsApp in new tab so owner receives the order directly
+    // 3. Ouvrir WhatsApp
     try {
       window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
     } catch {
@@ -84,7 +114,26 @@ export const CartDrawer: React.FC = () => {
     clearCart();
     setIsCheckoutModalOpen(false);
     setOrderCompleted(false);
+    setCreatedOrderId(null);
     closeCart();
+  };
+
+  const handleTrackPackage = () => {
+    if (createdOrderId) {
+      clearCart();
+      setIsCheckoutModalOpen(false);
+      setOrderCompleted(false);
+      closeCart();
+      goToTracking(createdOrderId);
+    }
+  };
+
+  const handleGoToOrderHistory = () => {
+    clearCart();
+    setIsCheckoutModalOpen(false);
+    setOrderCompleted(false);
+    closeCart();
+    goToOrders();
   };
 
   return (
@@ -395,9 +444,40 @@ export const CartDrawer: React.FC = () => {
                     />
                   </div>
 
-                  <div className="p-3 bg-zinc-50 border border-zinc-200 rounded-sm text-xs text-zinc-600">
-                    <p className="font-semibold text-zinc-900 mb-0.5">Règlement :</p>
-                    <p>Paiement comptant à la livraison ou virement Wave / Orange Money après confirmation téléphonique avec le vendeur.</p>
+                  {/* Payment Method Selector */}
+                  <div className="space-y-2">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-900">
+                      Mode de règlement souhaité *
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {PAYMENT_METHODS_DATA.map((method) => {
+                        const isSelected = paymentMethod === method.id;
+                        return (
+                          <button
+                            key={method.id}
+                            type="button"
+                            onClick={() => setPaymentMethod(method.id)}
+                            className={`p-2 rounded-lg border text-left transition-all ${
+                              isSelected
+                                ? 'border-[#B85D19] bg-amber-50/70 ring-1 ring-[#B85D19]'
+                                : 'border-zinc-200 bg-white hover:bg-zinc-50'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm">{method.icon}</span>
+                              <span className={`text-[8px] font-bold px-1 py-0.5 rounded ${
+                                isSelected ? 'bg-[#B85D19] text-white' : 'bg-zinc-100 text-zinc-500'
+                              }`}>
+                                {method.badge}
+                              </span>
+                            </div>
+                            <p className="font-bold text-[11px] text-zinc-900 mt-1">
+                              {method.label}
+                            </p>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div className="pt-2 flex gap-3">
@@ -410,7 +490,7 @@ export const CartDrawer: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 py-3 bg-[#141210] hover:bg-[#2C2723] text-white text-xs font-semibold uppercase tracking-wider transition-colors rounded-sm"
+                      className="flex-1 py-3 bg-[#141210] hover:bg-[#2C2723] text-white text-xs font-semibold uppercase tracking-wider transition-colors rounded-sm shadow-md"
                     >
                       Confirmer la commande
                     </button>
@@ -419,21 +499,35 @@ export const CartDrawer: React.FC = () => {
               </div>
             ) : (
               /* Success screen */
-              <div className="text-center py-6">
-                <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+              <div className="text-center py-5 space-y-4">
+                <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border-2 border-emerald-100">
                   <CheckCircle2 className="w-7 h-7" />
                 </div>
-                <h3 className="font-display font-bold text-lg text-zinc-900 uppercase mb-2">
-                  Commande validée
-                </h3>
-                <p className="text-xs text-zinc-600 max-w-sm mx-auto mb-5 leading-relaxed">
-                  Merci <strong>{customerName}</strong>. Le récapitulatif complet de votre commande a été généré pour le vendeur <strong>CAPOSTORE221</strong>.
-                </p>
+                <div>
+                  <h3 className="font-display font-bold text-lg text-zinc-900 uppercase">
+                    Commande validée !
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+                    Merci <strong>{customerName}</strong>. Votre commande a été enregistrée sur notre plateforme.
+                  </p>
+                </div>
 
-                <div className="p-3.5 bg-zinc-50 rounded-sm text-xs text-zinc-700 mb-5 text-left space-y-1 border border-zinc-200">
+                {createdOrderId && (
+                  <div className="inline-block p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                    <span className="text-[10px] uppercase font-bold text-amber-800 tracking-wider block">
+                      Numéro de suivi de colis
+                    </span>
+                    <span className="font-mono text-lg font-black text-amber-950">
+                      {createdOrderId}
+                    </span>
+                  </div>
+                )}
+
+                <div className="p-3 bg-zinc-50 rounded-xl text-xs text-zinc-700 text-left space-y-1 border border-zinc-200">
                   <p><strong>Destinataire :</strong> {customerName} ({customerPhone})</p>
-                  <p><strong>Lieu de livraison :</strong> {customerAddress}, {customerCity}</p>
-                  <p><strong>Total à régler :</strong> {formatFCFA(total)} (Paiement à la livraison ou Wave / OM)</p>
+                  <p><strong>Lieu :</strong> {customerAddress}, {customerCity}</p>
+                  <p><strong>Moyen de paiement :</strong> <span className="text-emerald-700 font-bold">{getPaymentMethodLabel(paymentMethod)}</span></p>
+                  <p><strong>Total à régler :</strong> {formatFCFA(total)}</p>
                 </div>
 
                 {lastWhatsAppUrl && (
@@ -441,21 +535,37 @@ export const CartDrawer: React.FC = () => {
                     href={lastWhatsAppUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-4 rounded-sm text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 mb-2.5 transition-colors shadow-sm"
+                    className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white py-3 px-4 rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-sm"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    <span>Envoyer la commande sur WhatsApp</span>
+                    <span>Ouvrir WhatsApp avec le vendeur</span>
                   </a>
                 )}
 
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <button
+                    onClick={handleTrackPackage}
+                    className="py-2.5 px-3 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <PackageCheck className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Suivre ce colis</span>
+                  </button>
+                  <button
+                    onClick={handleGoToOrderHistory}
+                    className="py-2.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold rounded-xl transition-colors"
+                  >
+                    Mes commandes
+                  </button>
+                </div>
+
                 <button
                   onClick={handleFinish}
-                  className="w-full py-3 bg-white hover:bg-zinc-100 border border-zinc-300 text-zinc-800 text-xs font-semibold uppercase tracking-wider rounded-sm transition-colors"
+                  className="w-full py-2.5 text-zinc-500 hover:text-black text-xs font-semibold transition-colors"
                 >
-                  Fermer & Retourner à la boutique
+                  Fermer & retourner à la boutique
                 </button>
 
-                <p className="text-[11px] text-zinc-400 pt-3">
+                <p className="text-[11px] text-zinc-400 pt-1">
                   Service client : {STORE_PHONE_WHATSAPP_DISPLAY} (WhatsApp) • {STORE_PHONE_CALL_DISPLAY} (Appel)
                 </p>
               </div>

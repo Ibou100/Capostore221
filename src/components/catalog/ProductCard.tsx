@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Heart, MessageCircle, ShoppingBag } from 'lucide-react';
 import type { Product } from '../../types';
-import { formatFCFA, getWhatsAppOrderLink } from '../../utils/format';
+import { formatFCFA } from '../../utils/format';
 import { useWishlist } from '../../context/WishlistContext';
 import { useStore } from '../../context/StoreContext';
 import { useCart } from '../../context/CartContext';
+import { useOrders } from '../../context/OrderContext';
 
 interface ProductCardProps {
   product: Product;
@@ -15,6 +16,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { goToProduct, openQuickView, showToast } = useStore();
   const { addToCart } = useCart();
+  const { openQuickOrder } = useOrders();
 
   const isFavorited = isInWishlist(product.id);
   const isOutOfStock = product.stock <= 0;
@@ -45,12 +47,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
-  const whatsappLink = getWhatsAppOrderLink(
-    product.name, 
-    product.price, 
-    undefined, 
-    product.images[0]
-  );
+  const handleQuickOrder = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openQuickOrder(product);
+  };
 
   return (
     <article
@@ -155,17 +155,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </button>
 
           {/* Direct WhatsApp Ordering */}
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+          <button
+            type="button"
+            onClick={handleQuickOrder}
             className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm border border-zinc-200 hover:border-emerald-600 text-zinc-700 hover:text-emerald-700 hover:bg-emerald-50 transition-colors flex items-center justify-center shrink-0"
-            title="Commander sur WhatsApp avec photo"
+            title="Commander sur WhatsApp (Suivi de colis & Paiement Wave/OM/Cash)"
             aria-label="Commander sur WhatsApp"
           >
             <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
-          </a>
+          </button>
         </div>
       </div>
     </article>

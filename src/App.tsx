@@ -2,6 +2,7 @@ import React from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { OrderProvider } from './context/OrderContext';
 
 import { AnnouncementBar } from './components/layout/AnnouncementBar';
 import { Navbar } from './components/layout/Navbar';
@@ -12,10 +13,14 @@ import { CatalogView } from './components/catalog/CatalogView';
 import { ProductDetailView } from './components/product/ProductDetailView';
 import { WishlistView } from './components/catalog/WishlistView';
 import { EditorialStoryView } from './components/home/EditorialStoryView';
+import { OrderHistoryView } from './components/orders/OrderHistoryView';
+import { OrderTrackingView } from './components/orders/OrderTrackingView';
+import { AdminView } from './components/admin/AdminView';
 
 import { CartDrawer } from './components/cart/CartDrawer';
 import { SearchModal } from './components/ui/SearchModal';
 import { QuickViewModal } from './components/ui/QuickViewModal';
+import { QuickOrderModal } from './components/ui/QuickOrderModal';
 import { ToastNotification } from './components/ui/ToastNotification';
 import { MobileBottomNav } from './components/layout/MobileBottomNav';
 
@@ -34,6 +39,12 @@ const AppContent: React.FC = () => {
         return <WishlistView />;
       case 'editorial':
         return <EditorialStoryView />;
+      case 'orders':
+        return <OrderHistoryView />;
+      case 'tracking':
+        return <OrderTrackingView initialOrderId={currentView.orderId} />;
+      case 'admin':
+        return <AdminView />;
       default:
         return <HomeView />;
     }
@@ -62,6 +73,7 @@ const AppContent: React.FC = () => {
       <CartDrawer />
       <SearchModal />
       <QuickViewModal />
+      <QuickOrderModal />
       <ToastNotification />
     </div>
   );
@@ -70,11 +82,13 @@ const AppContent: React.FC = () => {
 export function App() {
   return (
     <StoreProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <AppContent />
-        </WishlistProvider>
-      </CartProvider>
+      <OrderProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <AppContent />
+          </WishlistProvider>
+        </CartProvider>
+      </OrderProvider>
     </StoreProvider>
   );
 }

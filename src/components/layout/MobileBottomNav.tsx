@@ -1,21 +1,23 @@
 import React from 'react';
-import { Home, LayoutGrid, Heart, ShoppingBag, MessageCircle } from 'lucide-react';
+import { Home, LayoutGrid, Heart, ShoppingBag, Package } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
-import { STORE_WHATSAPP_PHONE } from '../../utils/format';
+import { useOrders } from '../../context/OrderContext';
 
 export const MobileBottomNav: React.FC = () => {
-  const { currentView, goToHome, goToCatalog, goToWishlist } = useStore();
+  const { currentView, goToHome, goToCatalog, goToWishlist, goToOrders } = useStore();
   const { openCart, totalCount } = useCart();
   const { wishlistCount } = useWishlist();
+  const { orders } = useOrders();
 
   const isHome = currentView.type === 'home';
   const isCatalog = currentView.type === 'catalog';
   const isWishlist = currentView.type === 'wishlist';
+  const isOrders = currentView.type === 'orders' || currentView.type === 'tracking';
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-zinc-200/90 py-1.5 px-3 flex items-center justify-around lg:hidden shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+    <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-zinc-200/90 py-1 px-2 flex items-center justify-around lg:hidden shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
       {/* 1. Accueil */}
       <button
         onClick={goToHome}
@@ -40,7 +42,24 @@ export const MobileBottomNav: React.FC = () => {
         <span className="text-[10px] font-medium mt-0.5">Boutique</span>
       </button>
 
-      {/* 3. Favoris */}
+      {/* 3. Commandes & Suivi */}
+      <button
+        onClick={goToOrders}
+        className={`relative flex flex-col items-center justify-center p-1.5 transition-colors ${
+          isOrders ? 'text-[#B85D19]' : 'text-zinc-400 hover:text-zinc-700'
+        }`}
+        aria-label="Mes Commandes"
+      >
+        <Package className="w-5 h-5" />
+        {orders.length > 0 && (
+          <span className="absolute top-0 right-1 min-w-4 h-4 px-1 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">
+            {orders.length}
+          </span>
+        )}
+        <span className="text-[10px] font-medium mt-0.5">Commandes</span>
+      </button>
+
+      {/* 4. Favoris */}
       <button
         onClick={goToWishlist}
         className={`relative flex flex-col items-center justify-center p-1.5 transition-colors ${
@@ -57,7 +76,7 @@ export const MobileBottomNav: React.FC = () => {
         <span className="text-[10px] font-medium mt-0.5">Favoris</span>
       </button>
 
-      {/* 4. Panier */}
+      {/* 5. Panier */}
       <button
         onClick={openCart}
         className="relative flex flex-col items-center justify-center p-1.5 text-zinc-400 hover:text-zinc-700 transition-colors"
@@ -71,18 +90,6 @@ export const MobileBottomNav: React.FC = () => {
         )}
         <span className="text-[10px] font-medium mt-0.5">Panier</span>
       </button>
-
-      {/* 5. WhatsApp direct */}
-      <a
-        href={`https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent("Bonjour CAPOSTORE221 ! J'ai une question sur vos articles disponibles.")}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex flex-col items-center justify-center p-1.5 text-emerald-600 hover:text-emerald-700 transition-colors"
-        aria-label="WhatsApp"
-      >
-        <MessageCircle className="w-5 h-5" />
-        <span className="text-[10px] font-medium mt-0.5">WhatsApp</span>
-      </a>
     </div>
   );
 };
