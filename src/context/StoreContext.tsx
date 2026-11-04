@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import type { Product, CategoryId, ProductGender, FilterState, ViewState, ProductCustomOverride } from '../types';
 import { INITIAL_PRODUCTS } from '../data/products';
+import { fetchCloudProducts, saveCloudProducts } from '../utils/cloudSync';
 
 interface StoreContextType {
   products: Product[];
@@ -28,6 +29,12 @@ interface StoreContextType {
   updateProductOverride: (productId: string, override: ProductCustomOverride) => void;
   resetProductOverrides: () => void;
   
+  // Custom Owner Products (Created & Uploaded from Admin panel)
+  customProducts: Product[];
+  addCustomProduct: (product: Product) => Promise<boolean>;
+  deleteCustomProduct: (productId: string) => Promise<boolean>;
+  refreshCloudCatalog: () => Promise<void>;
+
   // Search Modal
   isSearchOpen: boolean;
   openSearch: () => void;
@@ -47,7 +54,7 @@ const DEFAULT_FILTERS: FilterState = {
   category: 'tous',
   gender: 'all',
   minPrice: 0,
-  maxPrice: 10000,
+  maxPrice: 100000,
   sizes: [],
   colors: [],
   inStockOnly: false,
@@ -56,6 +63,7 @@ const DEFAULT_FILTERS: FilterState = {
 };
 
 const OVERRIDES_STORAGE_KEY = 'capostore_product_overrides_v1';
+const CUSTOM_PRODUCTS_STORAGE_KEY = 'capostore_custom_products_v1';
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
@@ -70,6 +78,27 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return {};
     }
   });
+
+  const [customProducts, setCustomProducts] = useState<Product[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const stored = localStorage.getItem(CUSTOM_PRODUCTS_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      console.error('Failed to parse custom products from localStorage', e);
+      return [];
+    }
+  });
+
+  const customProductsRef = useRef<Product[]>(customProducts);
+  useEffect(() => {
+    customProductsRef.current = customProducts;
+  }, [customProducts]);
+
+  const productOverridesRef = useRef<Record<string, ProductCustomOverride>>(productOverrides);
+  useEffect(() => {
+    productOverridesRef.current = productOverrides;
+  }, [productOverrides]);
 
   const [currentView, setCurrentView] = useState<ViewState>(() => {
     if (typeof window !== 'undefined') {
@@ -108,6 +137,15 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
 
+  // Sync custom products to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(customProducts));
+    } catch (e) {
+      console.error('Failed to save custom products', e);
+    }
+  }, [customProducts]);
+
   // Sync overrides to localStorage
   useEffect(() => {
     try {
@@ -117,9 +155,98 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [productOverrides]);
 
-  // Compute merged products
+  /**
+   * Cloud Catalog Synchronization:
+   * Merges custom products and overrides across all devices
+   */
+  const refreshCloudCatalog = useCallback(async () => {
+    try {
+      const cloudData = await fetchCloudProducts();
+      
+      // Merge custom products
+      if (cloudData.customProducts && Array.isArray(cloudData.customProducts)) {
+        setCustomProducts((prev) => {
+          const map = new Map<string, Product>();
+          cloudData.customProducts.forEach((p) => {
+            if (p && p.id) map.set(p.id, p);
+          });
+          prev.forEach((p) => {
+            if (p && p.id && !map.has(p.id)) {
+              map.set(p.id, p);
+            }
+          });
+          const merged = Array.from(map.values());
+          try {
+            localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(merged));
+          } catch (e) {
+            console.error(e);
+          }
+          return merged;
+        });
+      }
+
+      // Merge overrides
+      if (cloudData.overrides && typeof cloudData.overrides === 'object') {
+        setProductOverrides((prev) => {
+          const merged = { ...prev, ...cloudData.overrides };
+          try {
+            localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(merged));
+          } catch (e) {
+            console.error(e);
+          }
+          return merged;
+        });
+      }
+    } catch (err) {
+      console.warn('Could not refresh cloud catalog:', err);
+    }
+  }, []);
+
+  // Sync cloud catalog on mount and every 30 seconds
+  useEffect(() => {
+    refreshCloudCatalog();
+    const interval = setInterval(() => {
+      refreshCloudCatalog();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [refreshCloudCatalog]);
+
+  // Add custom product from owner admin
+  const addCustomProduct = async (product: Product): Promise<boolean> => {
+    const updated = [product, ...customProductsRef.current];
+    setCustomProducts(updated);
+    try {
+      localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+    showToast(`Nouvel article "${product.name}" ajouté avec succès !`, 'success');
+
+    // Cloud push
+    const saved = await saveCloudProducts(updated, productOverridesRef.current);
+    return saved;
+  };
+
+  // Delete custom product from owner admin
+  const deleteCustomProduct = async (productId: string): Promise<boolean> => {
+    const updated = customProductsRef.current.filter((p) => p.id !== productId);
+    setCustomProducts(updated);
+    try {
+      localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
+    }
+    showToast('Article supprimé du catalogue.', 'info');
+
+    // Cloud push
+    const saved = await saveCloudProducts(updated, productOverridesRef.current);
+    return saved;
+  };
+
+  // Compute merged products (Base 23 products + Owner custom products + Overrides)
   const products = useMemo(() => {
-    return INITIAL_PRODUCTS.map((baseProduct) => {
+    const allBase = [...INITIAL_PRODUCTS, ...customProducts];
+    return allBase.map((baseProduct) => {
       const override = productOverrides[baseProduct.id];
       if (!override) return baseProduct;
 
@@ -132,16 +259,27 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         published: override.published !== undefined ? override.published : baseProduct.published,
       };
     });
-  }, [productOverrides]);
+  }, [productOverrides, customProducts]);
 
   const updateProductOverride = (productId: string, override: ProductCustomOverride) => {
-    setProductOverrides((prev) => ({
-      ...prev,
-      [productId]: {
-        ...prev[productId],
-        ...override,
-      },
-    }));
+    setProductOverrides((prev) => {
+      const updated = {
+        ...prev,
+        [productId]: {
+          ...prev[productId],
+          ...override,
+        },
+      };
+      try {
+        localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      saveCloudProducts(customProductsRef.current, updated).catch((err) =>
+        console.warn('Cloud sync override failed:', err)
+      );
+      return updated;
+    });
     showToast('Modifications du produit enregistrées avec succès !', 'success');
   };
 
@@ -152,6 +290,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (e) {
       console.error(e);
     }
+    saveCloudProducts(customProductsRef.current, {}).catch((err) =>
+      console.warn('Cloud reset failed:', err)
+    );
     showToast('Toutes les tenues ont été réinitialisées aux valeurs par défaut.', 'info');
   };
 
@@ -373,6 +514,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         productOverrides,
         updateProductOverride,
         resetProductOverrides,
+        customProducts,
+        addCustomProduct,
+        deleteCustomProduct,
+        refreshCloudCatalog,
         isSearchOpen,
         openSearch,
         closeSearch,
