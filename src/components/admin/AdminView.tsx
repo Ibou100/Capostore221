@@ -1305,7 +1305,7 @@ export const AdminView: React.FC = () => {
                       </div>
 
                       {/* Status Selector for Owner */}
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                         <label className="text-xs font-bold text-zinc-700">
                           Statut Colis :
                         </label>
@@ -1326,6 +1326,35 @@ export const AdminView: React.FC = () => {
                           <option value="livree">5. Colis Livré</option>
                         </select>
                       </div>
+                    </div>
+
+                    {/* Quick Step Buttons for Owner */}
+                    <div className="bg-zinc-100/70 px-4 sm:px-6 py-2 border-b border-zinc-200/80 flex flex-wrap items-center gap-1.5">
+                      <span className="text-[10px] uppercase font-bold text-zinc-500 mr-1">
+                        Changer en 1 clic :
+                      </span>
+                      {(['transmise', 'confirmee', 'en_preparation', 'en_livraison', 'livree'] as OrderStatus[]).map((st, idx) => {
+                        const isAct = order.status === st;
+                        const cfg = ORDER_STATUS_CONFIG[st];
+                        return (
+                          <button
+                            key={st}
+                            type="button"
+                            onClick={() => {
+                              updateOrderStatus(order.id, st);
+                              addAuditLog(`Statut commande ${order.id} mis à jour`, `Nouveau statut : ${st}`);
+                              showToast(`Commande ${order.id} passée à : ${cfg?.label || st} !`, 'success');
+                            }}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                              isAct
+                                ? `${cfg?.badgeClass || 'bg-black text-white'} ring-2 ring-black/10 shadow-xs font-black`
+                                : 'bg-white hover:bg-zinc-200/60 text-zinc-600 border border-zinc-200'
+                            }`}
+                          >
+                            {idx + 1}. {cfg?.label || st} {isAct ? '✓' : ''}
+                          </button>
+                        );
+                      })}
                     </div>
 
                     {/* Content */}

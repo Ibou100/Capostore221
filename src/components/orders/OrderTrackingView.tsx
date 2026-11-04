@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Package, Search, CheckCircle2, Clock, Truck, 
   MapPin, Phone, CreditCard, MessageCircle, ArrowLeft,
-  AlertCircle, ShieldCheck
+  AlertCircle, ShieldCheck, Lock, KeyRound, X
 } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
@@ -12,6 +12,7 @@ import {
   getPaymentMethodLabel, 
   STORE_WHATSAPP_PHONE 
 } from '../../utils/format';
+import { isSessionValid, verifyOwnerPassword } from '../../utils/security';
 import type { OrderStatus } from '../../types';
 
 interface OrderTrackingViewProps {
@@ -27,11 +28,19 @@ const STEPS: { status: OrderStatus; label: string; icon: React.ElementType }[] =
 ];
 
 export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrderId }) => {
-  const { getOrderById, orders } = useOrders();
-  const { goToHome, goToCatalog, goToOrders } = useStore();
+  const { getOrderById, orders, updateOrderStatus } = useOrders();
+  const { goToHome, goToCatalog, goToOrders, goToAdmin, showToast } = useStore();
 
   const [searchQuery, setSearchQuery] = useState(initialOrderId || '');
   const [searchedId, setSearchedId] = useState(initialOrderId || '');
+
+  // Admin In-Place Modification State
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => isSessionValid());
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authPassword, setAuthPassword] = useState('');
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<OrderStatus | null>(null);
 
   const currentOrder = React.useMemo(() => {
     const id = searchedId.trim() || initialOrderId?.trim();
@@ -51,6 +60,53 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
     if (!currentStatus) return 1;
     const config = ORDER_STATUS_CONFIG[currentStatus];
     return config ? config.step : 1;
+  };
+
+  const handleStepClick = (status: OrderStatus) => {
+    if (!currentOrder) return;
+
+    if (isAdmin) {
+      updateOrderStatus(currentOrder.id, status);
+      const label = ORDER_STATUS_CONFIG[status]?.label || status;
+      showToast(`Statut de la commande ${currentOrder.id} mis à jour : ${label}`, 'success');
+    } else {
+      setPendingStatus(status);
+      setAuthPassword('');
+      setAuthError(null);
+      setIsAuthModalOpen(true);
+    }
+  };
+
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!authPassword.trim()) {
+      setAuthError('Veuillez entrer le mot de passe propriétaire.');
+      return;
+    }
+
+    setIsAuthenticating(true);
+    setAuthError(null);
+
+    try {
+      const res = await verifyOwnerPassword(authPassword);
+      if (res.success) {
+        setIsAdmin(true);
+        setIsAuthModalOpen(false);
+        if (currentOrder && pendingStatus) {
+          updateOrderStatus(currentOrder.id, pendingStatus);
+          const label = ORDER_STATUS_CONFIG[pendingStatus]?.label || pendingStatus;
+          showToast(`Accès validé ! Statut passé à : ${label}`, 'success');
+        } else {
+          showToast('Mode propriétaire activé avec succès !', 'success');
+        }
+      } else {
+        setAuthError(res.error || 'Mot de passe propriétaire incorrect.');
+      }
+    } catch {
+      setAuthError('Erreur de validation.');
+    } finally {
+      setIsAuthenticating(false);
+    }
   };
 
   const currentStatusConfig = (currentOrder?.status && ORDER_STATUS_CONFIG[currentOrder.status]) || ORDER_STATUS_CONFIG['transmise'];
@@ -86,7 +142,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
             Où en est votre colis CAPOSTORE221 ?
           </h1>
           <p className="text-xs sm:text-sm text-zinc-400 mt-2 leading-relaxed">
-            Saisissez votre numéro de commande reçu lors de votre validation (ex: <strong className="text-zinc-200 font-mono">CAPO-8472</strong>) pour suivre son acheminement en temps réel.
+            Saisissez votre numéro de commande reçu lors de votre validation (ex: <strong className="text-zinc-200 font-mono">CAPO-8924</strong>) pour suivre son acheminement en temps réel.
           </p>
         </div>
 
@@ -98,7 +154,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Ex: CAPO-8472"
+              placeholder="Ex: CAPO-8924"
               className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-zinc-400 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#B85D19] focus:bg-white/15"
             />
           </div>
@@ -114,8 +170,42 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
       {/* Result Section */}
       {currentOrder ? (
         <div className="space-y-6">
-          {/* Status Progress Stepper */}
+
+          {/* Stepper Card */}
           <div className="bg-white rounded-2xl p-6 sm:p-8 border border-zinc-200 shadow-sm">
+            
+            {/* Owner banner */}
+            {isAdmin ? (
+              <div className="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2 text-emerald-800 font-semibold">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>👑 Mode Propriétaire Actif : Cliquez sur n'importe quelle étape (1 à 5) ci-dessous pour changer le statut en 1 clic !</span>
+                </div>
+                <button
+                  onClick={goToAdmin}
+                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shrink-0 transition-colors"
+                >
+                  Console Admin →
+                </button>
+              </div>
+            ) : (
+              <div className="mb-6 p-3 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-between text-xs text-zinc-600">
+                <span>Vous êtes le propriétaire du site ? Cliquez sur une étape pour modifier le statut du colis.</span>
+                <button
+                  onClick={() => {
+                    setPendingStatus(null);
+                    setAuthPassword('');
+                    setAuthError(null);
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="font-bold text-[#B85D19] hover:underline flex items-center gap-1 shrink-0 ml-2"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Activer la gestion</span>
+                </button>
+              </div>
+            )}
+
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-zinc-100">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
@@ -147,7 +237,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
               </div>
             </div>
 
-            {/* Stepper Steps */}
+            {/* Stepper Steps (NOW FULLY CLICKABLE BY ADMIN/OWNER) */}
             <div className="pt-8">
               <div className="relative">
                 {/* Connecting Line */}
@@ -168,27 +258,37 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                     const Icon = step.icon;
 
                     return (
-                      <div key={step.status} className="flex sm:flex-col items-center gap-3 sm:gap-2 sm:text-center relative z-10">
+                      <button
+                        type="button"
+                        key={step.status}
+                        onClick={() => handleStepClick(step.status)}
+                        className="flex sm:flex-col items-center gap-3 sm:gap-2 sm:text-center relative z-10 group cursor-pointer p-2 rounded-2xl hover:bg-zinc-50 transition-all text-left sm:text-center"
+                        title={`Cliquer pour définir le statut sur "${step.label}"`}
+                      >
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 transition-all ${
+                          className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs shrink-0 transition-all group-hover:scale-110 ${
                             isCompleted
-                              ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 shadow-sm'
-                              : 'bg-zinc-100 text-zinc-400 border border-zinc-200'
+                              ? 'bg-emerald-600 text-white ring-4 ring-emerald-100 shadow-md'
+                              : 'bg-zinc-100 text-zinc-400 border border-zinc-200 group-hover:border-[#B85D19] group-hover:text-zinc-700'
                           }`}
                         >
                           {isCompleted ? <Icon className="w-5 h-5" /> : stepNumber}
                         </div>
                         <div>
-                          <p className={`text-xs font-bold ${isCurrent ? 'text-zinc-900' : 'text-zinc-500'}`}>
+                          <p className={`text-xs font-bold transition-colors ${isCurrent ? 'text-zinc-900 font-black' : 'text-zinc-600 group-hover:text-zinc-900'}`}>
                             {step.label}
                           </p>
-                          {isCurrent && (
-                            <span className="text-[10px] text-emerald-600 font-semibold uppercase tracking-wider block">
+                          {isCurrent ? (
+                            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block">
                               Étape actuelle
+                            </span>
+                          ) : (
+                            <span className="text-[9px] text-zinc-400 group-hover:text-[#B85D19] font-medium block">
+                              {isAdmin ? 'Cliquer pour activer' : 'Modifier le statut'}
                             </span>
                           )}
                         </div>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
@@ -198,7 +298,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
               <div className="mt-8 p-4 bg-zinc-50 rounded-xl border border-zinc-200/80 text-xs text-zinc-600 flex items-start gap-3">
                 <AlertCircle className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
                 <p>
-                  <strong>Statut : </strong>
+                  <strong>Explication du statut : </strong>
                   {currentStatusConfig.description}
                 </p>
               </div>
@@ -319,6 +419,58 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
             >
               Toutes mes commandes
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ADMIN AUTH MODAL (Allows the owner to authenticate right from the tracking page) */}
+      {isAuthModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#141210] text-white w-full max-w-sm rounded-3xl p-6 sm:p-8 shadow-2xl border border-zinc-800 animate-fadeIn">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800 mb-4">
+              <div className="flex items-center gap-2">
+                <KeyRound className="w-5 h-5 text-amber-400" />
+                <h3 className="font-display font-bold text-sm text-white">
+                  Accès Propriétaire
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsAuthModalOpen(false)}
+                className="p-1 text-zinc-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-zinc-400 mb-4">
+              Entrez le mot de passe administrateur pour modifier le statut du colis en direct.
+            </p>
+
+            <form onSubmit={handleAuthSubmit} className="space-y-4">
+              <input
+                type="password"
+                required
+                autoFocus
+                value={authPassword}
+                onChange={(e) => setAuthPassword(e.target.value)}
+                placeholder="Mot de passe propriétaire"
+                className="w-full text-xs px-3.5 py-3 bg-zinc-900 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+              />
+
+              {authError && (
+                <p className="text-xs text-red-400 bg-red-950/30 p-2.5 rounded-lg border border-red-500/30">
+                  {authError}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={isAuthenticating}
+                className="w-full py-3 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+              >
+                {isAuthenticating ? 'Vérification...' : 'Valider et Changer le statut'}
+              </button>
+            </form>
           </div>
         </div>
       )}
