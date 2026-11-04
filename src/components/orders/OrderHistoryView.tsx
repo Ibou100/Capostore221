@@ -62,7 +62,27 @@ export const OrderHistoryView: React.FC = () => {
       ) : (
         <div className="space-y-6">
           {orders.map((order) => {
-            const statusConfig = ORDER_STATUS_CONFIG[order.status];
+            const statusConfig = (order.status && ORDER_STATUS_CONFIG[order.status]) || {
+              label: 'Transmise',
+              badgeClass: 'bg-zinc-100 text-zinc-800 border-zinc-200',
+              color: '#666',
+              step: 1,
+            };
+
+            const items = Array.isArray(order.items) ? order.items : [];
+            const displayDate = order.createdAt ? (() => {
+              try {
+                return new Date(order.createdAt).toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
+              } catch {
+                return 'Date récente';
+              }
+            })() : 'Date récente';
 
             return (
               <div
@@ -76,13 +96,7 @@ export const OrderHistoryView: React.FC = () => {
                       {order.id}
                     </span>
                     <span className="text-xs text-zinc-500">
-                      {new Date(order.createdAt).toLocaleDateString('fr-FR', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      {displayDate}
                     </span>
                   </div>
 
@@ -100,10 +114,10 @@ export const OrderHistoryView: React.FC = () => {
                 <div className="p-5 sm:p-6 space-y-4">
                   {/* Items */}
                   <div className="divide-y divide-zinc-100">
-                    {order.items.map((item, idx) => (
+                    {items.map((item, idx) => (
                       <div key={idx} className="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3.5">
                         <img
-                          src={item.image}
+                          src={item.image || '/products/pantalon-prince-galles.jpg'}
                           alt={item.name}
                           className="w-14 h-14 object-cover rounded-lg bg-zinc-100 border border-zinc-200 shrink-0"
                         />
@@ -112,10 +126,10 @@ export const OrderHistoryView: React.FC = () => {
                             {item.name}
                           </h4>
                           <p className="text-[11px] text-zinc-500 mt-0.5">
-                            {item.size ? `Taille : ${item.size}` : 'Taille Unique'} • Qté : {item.quantity}
+                            {item.size ? `Taille : ${item.size}` : 'Taille Unique'} • Qté : {item.quantity || 1}
                           </p>
                           <p className="font-bold text-xs text-[#B85D19] mt-0.5">
-                            {formatFCFA(item.price * item.quantity)}
+                            {formatFCFA((item.price || 0) * (item.quantity || 1))}
                           </p>
                         </div>
                       </div>
@@ -126,17 +140,17 @@ export const OrderHistoryView: React.FC = () => {
                   <div className="pt-4 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-4 text-xs">
                     <div className="space-y-1">
                       <p className="text-zinc-500">
-                        Paiement : <strong className="text-zinc-800">{getPaymentMethodLabel(order.paymentMethod)}</strong>
+                        Paiement : <strong className="text-zinc-800">{getPaymentMethodLabel(order.paymentMethod || 'wave')}</strong>
                       </p>
                       <p className="text-zinc-500">
-                        Livraison : <strong className="text-zinc-800">{order.customerCity}</strong> ({order.customerAddress})
+                        Livraison : <strong className="text-zinc-800">{order.customerCity || 'Dakar'}</strong> ({order.customerAddress || 'Adresse client'})
                       </p>
                     </div>
 
                     <div className="text-right">
                       <span className="text-[11px] text-zinc-400 block">Total payé</span>
                       <span className="font-display font-black text-base text-zinc-900">
-                        {formatFCFA(order.total)}
+                        {formatFCFA(order.total || 0)}
                       </span>
                     </div>
                   </div>

@@ -47,10 +47,14 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
     setSearchedId(searchQuery.trim());
   };
 
-  const getStepProgress = (currentStatus: OrderStatus) => {
+  const getStepProgress = (currentStatus?: OrderStatus) => {
+    if (!currentStatus) return 1;
     const config = ORDER_STATUS_CONFIG[currentStatus];
     return config ? config.step : 1;
   };
+
+  const currentStatusConfig = (currentOrder?.status && ORDER_STATUS_CONFIG[currentOrder.status]) || ORDER_STATUS_CONFIG['transmise'];
+  const currentItems = Array.isArray(currentOrder?.items) ? currentOrder.items : [];
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -121,24 +125,24 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                   {currentOrder.id}
                 </h2>
                 <span className="text-xs text-zinc-500">
-                  Passée le {new Date(currentOrder.createdAt).toLocaleDateString('fr-FR', {
+                  {currentOrder.createdAt ? `Passée le ${new Date(currentOrder.createdAt).toLocaleDateString('fr-FR', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit',
-                  })}
+                  })}` : 'Commande récente'}
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
                 <span
                   className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border ${
-                    ORDER_STATUS_CONFIG[currentOrder.status].badgeClass
+                    currentStatusConfig.badgeClass
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-                  {ORDER_STATUS_CONFIG[currentOrder.status].label}
+                  {currentStatusConfig.label}
                 </span>
               </div>
             </div>
@@ -195,7 +199,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                 <AlertCircle className="w-4 h-4 text-zinc-500 shrink-0 mt-0.5" />
                 <p>
                   <strong>Statut : </strong>
-                  {ORDER_STATUS_CONFIG[currentOrder.status].description}
+                  {currentStatusConfig.description}
                 </p>
               </div>
             </div>
@@ -207,14 +211,14 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
             {/* Col 1 & 2: Ordered Items */}
             <div className="md:col-span-2 bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm space-y-4">
               <h3 className="font-display font-bold text-sm uppercase tracking-wider text-zinc-900 pb-2 border-b border-zinc-100">
-                Articles dans ce colis ({currentOrder.items.length})
+                Articles dans ce colis ({currentItems.length})
               </h3>
 
               <div className="space-y-3">
-                {currentOrder.items.map((item, idx) => (
+                {currentItems.map((item, idx) => (
                   <div key={idx} className="flex items-center gap-3.5 p-3 rounded-xl bg-zinc-50 border border-zinc-100">
                     <img
-                      src={item.image}
+                      src={item.image || '/products/pantalon-prince-galles.jpg'}
                       alt={item.name}
                       className="w-16 h-16 object-cover rounded-lg bg-zinc-200 shrink-0"
                     />
@@ -223,10 +227,10 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                         {item.name}
                       </h4>
                       <p className="text-[11px] text-zinc-500 mt-0.5">
-                        {item.size ? `Taille : ${item.size}` : 'Taille Unique'} • Quantité : {item.quantity}
+                        {item.size ? `Taille : ${item.size}` : 'Taille Unique'} • Quantité : {item.quantity || 1}
                       </p>
                       <p className="font-bold text-xs text-[#B85D19] mt-1">
-                        {formatFCFA(item.price * item.quantity)}
+                        {formatFCFA((item.price || 0) * (item.quantity || 1))}
                       </p>
                     </div>
                   </div>
@@ -236,7 +240,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
               <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-sm">
                 <span className="font-semibold text-zinc-600">Total de la commande :</span>
                 <span className="font-display font-bold text-base text-zinc-900">
-                  {formatFCFA(currentOrder.total)}
+                  {formatFCFA(currentOrder.total || 0)}
                 </span>
               </div>
             </div>
@@ -249,84 +253,73 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
 
               <div className="space-y-3.5 text-xs">
                 <div className="flex items-start gap-2.5">
-                  <MapPin className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
                   <div>
-                    <span className="font-bold text-zinc-700 block">Lieu de livraison</span>
-                    <span className="text-zinc-600 block">{currentOrder.customerCity}</span>
-                    <span className="text-zinc-500 text-[11px] block">{currentOrder.customerAddress}</span>
+                    <span className="text-zinc-400 block text-[10px] uppercase font-bold">Lieu de livraison</span>
+                    <strong className="text-zinc-800">{currentOrder.customerCity || 'Dakar'}</strong>
+                    <p className="text-zinc-500 mt-0.5">{currentOrder.customerAddress || 'Adresse client'}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <Phone className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
+                  <CreditCard className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
                   <div>
-                    <span className="font-bold text-zinc-700 block">Téléphone du destinataire</span>
-                    <span className="text-zinc-600 font-mono">{currentOrder.customerPhone}</span>
+                    <span className="text-zinc-400 block text-[10px] uppercase font-bold">Mode de règlement</span>
+                    <strong className="text-emerald-700">
+                      {getPaymentMethodLabel(currentOrder.paymentMethod || 'wave')}
+                    </strong>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <CreditCard className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
+                  <Phone className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
                   <div>
-                    <span className="font-bold text-zinc-700 block">Mode de paiement</span>
-                    <span className="text-emerald-700 font-semibold block">
-                      {getPaymentMethodLabel(currentOrder.paymentMethod)}
-                    </span>
+                    <span className="text-zinc-400 block text-[10px] uppercase font-bold">Client</span>
+                    <strong className="text-zinc-800">{currentOrder.customerName}</strong>
+                    <p className="text-zinc-500 font-mono mt-0.5">{currentOrder.customerPhone}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Direct WhatsApp Contact Button for this order */}
               <div className="pt-4 border-t border-zinc-100">
                 <a
                   href={`https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(
-                    `Bonjour CAPOSTORE221,\nJe vous contacte concernant le suivi de ma commande ${currentOrder.id}.\nPouvez-vous me donner des précisions sur la livraison ?`
+                    `Bonjour CAPOSTORE221,\nJe souhaite des informations sur le suivi de ma commande ${currentOrder.id}. Merci.`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm"
+                  className="w-full py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Assistance WhatsApp pour ce colis</span>
+                  <MessageCircle className="w-4 h-4 text-emerald-600" />
+                  <span>Assistance WhatsApp</span>
                 </a>
               </div>
             </div>
-
-          </div>
-        </div>
-      ) : searchQuery ? (
-        <div className="bg-white rounded-2xl p-10 text-center border border-zinc-200">
-          <Package className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
-          <h3 className="font-display font-bold text-base text-zinc-900">
-            Aucune commande trouvée pour « {searchQuery} »
-          </h3>
-          <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
-            Vérifiez le numéro saisi ou consultez votre historique de commandes ci-dessous.
-          </p>
-          <div className="mt-4 flex justify-center gap-3">
-            <button
-              onClick={goToOrders}
-              className="px-4 py-2 bg-zinc-900 text-white text-xs font-semibold rounded-xl hover:bg-black transition-colors"
-            >
-              Voir mes commandes
-            </button>
-            <button
-              onClick={() => goToCatalog({ category: 'tous' })}
-              className="px-4 py-2 bg-zinc-100 text-zinc-800 text-xs font-semibold rounded-xl hover:bg-zinc-200 transition-colors"
-            >
-              Découvrir la boutique
-            </button>
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl p-10 text-center border border-zinc-200">
+        <div className="bg-white rounded-2xl p-12 text-center border border-zinc-200 shadow-sm">
           <Package className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
           <h3 className="font-display font-bold text-base text-zinc-900">
-            Entrez votre numéro de commande
+            {searchedId ? `Aucune commande trouvée pour "${searchedId}"` : 'Aucune commande enregistrée'}
           </h3>
           <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
-            Le numéro au format CAPO-XXXX vous a été transmis dès la validation de votre commande.
+            Vérifiez l'identifiant saisi ou consultez l'historique complet de vos commandes.
           </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => goToCatalog({ category: 'tous' })}
+              className="px-5 py-2.5 bg-zinc-900 text-white rounded-xl text-xs font-semibold hover:bg-black transition-colors"
+            >
+              Voir le catalogue
+            </button>
+            <button
+              onClick={goToOrders}
+              className="px-5 py-2.5 bg-[#B85D19] text-white rounded-xl text-xs font-semibold hover:bg-[#9E4D12] transition-colors"
+            >
+              Toutes mes commandes
+            </button>
+          </div>
         </div>
       )}
     </div>

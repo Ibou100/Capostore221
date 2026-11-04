@@ -37,6 +37,42 @@ interface OrderContextType {
 
 const LOCAL_STORAGE_KEY = 'capostore_orders_v1';
 
+export function sanitizeOrder(raw: any): Order | null {
+  if (!raw || typeof raw !== 'object' || !raw.id) return null;
+
+  const validStatuses: OrderStatus[] = ['transmise', 'confirmee', 'en_preparation', 'en_livraison', 'livree'];
+  const status: OrderStatus = validStatuses.includes(raw.status) ? raw.status : 'transmise';
+
+  const validPayments: PaymentMethod[] = ['wave', 'orange_money', 'especes', 'free_money'];
+  const paymentMethod: PaymentMethod = validPayments.includes(raw.paymentMethod) ? raw.paymentMethod : 'wave';
+
+  const rawItems = Array.isArray(raw.items) ? raw.items : [];
+  const items: OrderItem[] = rawItems.map((item: any) => ({
+    productId: String(item?.productId || ''),
+    name: String(item?.name || 'Article CAPOSTORE221'),
+    price: typeof item?.price === 'number' && !isNaN(item.price) ? item.price : 5000,
+    quantity: typeof item?.quantity === 'number' && item.quantity > 0 ? item.quantity : 1,
+    size: item?.size ? String(item.size) : undefined,
+    color: item?.color ? String(item.color) : undefined,
+    image: String(item?.image || '/products/pantalon-prince-galles.jpg'),
+  }));
+
+  return {
+    id: String(raw.id),
+    createdAt: typeof raw.createdAt === 'string' && raw.createdAt ? raw.createdAt : new Date().toISOString(),
+    customerName: String(raw.customerName || raw.customer || 'Client CAPOSTORE221'),
+    customerPhone: String(raw.customerPhone || raw.phone || ''),
+    customerCity: String(raw.customerCity || raw.city || 'Dakar'),
+    customerAddress: String(raw.customerAddress || raw.address || ''),
+    paymentMethod,
+    items,
+    total: typeof raw.total === 'number' && !isNaN(raw.total) ? raw.total : 0,
+    shippingFee: typeof raw.shippingFee === 'number' ? raw.shippingFee : 0,
+    status,
+    notes: raw.notes ? String(raw.notes) : undefined,
+  };
+}
+
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -45,7 +81,10 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (stored) {
-        return JSON.parse(stored) as Order[];
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          return parsed.map(sanitizeOrder).filter((o): o is Order => o !== null);
+        }
       }
     } catch (e) {
       console.error('Failed to load orders from localStorage', e);
@@ -75,17 +114,20 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   /**
    * Bidirectional cloud synchronization:
-   * Merges cloud orders with local orders without losing either.
+   * Merges cloud orders with local orders safely.
    */
   const refreshOrders = useCallback(async () => {
     setIsSyncing(true);
     try {
-      const cloudOrders = await fetchCloudOrders();
-      const localOrders = ordersRef.current;
+      const rawCloudOrders = await fetchCloudOrders();
+      const cloudOrders = Array.isArray(rawCloudOrders)
+        ? rawCloudOrders.map(sanitizeOrder).filter((o): o is Order => o !== null)
+        : [];
 
+      const localOrders = ordersRef.current;
       const orderMap = new Map<string, Order>();
 
-      // Put cloud orders first
+      // Put sanitized cloud orders first
       cloudOrders.forEach((o) => {
         if (o && o.id) orderMap.set(o.id, o);
       });
@@ -99,9 +141,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           orderMap.set(local.id, local);
           hadLocalUnsynced = true;
         } else {
-          // If local has a newer status update, keep local or cloud
+          // Keep cloud unless local was updated very recently
           const cloud = orderMap.get(local.id)!;
-          // Prefer cloud unless local was updated very recently
           orderMap.set(local.id, cloud);
         }
       });
@@ -167,7 +208,10 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Immediate Cloud push to make sure owner sees it right away across devices
       (async () => {
         try {
-          const cloudExisting = await fetchCloudOrders();
+          const rawCloud = await fetchCloudOrders();
+          const cloudExisting = Array.isArray(rawCloud)
+            ? rawCloud.map(sanitizeOrder).filter((o): o is Order => o !== null)
+            : [];
           const map = new Map<string, Order>();
           cloudExisting.forEach((o) => map.set(o.id, o));
           map.set(newOrder.id, newOrder);

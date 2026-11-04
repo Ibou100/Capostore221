@@ -1369,23 +1369,23 @@ export const AdminView: React.FC = () => {
 
                       {/* Items */}
                       <div className="divide-y divide-zinc-100">
-                        {order.items.map((item, idx) => (
+                        {(Array.isArray(order.items) ? order.items : []).map((item, idx) => (
                           <div key={idx} className="py-2.5 flex items-center justify-between gap-3 text-xs">
                             <div className="flex items-center gap-3">
                               <img
-                                src={item.image}
+                                src={item.image || '/products/pantalon-prince-galles.jpg'}
                                 alt={item.name}
                                 className="w-12 h-12 object-cover rounded-lg bg-zinc-100 border border-zinc-200 shrink-0"
                               />
                               <div>
                                 <h4 className="font-semibold text-zinc-900">{item.name}</h4>
                                 <span className="text-[11px] text-zinc-500">
-                                  {item.size ? `Taille : ${item.size}` : 'Taille Unique'} • Quantité : {item.quantity}
+                                  {item.size ? `Taille : ${item.size}` : 'Taille Unique'} • Quantité : {item.quantity || 1}
                                 </span>
                               </div>
                             </div>
                             <span className="font-bold text-zinc-900 font-mono">
-                              {formatFCFA(item.price * item.quantity)}
+                              {formatFCFA((item.price || 0) * (item.quantity || 1))}
                             </span>
                           </div>
                         ))}
