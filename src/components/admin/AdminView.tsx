@@ -357,18 +357,7 @@ export const AdminView: React.FC = () => {
             </button>
           </form>
 
-          {/* Credentials Info Helper for the Owner */}
-          <div className="mt-6 p-3.5 rounded-xl bg-white/5 border border-white/10 text-[11px] text-zinc-400 space-y-1 text-left">
-            <span className="font-bold text-zinc-200 block">🔑 Aide pour le Propriétaire :</span>
-            <p>
-              Mot de passe initial par défaut : <strong className="text-amber-400 font-mono">CapoStore221@Admin</strong> (ou <strong className="text-amber-400 font-mono">capo221</strong>).
-            </p>
-            <p className="text-[10px] text-zinc-500">
-              Vous pourrez changer ce mot de passe à tout moment dans l'onglet « Sécurité » de votre tableau de bord.
-            </p>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-zinc-800/80 text-center">
+          <div className="mt-8 pt-4 border-t border-zinc-800/80 text-center">
             <button
               onClick={goToHome}
               className="text-xs text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1.5"

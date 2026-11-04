@@ -11,9 +11,9 @@ const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes lockout
 const SESSION_DURATION_MS = 2 * 60 * 60 * 1000; // 2 hours session expiry
 
-// Default owner password: "CapoStore221@Admin" (or "capo221" for quick access)
-// The owner can change this password at any time from the Admin settings!
-const DEFAULT_INITIAL_PASSWORDS = ['CapoStore221@Admin', 'capo221', '221'];
+// Unique default initial password for the owner
+// The owner can modify this password at any time from the security settings
+const DEFAULT_INITIAL_PASSWORD = 'CapoStore221@Admin';
 
 interface StoredAuth {
   salt: string;
@@ -126,8 +126,8 @@ export async function verifyOwnerPassword(candidatePassword: string): Promise<{ 
     const candidateHash = await computeHash(candidatePassword, stored.salt);
     isValid = candidateHash === stored.hash;
   } else {
-    // If no custom password set yet, check default owner passwords
-    isValid = DEFAULT_INITIAL_PASSWORDS.includes(candidatePassword.trim());
+    // If no custom password set yet, only the unique single default owner password works
+    isValid = candidatePassword.trim() === DEFAULT_INITIAL_PASSWORD;
     if (isValid) {
       // Auto-migrate to secure hashed storage
       await setOwnerPassword(candidatePassword.trim());
