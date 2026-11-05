@@ -23,7 +23,10 @@ export const Navbar: React.FC = () => {
   const { goToHome, goToCatalog, goToWishlist, goToOrders, goToAdmin, openSearch, currentView } = useStore();
   const { orders, myOrders } = useOrders();
   const isAdmin = isSessionValid();
-  const orderBadgeCount = isAdmin ? orders.length : myOrders.length;
+  // Notification badge only counts orders pending action (not delivered ones)
+  const pendingOrdersCount = orders.filter((o) => o.status !== 'livree').length;
+  const pendingMyOrdersCount = myOrders.filter((o) => o.status !== 'livree').length;
+  const orderBadgeCount = isAdmin ? pendingOrdersCount : pendingMyOrdersCount;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

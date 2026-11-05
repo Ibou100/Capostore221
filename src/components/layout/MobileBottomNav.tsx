@@ -12,7 +12,10 @@ export const MobileBottomNav: React.FC = () => {
   const { wishlistCount } = useWishlist();
   const { orders, myOrders } = useOrders();
   const isAdmin = isSessionValid();
-  const orderBadgeCount = isAdmin ? orders.length : myOrders.length;
+  // Notification badge only counts orders pending action (not delivered ones)
+  const pendingOrdersCount = orders.filter((o) => o.status !== 'livree').length;
+  const pendingMyOrdersCount = myOrders.filter((o) => o.status !== 'livree').length;
+  const orderBadgeCount = isAdmin ? pendingOrdersCount : pendingMyOrdersCount;
 
   const isHome = currentView.type === 'home';
   const isCatalog = currentView.type === 'catalog';

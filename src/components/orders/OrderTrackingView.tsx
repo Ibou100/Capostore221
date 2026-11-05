@@ -267,8 +267,12 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                     currentStatusConfig.badgeClass
                   }`}
                 >
-                  <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-                  {currentStatusConfig.label}
+                  {currentOrder.status === 'livree' ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  ) : (
+                    <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
+                  )}
+                  <span>{currentOrder.status === 'livree' ? 'Colis Livré (Terminé)' : currentStatusConfig.label}</span>
                 </span>
               </div>
             </div>
@@ -315,8 +319,8 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
                             {step.label}
                           </p>
                           {isCurrent ? (
-                            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block">
-                              Étape actuelle
+                            <span className={`text-[10px] font-bold uppercase tracking-wider block ${step.status === 'livree' ? 'text-emerald-700 font-black' : 'text-emerald-600'}`}>
+                              {step.status === 'livree' ? '✓ Terminé & Livré' : 'Étape actuelle'}
                             </span>
                           ) : (
                             <span className="text-[9px] text-zinc-400 group-hover:text-[#B85D19] font-medium block">
