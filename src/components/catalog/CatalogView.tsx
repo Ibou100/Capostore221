@@ -13,18 +13,18 @@ export const CatalogView: React.FC = () => {
   ) || CATEGORIES_META[0];
 
   return (
-    <div className="bg-[#FAF8F5] min-h-screen py-8 lg:py-14">
+    <div className="bg-[#FAF8F5] min-h-screen py-8 lg:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Editorial Catalog Header */}
-        <div className="pb-6 mb-8 sm:mb-10 border-b border-stone-200/80 text-left">
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-[#B85D19] text-[10px] font-bold uppercase tracking-widest mb-2">
-            <span>Catalogue Officiel • {filteredProducts.length} pièce{filteredProducts.length > 1 ? 's' : ''} en stock</span>
-          </div>
-          <h1 className="font-display font-black text-2xl sm:text-4xl text-[#0C0A09] tracking-tight">
+        <div className="pb-6 mb-8 border-b border-[#E7E2D9] text-left">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#B85D19] mb-1">
+            Catalogue • {filteredProducts.length} pièce{filteredProducts.length > 1 ? 's' : ''} disponible{filteredProducts.length > 1 ? 's' : ''}
+          </p>
+          <h1 className="font-display font-extrabold text-2xl sm:text-4xl text-zinc-900 tracking-tight">
             {currentCategoryMeta.name}
           </h1>
-          <p className="text-xs sm:text-sm text-stone-500 max-w-2xl mt-1.5 leading-relaxed">
+          <p className="text-xs sm:text-sm text-zinc-500 max-w-2xl mt-1.5 leading-relaxed">
             {currentCategoryMeta.description}
           </p>
         </div>
@@ -40,28 +40,28 @@ export const CatalogView: React.FC = () => {
           {/* Right Product Grid */}
           <div className="lg:col-span-3">
             {filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             ) : (
               /* Empty State */
-              <div className="bg-white border border-stone-200 rounded-3xl p-12 text-center my-8 shadow-sm">
-                <div className="w-16 h-16 rounded-2xl bg-stone-100 flex items-center justify-center mx-auto mb-4 text-stone-400">
-                  <PackageSearch className="w-8 h-8" />
+              <div className="bg-white border border-[#E7E2D9] rounded-sm p-12 text-center my-8">
+                <div className="w-14 h-14 rounded-full bg-zinc-100 flex items-center justify-center mx-auto mb-4 text-zinc-400">
+                  <PackageSearch className="w-7 h-7" />
                 </div>
-                <h3 className="font-display font-extrabold text-lg text-stone-900 mb-2">
+                <h3 className="font-display font-bold text-base text-zinc-900 mb-2">
                   Aucune pièce ne correspond à vos filtres
                 </h3>
-                <p className="text-xs text-stone-500 max-w-md mx-auto mb-6 leading-relaxed">
-                  Modifiez vos critères de sélection ou réinitialisez les options pour afficher toutes les pièces disponibles.
+                <p className="text-xs text-zinc-500 max-w-md mx-auto mb-6">
+                  Modifiez vos critères de sélection pour explorer nos créations disponibles.
                 </p>
                 <button
                   onClick={resetFilters}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#0C0A09] hover:bg-[#201D1A] text-white text-xs font-bold uppercase tracking-wider transition-all rounded-full shadow-md"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#141210] text-white text-xs font-semibold uppercase tracking-wider hover:bg-zinc-800 transition-colors rounded-sm"
                 >
-                  <RotateCcw className="w-4 h-4 text-amber-400" />
+                  <RotateCcw className="w-3.5 h-3.5" />
                   <span>Réinitialiser les filtres</span>
                 </button>
               </div>

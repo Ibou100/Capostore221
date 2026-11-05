@@ -47,63 +47,62 @@ export const CollectionsGrid: React.FC = () => {
   ];
 
   return (
-    <section className="py-10 sm:py-16 lg:py-20 bg-[#FAF8F5] border-b border-stone-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-8 sm:py-12 lg:py-16 bg-[#FAF8F5] border-b border-[#E7E2D9]">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 pb-4 sm:pb-6 border-b border-stone-200/60 gap-3 text-left">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-5 sm:mb-8 pb-3 sm:pb-4 border-b border-[#EAE5DC] gap-2 sm:gap-4 text-left">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-[#B85D19] text-[10px] font-bold uppercase tracking-widest mb-1.5">
-              <span>Le Vestiaire</span>
-            </div>
-            <h2 className="font-display font-black text-2xl sm:text-4xl text-[#0C0A09] tracking-tight">
-              Explorer par Département
+            <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#B85D19] mb-0.5">
+              Départements
+            </p>
+            <h2 className="font-display font-extrabold text-xl sm:text-3xl text-zinc-900 tracking-tight">
+              Explorer par Catégorie
             </h2>
           </div>
-          <p className="text-xs sm:text-sm text-stone-500 max-w-md leading-relaxed">
-            23 créations disponibles en stock réel immédiat. Choisissez votre catégorie, visualisez les coupes et commandez en direct.
+          <p className="text-xs sm:text-sm text-zinc-500 max-w-md">
+            Chaque pièce est disponible en stock réel. Commandez en ligne et recevez votre colis à domicile.
           </p>
         </div>
 
-        {/* 3 Luxury Category Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-7">
+        {/* 3 Clean Minimalist Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-6">
           {departments.map((dept) => (
             <div
               key={dept.id}
               onClick={() => goToCatalog({ category: dept.category })}
-              className="group relative overflow-hidden rounded-3xl cursor-pointer bg-white border border-stone-200/80 hover:border-[#B85D19]/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+              className="group relative overflow-hidden rounded-sm cursor-pointer bg-white border border-[#E7E2D9] hover:border-zinc-900 transition-all duration-300"
             >
               {/* Studio Frame */}
-              <div className="aspect-[4/3] sm:aspect-[4/5] w-full bg-gradient-to-b from-[#FAF8F5] to-[#F1EFEA] p-6 sm:p-8 overflow-hidden relative flex items-center justify-center border-b border-stone-200/80">
+              <div className="aspect-[4/3] sm:aspect-[4/5] w-full bg-[#FAF8F5] p-4 sm:p-6 overflow-hidden relative flex items-center justify-center border-b border-[#EAE5DC]">
                 <img
                   src={dept.image}
                   alt={dept.title}
-                  className="w-full h-full max-h-[240px] sm:max-h-none object-contain drop-shadow-md transition-transform duration-500 ease-out group-hover:scale-106"
+                  className="w-full h-full max-h-[220px] sm:max-h-none object-contain drop-shadow-sm transition-transform duration-300 ease-out group-hover:scale-104"
                   loading="lazy"
                   decoding="async"
                 />
                 
                 {/* Price tag */}
-                <span className="absolute top-4 left-4 text-xs font-black tracking-wider px-3 py-1 bg-[#0C0A09] text-white rounded-full shadow-md">
+                <span className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 text-[10px] sm:text-[11px] font-bold tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 bg-[#141210] text-white rounded-sm">
                   {dept.priceTag}
                 </span>
 
                 {/* Arrow indicator */}
-                <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white text-stone-900 border border-stone-200 flex items-center justify-center transition-all group-hover:bg-[#0C0A09] group-hover:text-amber-400 group-hover:rotate-45 duration-300 shadow-sm">
-                  <ArrowUpRight className="w-4 h-4" />
+                <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-zinc-800 border border-zinc-200 flex items-center justify-center transition-transform group-hover:rotate-45 duration-300 shadow-sm">
+                  <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </div>
               </div>
 
               {/* Text Info */}
-              <div className="p-5 sm:p-6 bg-white text-left">
-                <div className="flex items-center justify-between text-[10px] text-[#B85D19] uppercase tracking-widest font-bold mb-1">
+              <div className="p-3.5 sm:p-5 bg-white text-left">
+                <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-zinc-400 uppercase tracking-wider mb-0.5 sm:mb-1">
                   <span>{dept.count}</span>
-                  <span className="text-stone-400 font-medium">Collection 2026</span>
                 </div>
-                <h3 className="font-display font-extrabold text-base sm:text-lg text-stone-900 group-hover:text-[#B85D19] transition-colors">
+                <h3 className="font-display font-bold text-sm sm:text-base text-zinc-900 group-hover:text-[#B85D19] transition-colors mb-0.5 sm:mb-1">
                   {dept.title}
                 </h3>
-                <p className="text-xs text-stone-500 mt-1 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-zinc-500 leading-relaxed line-clamp-1 sm:line-clamp-2">
                   {dept.subtitle}
                 </p>
               </div>

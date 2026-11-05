@@ -85,172 +85,144 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full bg-gradient-to-b from-[#FAF8F5] via-[#F5F2EB] to-[#FAF8F5] border-b border-[#E7E2D9] overflow-hidden py-8 sm:py-12 lg:py-20">
-      {/* Decorative ambient subtle glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-amber-400/5 blur-3xl pointer-events-none rounded-full" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="relative w-full bg-[#FAF8F5] border-b border-[#E7E2D9] overflow-hidden py-6 sm:py-10 lg:py-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Top subtle category indicator */}
-        <div className="flex items-center justify-between pb-4 sm:pb-6 mb-6 sm:mb-10 border-b border-[#E2DDD3] text-xs">
-          <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-[#B85D19] animate-pulse" />
-            <span className="font-extrabold uppercase tracking-[0.2em] text-[#0C0A09] text-[10px] sm:text-xs">
-              Maison CapoStore221 • Dakar
+        <div className="flex items-center justify-between pb-3 sm:pb-6 mb-4 sm:mb-8 border-b border-[#E7E2D9] text-xs">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#B85D19]" />
+            <span className="font-semibold uppercase tracking-widest text-zinc-900 text-[10px] sm:text-[11px]">
+              Collection 2026 • CAPOSTORE221
             </span>
           </div>
-          <div className="hidden sm:flex items-center gap-3 text-stone-500 font-medium text-[11px] uppercase tracking-wider">
-            <span className="px-2.5 py-0.5 rounded-full bg-stone-200/60 text-stone-700 font-bold">Stock Réel</span>
-            <span>Tu commandes, on te livre</span>
-          </div>
+          <p className="hidden sm:block text-zinc-500 font-medium text-[11px] uppercase tracking-wider">
+            Vente en ligne • Tu commandes, on te livre
+          </p>
         </div>
 
         {/* Main Grid: Left Manifesto & CTAs | Right Curated Piece Stage */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 lg:gap-12 items-center">
           
           {/* Left Column: Editorial Headline & Actions */}
-          <div className="lg:col-span-6 text-left space-y-5 sm:space-y-7">
-            <div className="space-y-3 sm:space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-[#B85D19] text-[10px] sm:text-xs font-bold uppercase tracking-widest">
-                <span>Édition Urbaine & Tailleur 2026</span>
-              </div>
-              <h1 className="font-display font-black text-3xl sm:text-5xl lg:text-6xl text-[#0C0A09] tracking-tight leading-[1.08]">
-                L'allure contemporaine, <span className="gold-gradient-text block sm:inline">livrée chez vous.</span>
+          <div className="lg:col-span-6 text-left space-y-4 sm:space-y-6">
+            <div className="space-y-2 sm:space-y-3">
+              <span className="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#B85D19]">
+                Mode Urbaine & Tailleur
+              </span>
+              <h1 className="font-display font-black text-2xl sm:text-4xl lg:text-6xl text-[#141210] tracking-tight leading-[1.1]">
+                L'allure contemporaine, livrée chez vous.
               </h1>
-              <p className="text-sm sm:text-base text-stone-600 leading-relaxed font-normal max-w-lg">
-                Des coupes impeccables, des toiles denses et des finitions soignées. Vous commandez en ligne en 1 clic, nous préparons et assurons la livraison rapide directement chez vous à Dakar et dans tout le Sénégal.
+              <p className="text-xs sm:text-base text-zinc-600 leading-relaxed font-normal max-w-lg">
+                Des coupes impeccables, des toiles denses et des finitions soignées. Vous commandez en ligne, nous validons et assurons la livraison rapide directement à votre porte.
               </p>
             </div>
 
             {/* Price Pill Highlights */}
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 pt-1">
-              <div className="px-3.5 py-2 bg-white/90 backdrop-blur-xs border border-stone-200 rounded-xl text-xs text-stone-800 shadow-2xs flex items-center gap-2">
-                <span className="font-extrabold text-[#0C0A09] text-sm">5 000 FCFA</span>
-                <span className="text-[11px] text-stone-400 line-through">8 500 F</span>
-                <span className="text-[10px] font-black text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
-                  -41%
-                </span>
-                <span className="text-stone-500 font-medium ml-1">Pantalons & Chemises</span>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-0.5">
+              <div className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white border border-[#E7E2D9] rounded-sm text-[11px] sm:text-xs text-zinc-800">
+                <span className="font-bold text-[#141210]">5 000 FCFA</span>
+                <span className="text-zinc-500 ml-1">Pantalons & Chemises</span>
               </div>
-              <div className="px-3.5 py-2 bg-white/90 backdrop-blur-xs border border-stone-200 rounded-xl text-xs text-stone-800 shadow-2xs flex items-center gap-2">
-                <span className="font-extrabold text-[#0C0A09] text-sm">3 000 FCFA</span>
-                <span className="text-[11px] text-stone-400 line-through">5 000 F</span>
-                <span className="text-[10px] font-black text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
-                  -40%
-                </span>
-                <span className="text-stone-500 font-medium ml-1">Lunettes & Sacs</span>
+              <div className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white border border-[#E7E2D9] rounded-sm text-[11px] sm:text-xs text-zinc-800">
+                <span className="font-bold text-[#141210]">3 000 FCFA</span>
+                <span className="text-zinc-500 ml-1">Lunettes & Sacs</span>
               </div>
             </div>
 
             {/* Primary Action Buttons */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="pt-1 flex flex-row items-center gap-2 sm:gap-3">
               <button
                 onClick={() => goToCatalog({ category: 'tous' })}
-                className="bg-[#0C0A09] hover:bg-[#1E1B18] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 group cursor-pointer"
+                className="flex-1 sm:flex-initial bg-[#141210] hover:bg-[#2C2723] text-white px-4 sm:px-7 py-3 sm:py-3.5 rounded-sm text-[11px] sm:text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 sm:gap-2 transition-colors shadow-sm"
               >
-                <span>Explorer la Collection (23 pièces)</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <span>Explorer (23 pièces)</span>
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
 
               <button
                 type="button"
                 onClick={handleHeroQuickOrder}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
+                className="flex-1 sm:flex-initial bg-white hover:bg-zinc-50 text-zinc-900 border border-[#D9D3C7] px-3 sm:px-5 py-3 sm:py-3.5 rounded-sm text-[11px] sm:text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 sm:gap-2 transition-colors shadow-2xs"
               >
-                <MessageCircle className="w-4 h-4 fill-white/20" />
-                <span>Commander direct (WhatsApp)</span>
+                <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700" />
+                <span>Commander direct</span>
               </button>
             </div>
 
             {/* Quick Reassurance Ticker */}
-            <div className="pt-4 flex flex-wrap items-center gap-5 sm:gap-7 text-xs text-stone-600 border-t border-[#E5DFD4]">
-              <span className="flex items-center gap-1.5 font-medium">
-                <Check className="w-4 h-4 text-emerald-600" />
-                Photos 100% réelles
+            <div className="pt-2 sm:pt-4 flex items-center gap-4 sm:gap-6 text-[10px] sm:text-[11px] text-zinc-500 border-t border-[#EAE5DC]">
+              <span className="flex items-center gap-1">
+                <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-zinc-700" />
+                Photos réelles
               </span>
-              <span className="flex items-center gap-1.5 font-medium">
-                <Check className="w-4 h-4 text-emerald-600" />
-                Livraison Dakar 2h-4h
-              </span>
-              <span className="flex items-center gap-1.5 font-medium">
-                <Check className="w-4 h-4 text-emerald-600" />
-                Wave, OM & Espèces
+              <span className="flex items-center gap-1">
+                <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-zinc-700" />
+                Wave, OM & espèces
               </span>
             </div>
           </div>
 
           {/* Right Column: Featured Studio Stage with interactive garment selector */}
           <div className="lg:col-span-6">
-            <div className="bg-white border border-stone-200/90 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.06)] transition-all">
+            <div className="bg-white border border-[#E7E2D9] rounded-sm overflow-hidden shadow-sm">
               
               {/* Product Visual Container */}
               <div
                 onClick={() => goToProduct(currentPiece.id)}
-                className="relative aspect-[4/3] sm:aspect-[1/1] lg:aspect-[4/5] bg-gradient-to-b from-[#FAF8F5] to-[#F2EFE8] p-6 sm:p-10 flex items-center justify-center cursor-pointer group border-b border-stone-200/80"
+                className="relative aspect-[4/3] sm:aspect-[1/1] lg:aspect-[4/5] bg-[#FAF8F5] p-4 sm:p-10 flex items-center justify-center cursor-pointer group border-b border-[#EAE5DC]"
               >
                 <img
                   src={currentPiece.image}
                   alt={currentPiece.name}
-                  className="w-full h-full max-h-[280px] sm:max-h-[440px] object-contain drop-shadow-md transition-transform duration-500 ease-out group-hover:scale-105"
+                  className="w-full h-full max-h-[260px] sm:max-h-[460px] object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-103"
                   loading="eager"
                   decoding="async"
                 />
 
                 {/* Badge on Image */}
-                <div className="absolute top-4 left-4 flex flex-col gap-1.5 items-start">
-                  <span className="px-3 py-1 text-[10px] font-black uppercase tracking-wider bg-[#0C0A09] text-white rounded-full shadow-sm">
+                <div className="absolute top-3 left-3">
+                  <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-[#141210] text-white rounded-sm">
                     {currentPiece.badge}
-                  </span>
-                  <span className="px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider bg-[#f68b1e] text-white rounded shadow-sm">
-                    {currentPiece.price === 5000 ? '-41% Promo' : '-40% Promo'}
                   </span>
                 </div>
 
                 {/* Clickable prompt */}
-                <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full border border-stone-200 text-xs font-bold text-stone-900 flex items-center gap-1.5 shadow-md group-hover:bg-[#0C0A09] group-hover:text-white transition-all">
+                <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-sm border border-zinc-200 text-[10px] sm:text-[11px] font-semibold text-zinc-900 flex items-center gap-1 shadow-sm group-hover:bg-[#141210] group-hover:text-white transition-colors">
                   <span>Voir la fiche</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3 h-3" />
                 </div>
               </div>
 
               {/* Garment Details & Switcher Tabs */}
-              <div className="p-4 sm:p-6 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-3 sm:p-5 bg-white flex items-center justify-between gap-3">
                 <div className="text-left min-w-0">
-                  <p className="text-[10px] uppercase tracking-widest text-[#B85D19] font-bold truncate">
+                  <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-zinc-400 font-semibold truncate">
                     {currentPiece.category}
                   </p>
-                  <h3 className="font-display font-extrabold text-sm sm:text-lg text-stone-900 truncate mt-0.5">
+                  <h3 className="font-display font-bold text-xs sm:text-base text-zinc-900 truncate mt-0.5">
                     {currentPiece.name}
                   </h3>
-                  <div className="flex items-baseline gap-2 mt-1">
-                    <span className="font-display font-black text-base sm:text-xl text-[#0C0A09]">
-                      {formatFCFA(currentPiece.price)}
-                    </span>
-                    <span className="text-xs text-stone-400 line-through">
-                      {formatFCFA(currentPiece.price === 5000 ? 8500 : 5000)}
-                    </span>
-                  </div>
+                  <p className="font-bold text-xs sm:text-base text-[#141210] mt-0.5">
+                    {formatFCFA(currentPiece.price)}
+                  </p>
                 </div>
 
-                {/* Interactive Visual Thumbnail Garment Switcher */}
-                <div className="flex items-center gap-2 shrink-0">
+                {/* Garment Selector Tabs */}
+                <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                   {featuredPieces.map((piece, idx) => (
                     <button
                       key={piece.id}
                       onClick={() => setActivePieceIndex(idx)}
-                      className={`relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border-2 transition-all p-0.5 ${
+                      className={`w-7 h-7 sm:w-9 sm:h-9 rounded-sm border text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center ${
                         activePieceIndex === idx
-                          ? 'border-[#B85D19] ring-2 ring-[#B85D19]/30 scale-105'
-                          : 'border-stone-200 hover:border-stone-400 opacity-70 hover:opacity-100'
+                          ? 'bg-[#141210] text-white border-[#141210]'
+                          : 'bg-[#FAF8F5] text-zinc-600 border-[#E7E2D9] hover:border-zinc-900'
                       }`}
-                      aria-label={`Voir ${piece.name}`}
+                      aria-label={`Voir pièce ${idx + 1}`}
                       title={piece.name}
                     >
-                      <img
-                        src={piece.image}
-                        alt={piece.name}
-                        className="w-full h-full object-cover rounded-lg bg-stone-100"
-                      />
+                      0{idx + 1}
                     </button>
                   ))}
                 </div>
