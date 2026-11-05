@@ -206,7 +206,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  // Sync cloud catalog on mount and every 45 seconds (when tab is active)
+  // Sync cloud catalog on mount and on tab focus
   useEffect(() => {
     refreshCloudCatalog();
 
@@ -216,17 +216,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     };
 
-    const interval = setInterval(() => {
-      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-        refreshCloudCatalog();
-      }
-    }, 45000);
-
     window.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('focus', handleVisibility);
 
     return () => {
-      clearInterval(interval);
       window.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('focus', handleVisibility);
     };
