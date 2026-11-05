@@ -47,6 +47,8 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, Error
   handleReset = () => {
     try {
       localStorage.removeItem('capostore_orders_v1');
+      localStorage.removeItem('capostore_product_overrides_v1');
+      localStorage.removeItem('capostore_custom_products_v1');
     } catch {}
     window.location.href = '/';
   };

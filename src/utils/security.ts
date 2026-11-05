@@ -194,13 +194,12 @@ export function getAttemptTracker(): { count: number; lockedUntil: null } {
 export function addAuditLog(action: string, details?: string): void {
   if (typeof window === 'undefined') return;
   try {
-    const raw = localStorage.getItem(AUDIT_LOG_STORAGE_KEY);
-    const logs: SecurityAuditLog[] = raw ? JSON.parse(raw) : [];
+    const logs = getAuditLogs();
     const newEntry: SecurityAuditLog = {
       id: `audit_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       timestamp: new Date().toISOString(),
-      action,
-      details,
+      action: String(action || ''),
+      details: details ? String(details) : undefined,
     };
     const updated = [newEntry, ...logs].slice(0, 50);
     localStorage.setItem(AUDIT_LOG_STORAGE_KEY, JSON.stringify(updated));
@@ -213,7 +212,11 @@ export function getAuditLogs(): SecurityAuditLog[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(AUDIT_LOG_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((l): l is SecurityAuditLog => !!l && typeof l === 'object' && typeof l.id === 'string');
+    }
   } catch {}
   return [];
 }

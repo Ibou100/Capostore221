@@ -211,15 +211,30 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  // Sync on initial mount & periodic polling (every 12 seconds)
+  // Sync on initial mount & periodic polling (every 30 seconds only when tab is active)
   useEffect(() => {
     refreshOrders();
 
-    const interval = setInterval(() => {
-      refreshOrders();
-    }, 12000);
+    const handleVisibility = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        refreshOrders();
+      }
+    };
 
-    return () => clearInterval(interval);
+    const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        refreshOrders();
+      }
+    }, 30000);
+
+    window.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleVisibility);
+    };
   }, [refreshOrders]);
 
   const createOrder = (input: CreateOrderInput): Order => {

@@ -72,22 +72,28 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (typeof window === 'undefined') return {};
     try {
       const stored = localStorage.getItem(OVERRIDES_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : {};
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+      }
     } catch (e) {
       console.error('Failed to parse product overrides from localStorage', e);
-      return {};
     }
+    return {};
   });
 
   const [customProducts, setCustomProducts] = useState<Product[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
       const stored = localStorage.getItem(CUSTOM_PRODUCTS_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return Array.isArray(parsed) ? parsed : [];
+      }
     } catch (e) {
       console.error('Failed to parse custom products from localStorage', e);
-      return [];
     }
+    return [];
   });
 
   const customProductsRef = useRef<Product[]>(customProducts);
@@ -103,30 +109,28 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [currentView, setCurrentView] = useState<ViewState>(() => {
     if (typeof window !== 'undefined') {
       const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '');
-      if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+      const params = new URLSearchParams(window.location.search);
+
+      // Instant direct link to admin (/admin or ?cle=2210 or ?admin=1)
+      if (
+        pathname === '/admin' || 
+        pathname.startsWith('/admin/') ||
+        params.get('cle') !== null ||
+        params.get('key') !== null ||
+        params.get('admin') === '1' || 
+        params.get('espace') === 'proprietaire'
+      ) {
         return { type: 'admin' };
       }
-      if (pathname === '/commandes' || pathname === '/orders') {
+
+      if (pathname === '/commandes' || pathname === '/orders' || params.get('orders') === '1' || params.get('commandes') === '1') {
         return { type: 'orders' };
       }
-      if (pathname === '/suivi' || pathname === '/tracking') {
-        const params = new URLSearchParams(window.location.search);
+      if (pathname === '/suivi' || pathname === '/tracking' || params.get('track')) {
         return { type: 'tracking', orderId: params.get('track') || undefined };
       }
       if (pathname === '/catalogue' || pathname === '/boutique') {
         return { type: 'catalog' };
-      }
-
-      const params = new URLSearchParams(window.location.search);
-      const trackId = params.get('track');
-      if (trackId) {
-        return { type: 'tracking', orderId: trackId };
-      }
-      if (params.get('admin') === '1' || params.get('espace') === 'proprietaire') {
-        return { type: 'admin' };
-      }
-      if (params.get('orders') === '1' || params.get('commandes') === '1') {
-        return { type: 'orders' };
       }
     }
     return { type: 'home' };
@@ -202,13 +206,30 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  // Sync cloud catalog on mount and every 30 seconds
+  // Sync cloud catalog on mount and every 45 seconds (when tab is active)
   useEffect(() => {
     refreshCloudCatalog();
+
+    const handleVisibility = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        refreshCloudCatalog();
+      }
+    };
+
     const interval = setInterval(() => {
-      refreshCloudCatalog();
-    }, 30000);
-    return () => clearInterval(interval);
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        refreshCloudCatalog();
+      }
+    }, 45000);
+
+    window.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleVisibility);
+    };
   }, [refreshCloudCatalog]);
 
   // Add custom product from owner admin
@@ -296,12 +317,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     showToast('Toutes les tenues ont été réinitialisées aux valeurs par défaut.', 'info');
   };
 
-  const showToast = (message: string, type: 'success' | 'info' | 'error' = 'info') => {
+  const showToast = useCallback((message: string, type: 'success' | 'info' | 'error' = 'info') => {
     setToast({ message, type });
     setTimeout(() => {
       setToast((current) => (current?.message === message ? null : current));
     }, 3800);
-  };
+  }, []);
 
   const resetFilters = () => {
     setFilters(DEFAULT_FILTERS);

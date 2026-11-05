@@ -50,8 +50,21 @@ export const AdminView: React.FC = () => {
     lastSyncTime 
   } = useOrders();
 
-  // Authentication & Session State
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => isSessionValid());
+  // Authentication & Session State - Check immediately if session is valid OR if valid secret key is in URL
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const secretKey = params.get('cle') || params.get('key') || params.get('admin') || params.get('pass');
+      if (secretKey) {
+        const clean = secretKey.trim().toLowerCase();
+        if (['221', '2210', '2026', 'capo221', 'capostore221'].includes(clean)) {
+          createAdminSession();
+          return true;
+        }
+      }
+    }
+    return isSessionValid();
+  });
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -102,23 +115,18 @@ export const AdminView: React.FC = () => {
   // Audit Logs State
   const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>([]);
 
-  // Check for secret direct key in URL (ex: /admin?cle=2210) for instant 1-click access
+  // Clean secret URL key quietly after first mount without re-renders
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      const secretKey = params.get('cle') || params.get('key') || params.get('admin') || params.get('pass');
+      const secretKey = params.get('cle') || params.get('key') || params.get('pass');
       if (secretKey) {
-        const clean = secretKey.trim().toLowerCase();
-        if (['221', '2210', '2026', 'capo221', 'capostore221'].includes(clean)) {
-          createAdminSession();
-          setIsAuthenticated(true);
-          showToast('Connexion automatique réussie via votre lien secret !', 'success');
-          // Clean URL quietly
+        try {
           window.history.replaceState(null, '', '/admin');
-        }
+        } catch {}
       }
     }
-  }, [showToast]);
+  }, []);
 
   // Refresh audit logs on tab switch
   useEffect(() => {
@@ -396,27 +404,29 @@ export const AdminView: React.FC = () => {
     showToast('Sauvegarde JSON téléchargée avec succès.', 'success');
   };
 
-  // Filtered products list
-  const filteredProducts = products.filter((p) => {
-    const matchesSearch =
-      productSearch.trim() === '' ||
-      p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
-      p.subCategory.toLowerCase().includes(productSearch.toLowerCase());
-
-    const matchesCategory =
-      categoryFilter === 'all' || p.category === categoryFilter;
-
+  // Filtered products list (Defensively null-safe)
+  const filteredProducts = (products || []).filter((p) => {
+    if (!p) return false;
+    const q = (productSearch || '').toLowerCase().trim();
+    const name = String(p.name || '').toLowerCase();
+    const sub = String(p.subCategory || '').toLowerCase();
+    const matchesSearch = q === '' || name.includes(q) || sub.includes(q);
+    const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
-  // Filtered orders list
-  const filteredOrders = orders.filter((o) => {
-    const q = orderSearch.toLowerCase().trim();
+  // Filtered orders list (Defensively null-safe)
+  const filteredOrders = (orders || []).filter((o) => {
+    if (!o || !o.id) return false;
+    const q = (orderSearch || '').toLowerCase().trim();
+    const id = String(o.id || '').toLowerCase();
+    const customerName = String(o.customerName || '').toLowerCase();
+    const customerPhone = String(o.customerPhone || '');
     const matchesSearch =
       q === '' ||
-      o.id.toLowerCase().includes(q) ||
-      o.customerName.toLowerCase().includes(q) ||
-      o.customerPhone.includes(q);
+      id.includes(q) ||
+      customerName.includes(q) ||
+      customerPhone.includes(q);
 
     const matchesStatus =
       orderStatusFilter === 'all' || o.status === orderStatusFilter;
@@ -1007,7 +1017,7 @@ export const AdminView: React.FC = () => {
                     <div className="space-y-5">
                       <div className="flex flex-col sm:flex-row items-start gap-4">
                         <img
-                          src={product.images[0]}
+                          src={product.images && product.images[0] ? product.images[0] : '/products/pantalon-prince-galles.jpg'}
                           alt={product.name}
                           className="w-24 h-24 object-cover rounded-xl bg-zinc-100 border border-zinc-200 shrink-0"
                         />
@@ -1141,7 +1151,7 @@ export const AdminView: React.FC = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
                         <img
-                          src={product.images[0]}
+                          src={product.images && product.images[0] ? product.images[0] : '/products/pantalon-prince-galles.jpg'}
                           alt={product.name}
                           className="w-16 h-16 object-cover rounded-xl bg-zinc-100 border border-zinc-200 shrink-0"
                         />
@@ -1403,8 +1413,8 @@ export const AdminView: React.FC = () => {
                               <Phone className="w-3.5 h-3.5" />
                             </a>
                             <a
-                              href={`https://wa.me/${order.customerPhone.replace(/\D/g, '')}?text=${encodeURIComponent(
-                                `Bonjour ${order.customerName}, CAPOSTORE221 vous remercie pour votre commande ${order.id}. Nous sommes en train de la traiter.`
+                              href={`https://wa.me/${String(order.customerPhone || '').replace(/\D/g, '')}?text=${encodeURIComponent(
+                                `Bonjour ${order.customerName || 'Client'}, CAPOSTORE221 vous remercie pour votre commande ${order.id}. Nous sommes en train de la traiter.`
                               )}`}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -1455,8 +1465,8 @@ export const AdminView: React.FC = () => {
 
                         <div className="flex items-center gap-3">
                           <a
-                            href={`https://wa.me/${order.customerPhone.replace(/\D/g, '')}?text=${encodeURIComponent(
-                              `Bonjour ${order.customerName}, CAPOSTORE221 vous informe que votre commande ${order.id} est actuellement: ${statusConfig.label}. Suivez votre colis sur: https://capostore221.vercel.app/suivi?track=${order.id}`
+                            href={`https://wa.me/${String(order.customerPhone || '').replace(/\D/g, '')}?text=${encodeURIComponent(
+                              `Bonjour ${order.customerName || 'Client'}, CAPOSTORE221 vous informe que votre commande ${order.id} est actuellement: ${statusConfig.label}. Suivez votre colis sur: https://capostore221.vercel.app/suivi?track=${order.id}`
                             )}`}
                             target="_blank"
                             rel="noopener noreferrer"
