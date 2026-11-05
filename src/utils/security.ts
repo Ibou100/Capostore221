@@ -1,10 +1,8 @@
 /**
  * Security and Authentication Utilities for CAPOSTORE221 Owner Admin
- * Simplified, friction-free security:
- * - Direct PIN support (ex: 2210 or 2026 or capo221)
- * - Persistent 30-day session (no need to log in repeatedly)
- * - Direct secret URL key support (?cle=2210)
- * - NO locking out the business owner
+ * - Single secure master PIN: 2210 (or custom password updated by the owner)
+ * - Persistent 30-day session
+ * - Cryptographic SHA-256 password hashing with salt
  */
 
 const ADMIN_STORAGE_KEY = 'capostore_admin_auth_v3';
@@ -13,15 +11,8 @@ const SESSION_STORAGE_KEY = 'capostore_admin_session_v3';
 // 30 days session duration so the owner remains authenticated on their phone and PC
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
-// Accepted fast PINs and Master credentials for the owner
-const ACCEPTED_DEFAULT_CREDENTIALS = [
-  '2210',
-  '2026',
-  '221',
-  'capo221',
-  'capostore221',
-  'CapoStore221@Admin'
-];
+// Single default master PIN
+export const DEFAULT_OWNER_PIN = '2210';
 
 interface StoredAuth {
   salt: string;
@@ -98,39 +89,43 @@ export async function setOwnerPassword(newPassword: string): Promise<void> {
 }
 
 /**
- * Fast & resilient password / PIN verification
- * Accepts fast PINs (2210, 221), master passwords, and custom hashed passwords.
- * Zero lockouts to never block the store owner.
+ * Single secure password verification
+ * Checks custom hashed password if set, otherwise validates against master PIN (2210).
  */
 export async function verifyOwnerPassword(candidatePassword: string): Promise<{ success: boolean; error?: string }> {
   const cleanInput = candidatePassword.trim();
-  const cleanLower = cleanInput.toLowerCase();
-
-  // 1. Check against accepted fast PINs and master credentials
-  const isDefaultMatch = ACCEPTED_DEFAULT_CREDENTIALS.some(
-    (cred) => cred.toLowerCase() === cleanLower || cred === cleanInput
-  );
-
-  if (isDefaultMatch) {
-    createAdminSession();
-    addAuditLog('Connexion réussie à la Console Propriétaire');
-    return { success: true };
+  if (!cleanInput) {
+    return {
+      success: false,
+      error: 'Veuillez saisir votre mot de passe.',
+    };
   }
 
-  // 2. Check against custom saved password if owner customized it
+  // 1. Check against custom saved password if owner customized it
   const stored = await getStoredAuth();
-  if (stored) {
+  if (stored && stored.hash) {
     const candidateHash = await computeHash(cleanInput, stored.salt);
     if (candidateHash === stored.hash) {
       createAdminSession();
       addAuditLog('Connexion réussie avec mot de passe personnalisé');
       return { success: true };
     }
+    return {
+      success: false,
+      error: 'Mot de passe incorrect.',
+    };
+  }
+
+  // 2. Single default master PIN
+  if (cleanInput === DEFAULT_OWNER_PIN) {
+    createAdminSession();
+    addAuditLog('Connexion réussie à la Console Propriétaire');
+    return { success: true };
   }
 
   return {
     success: false,
-    error: 'Code ou mot de passe incorrect. Vous pouvez utiliser votre code PIN (ex: 2210 ou 221) ou votre mot de passe.',
+    error: 'Mot de passe incorrect.',
   };
 }
 

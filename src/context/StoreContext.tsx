@@ -118,12 +118,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '');
       const params = new URLSearchParams(window.location.search);
 
-      // Instant direct link to admin (/admin or ?cle=2210 or ?admin=1)
+      // Link to admin view (/admin or ?admin=1)
       if (
         pathname === '/admin' || 
         pathname.startsWith('/admin/') ||
-        params.get('cle') !== null ||
-        params.get('key') !== null ||
         params.get('admin') === '1' || 
         params.get('espace') === 'proprietaire'
       ) {
