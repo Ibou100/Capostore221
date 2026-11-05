@@ -193,24 +193,31 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                 </h1>
               </div>
 
-              {/* Pricing in FCFA */}
-              <div className="flex flex-wrap items-baseline gap-3 pb-5 border-b border-zinc-100">
-                <span className="font-display font-black text-2xl sm:text-3xl text-zinc-900">
-                  {formatFCFA(product.price)}
-                </span>
+              {/* Pricing in FCFA - Jumia Marketing Style */}
+              <div className="flex flex-col gap-1.5 pb-5 border-b border-zinc-100">
+                <div className="flex flex-wrap items-baseline gap-3">
+                  <span className="font-display font-black text-2xl sm:text-3xl text-zinc-950 tracking-tight">
+                    {formatFCFA(product.price)}
+                  </span>
+                  {product.compareAtPrice && product.compareAtPrice > product.price && (
+                    <span className="text-xs font-black text-[#f68b1e] bg-[#fef3e9] px-2 py-0.5 rounded border border-[#fbd3ad]">
+                      -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
+                    </span>
+                  )}
+                  <span className="text-xs text-zinc-500 ml-auto font-medium">
+                    Livraison directe à domicile
+                  </span>
+                </div>
                 {product.compareAtPrice && product.compareAtPrice > product.price && (
                   <div className="flex items-center gap-2">
-                    <span className="text-base sm:text-lg text-zinc-400 line-through font-medium">
+                    <span className="text-base sm:text-lg text-zinc-400 line-through decoration-zinc-400 font-medium">
                       {formatFCFA(product.compareAtPrice)}
                     </span>
-                    <span className="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
-                      Économisez {formatFCFA(product.compareAtPrice - product.price)} (-{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%)
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                      Économisez {formatFCFA(product.compareAtPrice - product.price)}
                     </span>
                   </div>
                 )}
-                <span className="text-xs text-zinc-500 ml-auto font-medium">
-                  Livraison directe à domicile
-                </span>
               </div>
 
               {/* Description */}

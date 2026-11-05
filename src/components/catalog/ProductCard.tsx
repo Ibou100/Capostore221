@@ -88,8 +88,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Minimalist Badges */}
         <div className="absolute top-2 left-2 z-10 flex flex-col gap-1 items-start">
           {product.compareAtPrice && product.compareAtPrice > product.price && (
-            <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-red-600 text-white rounded-xs shadow-xs">
-              Promo -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
+            <span className="px-2 py-0.5 text-[10px] sm:text-xs font-black uppercase tracking-wider bg-[#f68b1e] text-white rounded shadow-sm">
+              -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
             </span>
           )}
           {isOutOfStock ? (
@@ -137,20 +137,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.name}
           </h3>
 
-          {/* Price */}
-          <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-            <span className="font-display font-black text-xs sm:text-base text-zinc-900">
-              {formatFCFA(product.price)}
-            </span>
-            {product.compareAtPrice && product.compareAtPrice > product.price && (
-              <>
-                <span className="text-[10px] sm:text-xs text-zinc-400 line-through font-medium">
-                  {formatFCFA(product.compareAtPrice)}
-                </span>
-                <span className="text-[9px] font-bold text-red-600 bg-red-50 border border-red-200 px-1 py-0.2 rounded">
+          {/* Price - Jumia Marketing Style */}
+          <div className="flex flex-col gap-0.5 mb-2 sm:mb-3">
+            <div className="flex items-baseline gap-1.5 sm:gap-2">
+              <span className="font-display font-extrabold text-sm sm:text-base text-zinc-950 tracking-tight">
+                {formatFCFA(product.price)}
+              </span>
+              {product.compareAtPrice && product.compareAtPrice > product.price && (
+                <span className="text-[10px] font-black text-[#f68b1e] bg-[#fef3e9] px-1.5 py-0.2 rounded border border-[#fbd3ad]">
                   -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
                 </span>
-              </>
+              )}
+            </div>
+            {product.compareAtPrice && product.compareAtPrice > product.price && (
+              <span className="text-[11px] sm:text-xs text-zinc-400 line-through decoration-zinc-400 font-medium">
+                {formatFCFA(product.compareAtPrice)}
+              </span>
             )}
           </div>
         </div>

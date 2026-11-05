@@ -99,24 +99,26 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
               </h3>
             </div>
 
-            {/* Price */}
-            <div className="flex flex-wrap items-baseline gap-2 pb-3 border-b border-[#EFECE5]">
-              <span className="font-display font-black text-2xl text-zinc-900">
-                {formatFCFA(product.price)}
-              </span>
-              {product.compareAtPrice && product.compareAtPrice > product.price && (
-                <>
-                  <span className="text-sm text-zinc-400 line-through font-medium">
-                    {formatFCFA(product.compareAtPrice)}
-                  </span>
-                  <span className="text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
+            {/* Price - Jumia Marketing Style */}
+            <div className="flex flex-col gap-1 pb-3 border-b border-[#EFECE5]">
+              <div className="flex items-baseline gap-2">
+                <span className="font-display font-black text-2xl text-zinc-950">
+                  {formatFCFA(product.price)}
+                </span>
+                {product.compareAtPrice && product.compareAtPrice > product.price && (
+                  <span className="text-[11px] font-black text-[#f68b1e] bg-[#fef3e9] px-1.5 py-0.5 rounded border border-[#fbd3ad]">
                     -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
                   </span>
-                </>
+                )}
+                <span className="ml-auto text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-sm">
+                  En stock
+                </span>
+              </div>
+              {product.compareAtPrice && product.compareAtPrice > product.price && (
+                <span className="text-xs text-zinc-400 line-through decoration-zinc-400 font-medium">
+                  {formatFCFA(product.compareAtPrice)}
+                </span>
               )}
-              <span className="ml-auto text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-sm">
-                En stock
-              </span>
             </div>
 
             {/* Description */}

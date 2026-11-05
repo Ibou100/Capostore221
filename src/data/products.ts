@@ -10,6 +10,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Pantalons',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/pantalon-prince-galles.jpg',
       '/products/pantalon-prince-galles-alt.jpg'
@@ -48,6 +49,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Pantalons',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/bermuda-cargo-ecru.jpg'
     ],
@@ -85,6 +87,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Pantalons',
     gender: 'unisexe',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/pantalon-cargo-ecru.jpg'
     ],
@@ -123,6 +126,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Pantalons',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/jean-carpenter-denim.jpg'
     ],
@@ -160,6 +164,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/chemise-carreaux-burton.jpg'
     ],
@@ -198,6 +203,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/chemise-rayee-rose-craie.jpg'
     ],
@@ -235,6 +241,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Pantalons',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/jean-droit-stone-washed.jpg'
     ],
@@ -272,6 +279,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Pantalons',
     gender: 'unisexe',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/jean-droit-bleached.png'
     ],
@@ -309,6 +317,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/polo-manches-longues-grenat.jpg'
     ],
@@ -347,6 +356,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Pantalons',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/jean-droit-brut-indigo.png'
     ],
@@ -384,6 +394,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/chemisette-vichy-rouge.jpg'
     ],
@@ -421,6 +432,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Sacs & Maroquinerie',
     gender: 'unisexe',
     price: 3000,
+    compareAtPrice: 5000,
     images: [
       '/products/sacoche-bandouliere-sable.png'
     ],
@@ -455,6 +467,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Pantalons',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/bermuda-technique-graphite.png'
     ],
@@ -492,6 +505,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/chemise-oxford-brique.jpg'
     ],
@@ -529,6 +543,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/tshirt-henley-gris-chine.jpg'
     ],
@@ -566,6 +581,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/chemise-oxford-bleu-azur.png'
     ],
@@ -603,6 +619,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/chemise-carreaux-taupe-azur.jpg'
     ],
@@ -641,6 +658,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Lunettes',
     gender: 'unisexe',
     price: 3000,
+    compareAtPrice: 5000,
     images: [
       '/products/monture-lunettes-acetate-bordeaux.jpg'
     ],
@@ -675,6 +693,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/polo-vintage-vert-foret.png'
     ],
@@ -713,6 +732,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/chemise-popeline-bleu-pastel.png'
     ],
@@ -751,6 +771,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Sacs & Maroquinerie',
     gender: 'unisexe',
     price: 3000,
+    compareAtPrice: 5000,
     images: [
       '/products/pochette-cuir-dragonne-xqr.png'
     ],
@@ -786,6 +807,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'Pantalons',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/pantalon-tailleur-noir-pli.png'
     ],
@@ -824,6 +846,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     subCategory: 'T-shirts & Hauts',
     gender: 'homme',
     price: 5000,
+    compareAtPrice: 8500,
     images: [
       '/products/chemise-oxford-lilas-parme.png'
     ],
