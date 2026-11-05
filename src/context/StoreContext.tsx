@@ -2,6 +2,13 @@ import React, { createContext, useContext, useState, useMemo, useEffect, useCall
 import type { Product, CategoryId, ProductGender, FilterState, ViewState, ProductCustomOverride } from '../types';
 import { INITIAL_PRODUCTS } from '../data/products';
 import { fetchCloudProducts, saveCloudProducts } from '../utils/cloudSync';
+import {
+  isSupabaseConfigured,
+  fetchSupabaseProducts,
+  upsertSupabaseProduct,
+  deleteSupabaseProduct,
+  getSupabaseClient
+} from '../lib/supabase';
 
 interface StoreContextType {
   products: Product[];
@@ -161,10 +168,41 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   /**
    * Cloud Catalog Synchronization:
-   * Merges custom products and overrides across all devices
+   * Merges custom products and overrides across all devices via Supabase Database (or local fallback)
    */
   const refreshCloudCatalog = useCallback(async () => {
     try {
+      // 1. Try Supabase first if configured
+      if (isSupabaseConfigured()) {
+        const dbProducts = await fetchSupabaseProducts();
+        if (dbProducts && Array.isArray(dbProducts) && dbProducts.length > 0) {
+          const customs = dbProducts.filter((p) => p.id.startsWith('capo-custom-'));
+          setCustomProducts(customs);
+          try {
+            localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(customs));
+          } catch {}
+
+          const overrides: Record<string, ProductCustomOverride> = {};
+          dbProducts
+            .filter((p) => !p.id.startsWith('capo-custom-'))
+            .forEach((p) => {
+              overrides[p.id] = {
+                name: p.name,
+                price: p.price,
+                stock: p.stock,
+                published: p.published,
+                availableSizes: p.availableSizes,
+              };
+            });
+          setProductOverrides(overrides);
+          try {
+            localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(overrides));
+          } catch {}
+          return;
+        }
+      }
+
+      // 2. Fallback to Cloud Sync
       const cloudData = await fetchCloudProducts();
       
       // Merge custom products
@@ -225,6 +263,24 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [refreshCloudCatalog]);
 
+  // Real-time Supabase Subscription for products
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    const client = getSupabaseClient();
+    if (!client) return;
+
+    const channel = client
+      .channel('public:products_channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+        refreshCloudCatalog();
+      })
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
+  }, [refreshCloudCatalog]);
+
   // Add custom product from owner admin
   const addCustomProduct = async (product: Product): Promise<boolean> => {
     const updated = [product, ...customProductsRef.current];
@@ -236,7 +292,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
     showToast(`Nouvel article "${product.name}" ajouté avec succès !`, 'success');
 
-    // Cloud push
+    // Supabase push if configured
+    if (isSupabaseConfigured()) {
+      upsertSupabaseProduct(product).catch((err) => console.warn('Supabase product save failed:', err));
+    }
+
+    // Cloud push fallback
     const saved = await saveCloudProducts(updated, productOverridesRef.current);
     return saved;
   };
@@ -252,7 +313,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
     showToast('Article supprimé du catalogue.', 'info');
 
-    // Cloud push
+    if (isSupabaseConfigured()) {
+      deleteSupabaseProduct(productId).catch((err) => console.warn('Supabase product delete failed:', err));
+    }
+
+    // Cloud push fallback
     const saved = await saveCloudProducts(updated, productOverridesRef.current);
     return saved;
   };
@@ -289,6 +354,18 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       } catch (e) {
         console.error(e);
       }
+
+      // Supabase push directly
+      if (isSupabaseConfigured()) {
+        const fullProd = products.find((p) => p.id === productId);
+        if (fullProd) {
+          upsertSupabaseProduct({
+            ...fullProd,
+            ...override,
+          }).catch((err) => console.warn('Supabase price update error:', err));
+        }
+      }
+
       saveCloudProducts(customProductsRef.current, updated).catch((err) =>
         console.warn('Cloud sync override failed:', err)
       );

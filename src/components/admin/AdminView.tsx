@@ -4,7 +4,8 @@ import {
   Trash2, Search, ArrowLeft, Phone, MessageCircle, 
   Eye, EyeOff, KeyRound, Download, Clock, 
   LogOut, Plus, Upload, RefreshCw, 
-  Check, X, Sparkles, Copy, Link as LinkIcon
+  Check, X, Sparkles, Copy, Link as LinkIcon,
+  Database, Server, CheckCircle2, AlertTriangle, ExternalLink
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
@@ -23,6 +24,14 @@ import {
   addAuditLog,
   type SecurityAuditLog 
 } from '../../utils/security';
+import {
+  getSupabaseConfig,
+  saveSupabaseConfig,
+  clearSupabaseConfig,
+  isSupabaseConfigured,
+  testSupabaseConnection,
+  seedInitialProductsToSupabase
+} from '../../lib/supabase';
 import { compressImageFile } from '../../utils/cloudSync';
 import type { OrderStatus, Product, CategoryId } from '../../types';
 
@@ -114,6 +123,14 @@ export const AdminView: React.FC = () => {
 
   // Audit Logs State
   const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>([]);
+
+  // Supabase Database Connection State
+  const [supabaseUrlInput, setSupabaseUrlInput] = useState(() => getSupabaseConfig().url);
+  const [supabaseKeyInput, setSupabaseKeyInput] = useState(() => getSupabaseConfig().anonKey);
+  const [isDbConfigured, setIsDbConfigured] = useState(() => isSupabaseConfigured());
+  const [isTestingDb, setIsTestingDb] = useState(false);
+  const [dbTestFeedback, setDbTestFeedback] = useState<{ success: boolean; message: string } | null>(null);
+  const [isSeedingDb, setIsSeedingDb] = useState(false);
 
   // Clean secret URL key quietly after first mount without re-renders
   useEffect(() => {
@@ -403,6 +420,109 @@ export const AdminView: React.FC = () => {
     URL.revokeObjectURL(url);
     showToast('Sauvegarde JSON téléchargée avec succès.', 'success');
   };
+
+  const handleSaveAndTestSupabase = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDbTestFeedback(null);
+    setIsTestingDb(true);
+    try {
+      if (!supabaseUrlInput.trim() || !supabaseKeyInput.trim()) {
+        showToast('Veuillez saisir votre URL Supabase et votre clé API anon.', 'error');
+        return;
+      }
+      saveSupabaseConfig(supabaseUrlInput, supabaseKeyInput);
+      const res = await testSupabaseConnection();
+      setDbTestFeedback(res);
+      setIsDbConfigured(res.success);
+      if (res.success) {
+        addAuditLog('Connexion réussie à Supabase PostgreSQL');
+        showToast('Base de données Supabase connectée avec succès !', 'success');
+      } else {
+        showToast('Erreur de connexion. Vérifiez l\'URL et la clé.', 'error');
+      }
+    } finally {
+      setIsTestingDb(false);
+    }
+  };
+
+  const handleDisconnectSupabase = () => {
+    if (window.confirm('Voulez-vous déconnecter la base Supabase et revenir au stockage local ?')) {
+      clearSupabaseConfig();
+      setSupabaseUrlInput('');
+      setSupabaseKeyInput('');
+      setIsDbConfigured(false);
+      setDbTestFeedback(null);
+      addAuditLog('Déconnexion de Supabase (retour au mode local)');
+      showToast('Base de données déconnectée.', 'info');
+    }
+  };
+
+  const handleSeedProducts = async () => {
+    setIsSeedingDb(true);
+    try {
+      const res = await seedInitialProductsToSupabase(products);
+      if (res.error) {
+        showToast(`Erreur : ${res.error}`, 'error');
+      } else {
+        addAuditLog(`Initialisation de ${res.count} articles dans Supabase`);
+        showToast(`${res.count} articles synchronisés avec succès dans Supabase !`, 'success');
+      }
+    } finally {
+      setIsSeedingDb(false);
+    }
+  };
+
+  const SQL_SCHEMA_SNIPPET = `-- 1. Table Produits
+CREATE TABLE IF NOT EXISTS public.products (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT NOT NULL,
+  category TEXT NOT NULL DEFAULT 'vetements',
+  sub_category TEXT DEFAULT 'Boubous & Costumes',
+  gender TEXT DEFAULT 'homme',
+  price NUMERIC NOT NULL DEFAULT 5000,
+  compare_at_price NUMERIC,
+  images JSONB NOT NULL DEFAULT '[]'::jsonb,
+  description TEXT,
+  details JSONB DEFAULT '[]'::jsonb,
+  materials TEXT,
+  variants JSONB DEFAULT '[]'::jsonb,
+  available_sizes JSONB DEFAULT '[]'::jsonb,
+  stock INTEGER DEFAULT 10,
+  is_new BOOLEAN DEFAULT false,
+  is_featured BOOLEAN DEFAULT false,
+  is_popular BOOLEAN DEFAULT false,
+  published BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. Table Commandes
+CREATE TABLE IF NOT EXISTS public.orders (
+  id TEXT PRIMARY KEY,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  customer_name TEXT NOT NULL,
+  customer_phone TEXT NOT NULL,
+  customer_city TEXT DEFAULT 'Dakar',
+  customer_address TEXT DEFAULT '',
+  payment_method TEXT DEFAULT 'wave',
+  items JSONB NOT NULL DEFAULT '[]'::jsonb,
+  total NUMERIC NOT NULL DEFAULT 0,
+  shipping_fee NUMERIC DEFAULT 0,
+  status TEXT DEFAULT 'transmise',
+  notes TEXT,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 3. Sécurité RLS
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view products" ON public.products FOR SELECT USING (true);
+CREATE POLICY "Full access to products" ON public.products FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Anyone can insert orders" ON public.orders FOR INSERT WITH CHECK (true);
+CREATE POLICY "Orders read access" ON public.orders FOR SELECT USING (true);
+CREATE POLICY "Orders update access" ON public.orders FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
 
   // Filtered products list (Defensively null-safe)
   const filteredProducts = (products || []).filter((p) => {
@@ -1556,6 +1676,194 @@ export const AdminView: React.FC = () => {
                   Votre session reste enregistrée pendant 30 jours consécutifs sur votre téléphone. Vous ne serez plus jamais déconnecté de manière inattendue.
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* Supabase PostgreSQL Cloud Database Integration Card */}
+          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-zinc-200 shadow-sm space-y-6 lg:col-span-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
+                  <Database className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-display font-bold text-base text-zinc-900">
+                      Base de Données Cloud (Supabase PostgreSQL)
+                    </h3>
+                    <span
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        isDbConfigured
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          : 'bg-amber-100 text-amber-800 border border-amber-300'
+                      }`}
+                    >
+                      {isDbConfigured ? (
+                        <>
+                          <CheckCircle2 className="w-3 h-3" /> Connecté en Temps Réel
+                        </>
+                      ) : (
+                        <>
+                          <AlertTriangle className="w-3 h-3" /> Non Connecté (Mode Local)
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-500 mt-0.5">
+                    Permet la mise à jour des prix en direct et la réception instantanée des commandes clients sur tous les téléphones et PC.
+                  </p>
+                </div>
+              </div>
+
+              {isDbConfigured && (
+                <button
+                  type="button"
+                  onClick={handleDisconnectSupabase}
+                  className="px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 text-xs font-semibold rounded-lg transition-colors shrink-0"
+                >
+                  Déconnecter
+                </button>
+              )}
+            </div>
+
+            {/* Connection Form */}
+            <form onSubmit={handleSaveAndTestSupabase} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
+                    URL du Projet Supabase *
+                  </label>
+                  <input
+                    type="url"
+                    required
+                    value={supabaseUrlInput}
+                    onChange={(e) => setSupabaseUrlInput(e.target.value)}
+                    placeholder="https://xyzabcdefg.supabase.co"
+                    className="w-full text-xs font-mono px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+                  />
+                  <span className="text-[10px] text-zinc-400 mt-0.5 block">
+                    Trouvable dans : <em>Project Settings &gt; API &gt; Project URL</em>
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
+                    Clé API Publique (anon key) *
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={supabaseKeyInput}
+                    onChange={(e) => setSupabaseKeyInput(e.target.value)}
+                    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    className="w-full text-xs font-mono px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+                  />
+                  <span className="text-[10px] text-zinc-400 mt-0.5 block">
+                    Trouvable dans : <em>Project Settings &gt; API &gt; Project API keys (anon public)</em>
+                  </span>
+                </div>
+              </div>
+
+              {dbTestFeedback && (
+                <div
+                  className={`p-3 rounded-xl border text-xs flex items-center gap-2 ${
+                    dbTestFeedback.success
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      : 'bg-red-50 text-red-800 border-red-200'
+                  }`}
+                >
+                  {dbTestFeedback.success ? (
+                    <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                  ) : (
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                  )}
+                  <span>{dbTestFeedback.message}</span>
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={isTestingDb}
+                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center gap-2 disabled:opacity-50"
+                >
+                  {isTestingDb ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Test de connexion en cours...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Server className="w-3.5 h-3.5" />
+                      <span>{isDbConfigured ? 'Tester & Actualiser la Connexion' : 'Connecter à Supabase'}</span>
+                    </>
+                  )}
+                </button>
+
+                {isDbConfigured && (
+                  <button
+                    type="button"
+                    onClick={handleSeedProducts}
+                    disabled={isSeedingDb}
+                    className="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center gap-2 disabled:opacity-50"
+                    title="Envoie les 23 articles du catalogue directement dans votre base Supabase"
+                  >
+                    {isSeedingDb ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        <span>Envoi des articles...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Synchroniser les 23 articles vers Supabase</span>
+                      </>
+                    )}
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(SQL_SCHEMA_SNIPPET);
+                    showToast('Script SQL copié ! Vous pouvez le coller dans Supabase SQL Editor.', 'success');
+                  }}
+                  className="px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors"
+                >
+                  <Copy className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>Copier le Script SQL (Tables & Sécurité)</span>
+                </button>
+              </div>
+            </form>
+
+            {/* Quick 3-Step Setup Instructions */}
+            <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-200 text-xs space-y-2">
+              <strong className="text-zinc-800 font-bold block">
+                💡 Comment configurer votre base de données Supabase gratuite en 3 minutes :
+              </strong>
+              <ol className="list-decimal list-inside space-y-1.5 text-zinc-600 text-[11px] leading-relaxed">
+                <li>
+                  Rendez-vous sur{' '}
+                  <a
+                    href="https://supabase.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#B85D19] font-bold hover:underline inline-flex items-center gap-0.5"
+                  >
+                    supabase.com <ExternalLink className="w-2.5 h-2.5" />
+                  </a>{' '}
+                  et créez un compte gratuit (avec Google ou GitHub).
+                </li>
+                <li>
+                  Cliquez sur <strong>« New Project »</strong>, nommez-le <em>capostore221</em> et choisissez un mot de passe.
+                </li>
+                <li>
+                  Allez dans l'onglet <strong>SQL Editor</strong> à gauche, cliquez sur <em>« Copier le Script SQL »</em> ci-dessus, collez-le et appuyez sur <strong>Run</strong>.
+                </li>
+                <li>
+                  Allez dans <strong>Project Settings &gt; API</strong>, copiez votre <strong>URL</strong> et votre <strong>clé anon</strong>, collez-les dans les champs ci-dessus puis cliquez sur <strong>Connecter à Supabase</strong> !
+                </li>
+              </ol>
             </div>
           </div>
 

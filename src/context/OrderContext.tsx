@@ -2,6 +2,14 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import type { Order, OrderItem, OrderStatus, PaymentMethod, Product } from '../types';
 import { generateOrderId } from '../utils/format';
 import { fetchCloudOrders, saveCloudOrders } from '../utils/cloudSync';
+import {
+  isSupabaseConfigured,
+  fetchSupabaseOrders,
+  insertSupabaseOrder,
+  updateSupabaseOrderStatus,
+  deleteSupabaseOrder,
+  getSupabaseClient
+} from '../lib/supabase';
 
 interface CreateOrderInput {
   customerName: string;
@@ -157,11 +165,25 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [orders]);
 
   /**
-   * Bidirectional cloud synchronization
+   * Bidirectional cloud synchronization with Supabase Database and local cache fallback
    */
   const refreshOrders = useCallback(async () => {
     setIsSyncing(true);
     try {
+      // 1. Try Supabase first if configured
+      if (isSupabaseConfigured()) {
+        const dbOrders = await fetchSupabaseOrders();
+        if (dbOrders && Array.isArray(dbOrders)) {
+          setOrders(dbOrders);
+          try {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dbOrders));
+          } catch {}
+          setLastSyncTime(new Date());
+          return;
+        }
+      }
+
+      // 2. Fallback to Cloud Sync
       const rawCloudOrders = await fetchCloudOrders();
       const cloudOrders = Array.isArray(rawCloudOrders)
         ? rawCloudOrders.map(sanitizeOrder).filter((o): o is Order => o !== null)
@@ -230,6 +252,24 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [refreshOrders]);
 
+  // Real-time Supabase Subscription for orders
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    const client = getSupabaseClient();
+    if (!client) return;
+
+    const channel = client
+      .channel('public:orders_channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+        refreshOrders();
+      })
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
+  }, [refreshOrders]);
+
   const createOrder = (input: CreateOrderInput): Order => {
     const newOrder: Order = {
       id: generateOrderId(),
@@ -257,7 +297,14 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error(err);
       }
 
-      // Immediate Cloud push
+      // Supabase direct push
+      if (isSupabaseConfigured()) {
+        insertSupabaseOrder(newOrder).catch((err) =>
+          console.warn('Supabase order insert error:', err)
+        );
+      }
+
+      // Cloud push fallback
       (async () => {
         try {
           const rawCloud = await fetchCloudOrders();
@@ -293,6 +340,13 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error(e);
       }
 
+      // Supabase update
+      if (isSupabaseConfigured()) {
+        updateSupabaseOrderStatus(orderId, status).catch((err) =>
+          console.warn('Supabase status update error:', err)
+        );
+      }
+
       saveCloudOrders(updated).catch((err) =>
         console.warn('Could not sync status update to cloud', err)
       );
@@ -310,8 +364,15 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error(e);
       }
 
+      // Supabase delete
+      if (isSupabaseConfigured()) {
+        deleteSupabaseOrder(orderId).catch((err) =>
+          console.warn('Supabase order delete error:', err)
+        );
+      }
+
       saveCloudOrders(updated).catch((err) =>
-        console.warn('Could not sync deletion to cloud', err)
+        console.warn('Could not delete from cloud', err)
       );
 
       return updated;
