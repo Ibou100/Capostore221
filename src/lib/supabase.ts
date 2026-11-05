@@ -22,6 +22,22 @@ export interface SupabaseConfig {
 let cachedClient: SupabaseClient | null = null;
 let lastUsedConfig: string = '';
 
+export const DEFAULT_SUPABASE_URL = 'https://qpvjmqjrpzwefbolswvh.supabase.co';
+export const DEFAULT_SUPABASE_KEY = 'sb_publishable_IuVNbH_zrUx3gaK7uCvJgg_q9MxFmf0';
+
+/**
+ * Sanitizes and normalizes Supabase URL
+ */
+export function cleanSupabaseUrl(rawUrl: string): string {
+  if (!rawUrl) return '';
+  let url = rawUrl.trim();
+  // Strip trailing slashes
+  url = url.replace(/\/+$/, '');
+  // Strip /rest/v1 or /rest if present
+  url = url.replace(/\/rest(\/v1)?\/?$/, '');
+  return url;
+}
+
 /**
  * Gets currently saved Supabase configuration
  */
@@ -30,7 +46,7 @@ export function getSupabaseConfig(): SupabaseConfig {
   const envUrl = import.meta.env.VITE_SUPABASE_URL;
   const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   if (envUrl && envKey && typeof envUrl === 'string' && typeof envKey === 'string') {
-    return { url: envUrl.trim(), anonKey: envKey.trim() };
+    return { url: cleanSupabaseUrl(envUrl), anonKey: envKey.trim() };
   }
 
   // 2. Check local storage (configured by owner in Admin panel)
@@ -40,7 +56,7 @@ export function getSupabaseConfig(): SupabaseConfig {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed?.url && parsed?.anonKey) {
-          return { url: String(parsed.url).trim(), anonKey: String(parsed.anonKey).trim() };
+          return { url: cleanSupabaseUrl(parsed.url), anonKey: String(parsed.anonKey).trim() };
         }
       }
     } catch (e) {
@@ -48,7 +64,8 @@ export function getSupabaseConfig(): SupabaseConfig {
     }
   }
 
-  return { url: '', anonKey: '' };
+  // 3. Fallback to production CapoStore221 Supabase project
+  return { url: DEFAULT_SUPABASE_URL, anonKey: DEFAULT_SUPABASE_KEY };
 }
 
 /**
@@ -70,7 +87,7 @@ export function isSupabaseConfigured(): boolean {
  */
 export function saveSupabaseConfig(url: string, anonKey: string): void {
   if (typeof window === 'undefined') return;
-  const cleanUrl = url.trim().replace(/\/$/, '');
+  const cleanUrl = cleanSupabaseUrl(url);
   const cleanKey = anonKey.trim();
   localStorage.setItem(
     SUPABASE_CONFIG_KEY,
