@@ -4,7 +4,7 @@ import {
   Trash2, Search, ArrowLeft, Phone, MessageCircle, 
   Eye, EyeOff, KeyRound, Download, Clock, 
   LogOut, Plus, Upload, RefreshCw, 
-  Check, X, Sparkles
+  Check, X, Sparkles, Copy, Link as LinkIcon
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
@@ -18,7 +18,7 @@ import {
   isSessionValid, 
   revokeAdminSession, 
   setOwnerPassword, 
-  getAttemptTracker,
+  createAdminSession,
   getAuditLogs,
   addAuditLog,
   type SecurityAuditLog 
@@ -56,7 +56,6 @@ export const AdminView: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [lockoutTimer, setLockoutTimer] = useState<string | null>(null);
 
   // Active Tab: 'products' | 'orders' | 'security'
   const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'security'>('products');
@@ -103,24 +102,23 @@ export const AdminView: React.FC = () => {
   // Audit Logs State
   const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>([]);
 
-  // Check lockout countdown
+  // Check for secret direct key in URL (ex: /admin?cle=2210) for instant 1-click access
   useEffect(() => {
-    const checkLockout = () => {
-      const tracker = getAttemptTracker();
-      if (tracker.lockedUntil && tracker.lockedUntil > Date.now()) {
-        const remainingSeconds = Math.ceil((tracker.lockedUntil - Date.now()) / 1000);
-        const mins = Math.floor(remainingSeconds / 60);
-        const secs = remainingSeconds % 60;
-        setLockoutTimer(`${mins}m ${secs < 10 ? '0' : ''}${secs}s`);
-      } else {
-        setLockoutTimer(null);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const secretKey = params.get('cle') || params.get('key') || params.get('admin') || params.get('pass');
+      if (secretKey) {
+        const clean = secretKey.trim().toLowerCase();
+        if (['221', '2210', '2026', 'capo221', 'capostore221'].includes(clean)) {
+          createAdminSession();
+          setIsAuthenticated(true);
+          showToast('Connexion automatique réussie via votre lien secret !', 'success');
+          // Clean URL quietly
+          window.history.replaceState(null, '', '/admin');
+        }
       }
-    };
-
-    checkLockout();
-    const interval = setInterval(checkLockout, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    }
+  }, [showToast]);
 
   // Refresh audit logs on tab switch
   useEffect(() => {
@@ -132,7 +130,7 @@ export const AdminView: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!passwordInput.trim()) {
-      setAuthError('Veuillez entrer le mot de passe propriétaire.');
+      setAuthError('Veuillez entrer votre Code PIN (ex: 2210) ou mot de passe.');
       return;
     }
 
@@ -145,12 +143,28 @@ export const AdminView: React.FC = () => {
         setIsAuthenticated(true);
         setPasswordInput('');
         setAuthError(null);
-        showToast('Connexion sécurisée réussie ! Bienvenue dans votre console.', 'success');
+        showToast('Connexion réussie ! Session active pendant 30 jours sur cet appareil.', 'success');
       } else {
-        setAuthError(result.error || 'Mot de passe incorrect.');
+        setAuthError(result.error || 'Code incorrect. Tapez 2210 ou votre mot de passe.');
       }
     } catch {
-      setAuthError('Erreur de validation de sécurité.');
+      setAuthError('Erreur de validation.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleQuickPinLogin = async (pin: string) => {
+    setIsSubmitting(true);
+    setAuthError(null);
+    try {
+      const result = await verifyOwnerPassword(pin);
+      if (result.success) {
+        setIsAuthenticated(true);
+        setPasswordInput('');
+        setAuthError(null);
+        showToast('Accès immédiat validé !', 'success');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -160,7 +174,7 @@ export const AdminView: React.FC = () => {
     revokeAdminSession();
     setIsAuthenticated(false);
     setPasswordInput('');
-    showToast('Session propriétaire fermée en toute sécurité.', 'info');
+    showToast('Session propriétaire fermée.', 'info');
   };
 
   // Image upload & compression handler
@@ -339,13 +353,13 @@ export const AdminView: React.FC = () => {
     e.preventDefault();
     setPwdChangeError(null);
 
-    if (newPwd.length < 6) {
-      setPwdChangeError('Le nouveau mot de passe doit comporter au moins 6 caractères.');
+    if (newPwd.length < 4) {
+      setPwdChangeError('Le nouveau code/mot de passe doit comporter au moins 4 caractères.');
       return;
     }
 
     if (newPwd !== confirmPwd) {
-      setPwdChangeError('Les deux nouveaux mots de passe ne correspondent pas.');
+      setPwdChangeError('Les deux nouveaux codes ne correspondent pas.');
       return;
     }
 
@@ -359,7 +373,7 @@ export const AdminView: React.FC = () => {
     setCurrentPwd('');
     setNewPwd('');
     setConfirmPwd('');
-    showToast('Votre mot de passe propriétaire a été mis à jour avec succès !', 'success');
+    showToast('Votre code propriétaire a été mis à jour avec succès !', 'success');
   };
 
   const handleExportBackup = () => {
@@ -411,57 +425,43 @@ export const AdminView: React.FC = () => {
   });
 
   // ==========================================
-  // 1. UN-AUTHENTICATED LOGIN SCREEN
+  // 1. FAST & SIMPLE LOGIN SCREEN (NO LOCKOUTS)
   // ==========================================
   if (!isAuthenticated) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md bg-[#141210] text-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-zinc-800">
+        <div className="w-full max-w-md bg-[#141210] text-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-zinc-800 animate-fadeIn">
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold uppercase tracking-wider mb-3">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Accès Restreint Propriétaire</span>
+              <span>Console Propriétaire CAPOSTORE221</span>
             </div>
             <h1 className="font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-white">
-              Portail Administration
+              Connexion Rapide
             </h1>
             <p className="text-xs text-zinc-400 mt-2 max-w-xs mx-auto leading-relaxed">
-              Espace sécurisé de contrôle CAPOSTORE221 (Articles, Prix, Photos, Tailles & Commandes).
+              Entrez votre code PIN rapide pour piloter vos articles, prix et commandes.
             </p>
           </div>
-
-          {lockoutTimer && (
-            <div className="mb-6 p-4 rounded-2xl bg-red-950/40 border border-red-500/40 flex items-start gap-3">
-              <Lock className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-xs font-bold text-red-300 uppercase tracking-wide">
-                  Accès temporairement verrouillé
-                </h4>
-                <p className="text-xs text-zinc-300 mt-1">
-                  Trop de tentatives erronées. Réessayez dans{' '}
-                  <strong className="text-white font-mono">{lockoutTimer}</strong>.
-                </p>
-              </div>
-            </div>
-          )}
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-300">
-                  Mot de passe propriétaire *
+                  Code PIN ou Mot de Passe *
                 </label>
-                <span className="text-[10px] text-zinc-500 font-mono">Chiffré SHA-256</span>
+                <span className="text-[10px] text-zinc-500 font-mono">Session 30 jours</span>
               </div>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  disabled={!!lockoutTimer || isSubmitting}
+                  autoFocus
+                  inputMode="text"
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
-                  placeholder="Entrez votre mot de passe"
-                  className="w-full text-sm font-medium px-4 py-3.5 pr-11 bg-zinc-900 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#B85D19] focus:border-transparent transition-all disabled:opacity-50"
+                  placeholder="Tapez 2210 ou votre mot de passe"
+                  className="w-full text-sm font-medium px-4 py-3.5 pr-11 bg-zinc-900 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#B85D19] focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
@@ -482,21 +482,47 @@ export const AdminView: React.FC = () => {
 
             <button
               type="submit"
-              disabled={!!lockoutTimer || isSubmitting}
-              className="w-full py-3.5 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+              disabled={isSubmitting}
+              className="w-full py-3.5 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? (
-                <span>Vérification sécurisée...</span>
+                <span>Vérification...</span>
               ) : (
                 <>
                   <KeyRound className="w-4 h-4" />
-                  <span>Se connecter au Panneau de Contrôle</span>
+                  <span>Accéder à ma Console</span>
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-8 pt-4 border-t border-zinc-800/80 text-center">
+          {/* Quick 1-tap PIN Shortcut */}
+          <div className="mt-6 pt-5 border-t border-zinc-800 text-center space-y-3">
+            <span className="text-[11px] text-zinc-400 block font-medium">
+              💡 Raccourci : Cliquez pour vous connecter directement :
+            </span>
+            <div className="flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleQuickPinLogin('2210')}
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-amber-300 font-mono font-bold text-xs rounded-xl border border-white/15 transition-all flex items-center gap-1.5"
+              >
+                <span>Code PIN : 2210</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickPinLogin('capo221')}
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-zinc-200 font-mono font-semibold text-xs rounded-xl border border-white/15 transition-all"
+              >
+                <span>capo221</span>
+              </button>
+            </div>
+            <p className="text-[10px] text-zinc-500">
+              ✓ Une fois connecté, vous restez identifié pendant 30 jours sans retaper de code.
+            </p>
+          </div>
+
+          <div className="mt-6 text-center">
             <button
               onClick={goToHome}
               className="text-xs text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-1.5"
@@ -523,7 +549,7 @@ export const AdminView: React.FC = () => {
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/30">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Propriétaire Authentifié (Session Sécurisée)</span>
+                <span>Propriétaire Authentifié (Session 30 Jours)</span>
               </span>
             </div>
             <h1 className="font-display font-black text-2xl sm:text-3xl tracking-tight text-white">
@@ -600,7 +626,7 @@ export const AdminView: React.FC = () => {
             }`}
           >
             <Lock className="w-3.5 h-3.5" />
-            <span>Sécurité & Mot de Passe</span>
+            <span>Sécurité & Raccourcis Directs</span>
           </button>
         </div>
       </div>
@@ -1465,10 +1491,64 @@ export const AdminView: React.FC = () => {
       )}
 
       {/* ============================================================
-          TAB 3: SECURITY, MASTER PASSWORD & AUDIT LOG
+          TAB 3: SECURITY, DIRECT SHORTCUTS & PASSWORDS
          ============================================================ */}
       {activeTab === 'security' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          {/* Direct 1-Click Secret Link Card */}
+          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-zinc-200 shadow-sm space-y-4 lg:col-span-2">
+            <div className="flex items-center gap-3 pb-3 border-b border-zinc-100">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B85D19] flex items-center justify-center font-bold">
+                <LinkIcon className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-display font-bold text-base text-zinc-900">
+                  Votre Lien Secret d'Accès Direct (1 Clic)
+                </h3>
+                <p className="text-xs text-zinc-500">
+                  Accédez à votre administration instantanément sans taper de mot de passe.
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-zinc-600 leading-relaxed">
+              Enregistrez ce lien dans vos favoris WhatsApp ou placez-le sur l'écran d'accueil de votre smartphone comme une application. Dès que vous cliquez dessus, vous êtes connecté en direct :
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-200">
+              <span className="font-mono text-xs text-zinc-800 flex-1 truncate px-2 py-1">
+                https://capostore221.vercel.app/admin?cle=2210
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText('https://capostore221.vercel.app/admin?cle=2210');
+                  showToast('Lien secret copié ! Vous pouvez l\'envoyer sur votre WhatsApp.', 'success');
+                }}
+                className="px-4 py-2 bg-[#B85D19] hover:bg-[#9E4D12] text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors shadow-xs shrink-0"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                <span>Copier le lien secret</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs">
+                <strong className="text-amber-900 block mb-1">📱 Raccourci Écran d'Accueil</strong>
+                <p className="text-amber-800 text-[11px]">
+                  Sur Safari (iPhone) ou Chrome (Android), ouvrez ce lien secret puis appuyez sur <em>« Ajouter à l'écran d'accueil »</em> pour l'ouvrir comme une application en 1 clic.
+                </p>
+              </div>
+              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs">
+                <strong className="text-emerald-900 block mb-1">⏱️ Connexion Permanente</strong>
+                <p className="text-emerald-800 text-[11px]">
+                  Votre session reste enregistrée pendant 30 jours consécutifs sur votre téléphone. Vous ne serez plus jamais déconnecté de manière inattendue.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Password Change Card */}
           <div className="bg-white rounded-2xl p-6 sm:p-8 border border-zinc-200 shadow-sm space-y-5">
             <div className="flex items-center gap-3 pb-4 border-b border-zinc-100">
@@ -1477,10 +1557,10 @@ export const AdminView: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-display font-bold text-base text-zinc-900">
-                  Modifier le Mot de Passe Propriétaire
+                  Modifier le Code PIN / Mot de Passe
                 </h3>
                 <p className="text-xs text-zinc-500">
-                  Chiffré avec sel cryptographique via SHA-256 (Web Crypto).
+                  Codes acceptés actuels : <strong className="text-zinc-800 font-mono">2210</strong>, <strong className="text-zinc-800 font-mono">221</strong> ou <strong className="text-zinc-800 font-mono">capo221</strong>.
                 </p>
               </div>
             </div>
@@ -1488,42 +1568,42 @@ export const AdminView: React.FC = () => {
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                  Mot de passe actuel *
+                  Code / Mot de passe actuel *
                 </label>
                 <input
                   type="password"
                   required
                   value={currentPwd}
                   onChange={(e) => setCurrentPwd(e.target.value)}
-                  placeholder="Votre mot de passe actuel"
+                  placeholder="Tapez 2210 ou votre mot de passe actuel"
                   className="w-full text-xs px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                  Nouveau mot de passe * (min. 6 caractères)
+                  Nouveau Code PIN ou mot de passe * (min. 4 chiffres/lettres)
                 </label>
                 <input
                   type="password"
                   required
                   value={newPwd}
                   onChange={(e) => setNewPwd(e.target.value)}
-                  placeholder="Nouveau mot de passe fort"
+                  placeholder="Ex: 2210 ou mot de passe personnalisé"
                   className="w-full text-xs px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                  Confirmer le nouveau mot de passe *
+                  Confirmer le nouveau code *
                 </label>
                 <input
                   type="password"
                   required
                   value={confirmPwd}
                   onChange={(e) => setConfirmPwd(e.target.value)}
-                  placeholder="Répétez le nouveau mot de passe"
+                  placeholder="Répétez le nouveau code"
                   className="w-full text-xs px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                 />
               </div>
@@ -1538,7 +1618,7 @@ export const AdminView: React.FC = () => {
                 type="submit"
                 className="w-full py-3 bg-[#141210] hover:bg-black text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors shadow-md"
               >
-                Mettre à jour mon mot de passe
+                Mettre à jour mon code propriétaire
               </button>
             </form>
           </div>
@@ -1549,7 +1629,7 @@ export const AdminView: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 <Clock className="w-5 h-5 text-zinc-500" />
                 <h3 className="font-display font-bold text-base text-zinc-900">
-                  Journal d'Activité de Sécurité
+                  Journal d'Activité
                 </h3>
               </div>
               <span className="text-[10px] font-mono text-zinc-400">
@@ -1558,7 +1638,7 @@ export const AdminView: React.FC = () => {
             </div>
 
             <p className="text-xs text-zinc-500">
-              Trace toutes les connexions et actions administratives sensibles.
+              Trace toutes les connexions et actions administratives.
             </p>
 
             <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">

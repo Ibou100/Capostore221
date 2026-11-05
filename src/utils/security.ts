@@ -1,29 +1,32 @@
 /**
  * Security and Authentication Utilities for CAPOSTORE221 Owner Admin
- * Uses Web Crypto API for SHA-256 hashing with salt, rate-limiting, and session management.
+ * Simplified, friction-free security:
+ * - Direct PIN support (ex: 2210 or 2026 or capo221)
+ * - Persistent 30-day session (no need to log in repeatedly)
+ * - Direct secret URL key support (?cle=2210)
+ * - NO locking out the business owner
  */
 
-const ADMIN_STORAGE_KEY = 'capostore_admin_auth_v2';
-const ATTEMPTS_STORAGE_KEY = 'capostore_admin_attempts_v2';
-const SESSION_STORAGE_KEY = 'capostore_admin_session_v2';
+const ADMIN_STORAGE_KEY = 'capostore_admin_auth_v3';
+const SESSION_STORAGE_KEY = 'capostore_admin_session_v3';
 
-const MAX_FAILED_ATTEMPTS = 5;
-const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes lockout
-const SESSION_DURATION_MS = 2 * 60 * 60 * 1000; // 2 hours session expiry
+// 30 days session duration so the owner remains authenticated on their phone and PC
+const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
-// Unique default initial password for the owner
-// The owner can modify this password at any time from the security settings
-const DEFAULT_INITIAL_PASSWORD = 'CapoStore221@Admin';
+// Accepted fast PINs and Master credentials for the owner
+const ACCEPTED_DEFAULT_CREDENTIALS = [
+  '2210',
+  '2026',
+  '221',
+  'capo221',
+  'capostore221',
+  'CapoStore221@Admin'
+];
 
 interface StoredAuth {
   salt: string;
   hash: string;
   updatedAt: string;
-}
-
-interface AttemptTracker {
-  count: number;
-  lockedUntil: number | null;
 }
 
 interface AdminSession {
@@ -41,9 +44,14 @@ export interface SecurityAuditLog {
 
 const AUDIT_LOG_STORAGE_KEY = 'capostore_security_audit_log_v1';
 
-/**
- * Converts ArrayBuffer to Hex string
- */
+// Immediately clear any old lockout locks from previous versions
+if (typeof window !== 'undefined') {
+  try {
+    localStorage.removeItem('capostore_admin_attempts_v2');
+    localStorage.removeItem('capostore_admin_attempts_v1');
+  } catch {}
+}
+
 function bufferToHex(buffer: ArrayBuffer): string {
   const byteArray = new Uint8Array(buffer);
   return Array.from(byteArray)
@@ -51,9 +59,6 @@ function bufferToHex(buffer: ArrayBuffer): string {
     .join('');
 }
 
-/**
- * Computes SHA-256 hash with salt
- */
 export async function computeHash(password: string, salt: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(`${salt}:${password}`);
@@ -61,18 +66,12 @@ export async function computeHash(password: string, salt: string): Promise<strin
   return bufferToHex(hashBuffer);
 }
 
-/**
- * Generates a random cryptographic hex salt
- */
 export function generateSalt(): string {
   const array = new Uint8Array(16);
   crypto.getRandomValues(array);
   return bufferToHex(array.buffer);
 }
 
-/**
- * Initializes or retrieves the stored master password hash
- */
 export async function getStoredAuth(): Promise<StoredAuth | null> {
   if (typeof window === 'undefined') return null;
   try {
@@ -86,109 +85,57 @@ export async function getStoredAuth(): Promise<StoredAuth | null> {
   return null;
 }
 
-/**
- * Sets a new master password for the owner
- */
 export async function setOwnerPassword(newPassword: string): Promise<void> {
   const salt = generateSalt();
-  const hash = await computeHash(newPassword, salt);
+  const hash = await computeHash(newPassword.trim(), salt);
   const data: StoredAuth = {
     salt,
     hash,
     updatedAt: new Date().toISOString(),
   };
   localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(data));
-  addAuditLog('Modification du mot de passe administrateur propriétaire');
+  addAuditLog('Modification du mot de passe propriétaire');
 }
 
 /**
- * Verifies if entered password matches the stored owner password
+ * Fast & resilient password / PIN verification
+ * Accepts fast PINs (2210, 221), master passwords, and custom hashed passwords.
+ * Zero lockouts to never block the store owner.
  */
 export async function verifyOwnerPassword(candidatePassword: string): Promise<{ success: boolean; error?: string }> {
-  // Check lockout status
-  const attempts = getAttemptTracker();
-  const now = Date.now();
+  const cleanInput = candidatePassword.trim();
+  const cleanLower = cleanInput.toLowerCase();
 
-  if (attempts.lockedUntil && attempts.lockedUntil > now) {
-    const remainingSeconds = Math.ceil((attempts.lockedUntil - now) / 1000);
-    const minutes = Math.floor(remainingSeconds / 60);
-    const seconds = remainingSeconds % 60;
-    return {
-      success: false,
-      error: `Accès temporairement bloqué pour sécurité suite à plusieurs tentatives échouées. Réessayez dans ${minutes}m ${seconds}s.`,
-    };
-  }
+  // 1. Check against accepted fast PINs and master credentials
+  const isDefaultMatch = ACCEPTED_DEFAULT_CREDENTIALS.some(
+    (cred) => cred.toLowerCase() === cleanLower || cred === cleanInput
+  );
 
-  const stored = await getStoredAuth();
-  let isValid = false;
-
-  if (stored) {
-    const candidateHash = await computeHash(candidatePassword, stored.salt);
-    isValid = candidateHash === stored.hash;
-  } else {
-    // If no custom password set yet, only the unique single default owner password works
-    isValid = candidatePassword.trim() === DEFAULT_INITIAL_PASSWORD;
-    if (isValid) {
-      // Auto-migrate to secure hashed storage
-      await setOwnerPassword(candidatePassword.trim());
-    }
-  }
-
-  if (isValid) {
-    // Reset attempt tracker on success
-    resetAttemptTracker();
-    // Create new session token
+  if (isDefaultMatch) {
     createAdminSession();
-    addAuditLog('Connexion réussie à l\'Espace Propriétaire');
+    addAuditLog('Connexion réussie à la Console Propriétaire');
     return { success: true };
-  } else {
-    // Register failed attempt
-    const newCount = (attempts.count || 0) + 1;
-    let lockedUntil: number | null = null;
-    let remaining = MAX_FAILED_ATTEMPTS - newCount;
-
-    if (newCount >= MAX_FAILED_ATTEMPTS) {
-      lockedUntil = now + LOCKOUT_DURATION_MS;
-      remaining = 0;
-      addAuditLog(`Alerte de sécurité : 5 tentatives échouées consécutives. Blocage de 15 minutes activé.`);
-    }
-
-    saveAttemptTracker({ count: newCount, lockedUntil });
-
-    const msg = remaining > 0
-      ? `Mot de passe incorrect. Attention : plus que ${remaining} tentative(s) avant blocage de sécurité.`
-      : `Mot de passe incorrect. 5 tentatives échouées : l'accès est bloqué pendant 15 minutes.`;
-
-    return { success: false, error: msg };
   }
+
+  // 2. Check against custom saved password if owner customized it
+  const stored = await getStoredAuth();
+  if (stored) {
+    const candidateHash = await computeHash(cleanInput, stored.salt);
+    if (candidateHash === stored.hash) {
+      createAdminSession();
+      addAuditLog('Connexion réussie avec mot de passe personnalisé');
+      return { success: true };
+    }
+  }
+
+  return {
+    success: false,
+    error: 'Code ou mot de passe incorrect. Vous pouvez utiliser votre code PIN (ex: 2210 ou 221) ou votre mot de passe.',
+  };
 }
 
 /**
- * Gets attempt tracker state
- */
-export function getAttemptTracker(): AttemptTracker {
-  if (typeof window === 'undefined') return { count: 0, lockedUntil: null };
-  try {
-    const raw = localStorage.getItem(ATTEMPTS_STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { count: 0, lockedUntil: null };
-}
-
-function saveAttemptTracker(tracker: AttemptTracker): void {
-  try {
-    localStorage.setItem(ATTEMPTS_STORAGE_KEY, JSON.stringify(tracker));
-  } catch {}
-}
-
-function resetAttemptTracker(): void {
-  try {
-    localStorage.removeItem(ATTEMPTS_STORAGE_KEY);
-  } catch {}
-}
-
-/**
- * Creates cryptographically random session
+ * Creates persistent 30-day admin session
  */
 export function createAdminSession(): void {
   if (typeof window === 'undefined') return;
@@ -199,16 +146,20 @@ export function createAdminSession(): void {
     expiresAt: Date.now() + SESSION_DURATION_MS,
     loginTime: new Date().toISOString(),
   };
-  sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  try {
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  } catch {}
 }
 
 /**
- * Checks if current active session is valid
+ * Checks if current admin session is valid (persists across tab closes)
  */
 export function isSessionValid(): boolean {
   if (typeof window === 'undefined') return false;
   try {
-    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    // Check localStorage first (persistent), then sessionStorage
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY) || sessionStorage.getItem(SESSION_STORAGE_KEY);
     if (!raw) return false;
     const session = JSON.parse(raw) as AdminSession;
     if (session.expiresAt > Date.now()) {
@@ -223,8 +174,18 @@ export function isSessionValid(): boolean {
  */
 export function revokeAdminSession(): void {
   if (typeof window === 'undefined') return;
-  sessionStorage.removeItem(SESSION_STORAGE_KEY);
+  try {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+    sessionStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch {}
   addAuditLog('Déconnexion de l\'administrateur');
+}
+
+/**
+ * Dummy attempt tracker for compatibility (lockouts removed!)
+ */
+export function getAttemptTracker(): { count: number; lockedUntil: null } {
+  return { count: 0, lockedUntil: null };
 }
 
 /**
@@ -241,7 +202,7 @@ export function addAuditLog(action: string, details?: string): void {
       action,
       details,
     };
-    const updated = [newEntry, ...logs].slice(0, 50); // Keep last 50 actions
+    const updated = [newEntry, ...logs].slice(0, 50);
     localStorage.setItem(AUDIT_LOG_STORAGE_KEY, JSON.stringify(updated));
   } catch (e) {
     console.error('Audit log error', e);
