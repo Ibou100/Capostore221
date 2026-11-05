@@ -29,7 +29,7 @@ interface StoreContextType {
   goToCartPage: () => void;
   goToOrders: () => void;
   goToTracking: (orderId?: string) => void;
-  goToAdmin: () => void;
+  goToAdmin: (tab?: 'products' | 'orders' | 'security' | any) => void;
   
   // Product overrides (Owner customisations: name, price, available sizes, stock)
   productOverrides: Record<string, ProductCustomOverride>;
@@ -492,10 +492,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const goToAdmin = () => {
+  const goToAdmin = (tab?: 'products' | 'orders' | 'security' | any) => {
+    const validTab = (typeof tab === 'string' && ['products', 'orders', 'security'].includes(tab)) ? tab : undefined;
     setCurrentView({ type: 'admin' });
-    if (typeof window !== 'undefined' && window.location.pathname !== '/admin') {
-      window.history.pushState(null, '', '/admin');
+    if (typeof window !== 'undefined') {
+      const targetUrl = validTab ? `/admin?tab=${validTab}` : '/admin';
+      window.history.pushState(null, '', targetUrl);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

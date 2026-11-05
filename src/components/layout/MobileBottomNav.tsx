@@ -4,12 +4,15 @@ import { useStore } from '../../context/StoreContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useOrders } from '../../context/OrderContext';
+import { isSessionValid } from '../../utils/security';
 
 export const MobileBottomNav: React.FC = () => {
   const { currentView, goToHome, goToCatalog, goToWishlist, goToOrders } = useStore();
   const { openCart, totalCount } = useCart();
   const { wishlistCount } = useWishlist();
-  const { myOrders } = useOrders();
+  const { orders, myOrders } = useOrders();
+  const isAdmin = isSessionValid();
+  const orderBadgeCount = isAdmin ? orders.length : myOrders.length;
 
   const isHome = currentView.type === 'home';
   const isCatalog = currentView.type === 'catalog';
@@ -51,9 +54,9 @@ export const MobileBottomNav: React.FC = () => {
         aria-label="Mes Commandes"
       >
         <Package className="w-5 h-5" />
-        {myOrders.length > 0 && (
+        {orderBadgeCount > 0 && (
           <span className="absolute top-0 right-1 min-w-4 h-4 px-1 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">
-            {myOrders.length}
+            {orderBadgeCount}
           </span>
         )}
         <span className="text-[10px] font-medium mt-0.5">Commandes</span>

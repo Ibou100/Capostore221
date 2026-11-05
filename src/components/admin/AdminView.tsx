@@ -80,7 +80,15 @@ export const AdminView: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Active Tab: 'products' | 'orders' | 'security'
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'security'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'security'>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab') || params.get('onglet');
+      if (tab === 'orders' || tab === 'commandes') return 'orders';
+      if (tab === 'security' || tab === 'securite') return 'security';
+    }
+    return 'products';
+  });
 
   // Change Password Form State
   const [currentPwd, setCurrentPwd] = useState('');

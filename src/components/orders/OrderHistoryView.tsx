@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Package, MessageCircle, ShoppingBag, Eye, Search, ShieldCheck } from 'lucide-react';
+import { Package, MessageCircle, ShoppingBag, Eye, Search, ShieldCheck, ArrowRight, UserCheck } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
+import { isSessionValid } from '../../utils/security';
 import { 
   formatFCFA, 
   ORDER_STATUS_CONFIG, 
@@ -10,8 +11,11 @@ import {
 } from '../../utils/format';
 
 export const OrderHistoryView: React.FC = () => {
-  const { myOrders, getOrderById, addOrderToMyOrders } = useOrders();
-  const { goToCatalog, goToTracking, showToast } = useStore();
+  const { orders, myOrders, getOrderById, addOrderToMyOrders } = useOrders();
+  const { goToCatalog, goToTracking, goToAdmin, showToast } = useStore();
+
+  const isAdmin = isSessionValid();
+  const [showAllAsAdmin, setShowAllAsAdmin] = useState<boolean>(isAdmin);
 
   const [lookupId, setLookupId] = useState('');
   const [lookupError, setLookupError] = useState<string | null>(null);
@@ -31,24 +35,70 @@ export const OrderHistoryView: React.FC = () => {
     }
   };
 
+  // If owner is logged in and chooses to see store orders, show all; otherwise show this device's orders
+  const displayedOrders = (isAdmin && showAllAsAdmin) ? orders : myOrders;
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      {/* OWNER ADMIN QUICK ACCESS BANNER */}
+      {isAdmin && (
+        <div className="bg-gradient-to-r from-[#141210] to-zinc-900 text-white p-4 sm:p-5 rounded-2xl mb-8 shadow-xl border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fadeIn">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold shrink-0 border border-amber-500/30">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                  Mode Propriétaire Actif
+                </span>
+                <span className="text-[10px] bg-amber-500 text-black font-black px-2 py-0.5 rounded-full">
+                  {orders.length} commande(s) en base Supabase
+                </span>
+              </div>
+              <p className="text-xs text-zinc-300 mt-0.5">
+                Vous consultez l'espace client. Les commandes réelles des clients sont synchronisées en direct.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={() => goToAdmin('orders')}
+              className="flex-1 sm:flex-none px-4 py-2.5 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
+            >
+              <span>Console Admin Commandes ({orders.length})</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setShowAllAsAdmin(!showAllAsAdmin)}
+              className="px-3 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold rounded-xl border border-zinc-700 transition-colors"
+              title="Basculer entre la vue de toutes les commandes et la vue client restreinte"
+            >
+              {showAllAsAdmin ? 'Vue Client' : 'Tout afficher'}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-200 mb-8">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-              Espace Client Privé & Confidentiel
+              {isAdmin && showAllAsAdmin ? 'Toutes les Commandes Clients (Supabase)' : 'Espace Client Privé & Confidentiel'}
             </span>
             <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
               <ShieldCheck className="w-3 h-3" /> Données protégées
             </span>
           </div>
           <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-zinc-900 tracking-tight">
-            Historique de vos commandes
+            {isAdmin && showAllAsAdmin ? 'Commandes Reçues sur CAPOSTORE221' : 'Historique de vos commandes'}
           </h1>
           <p className="text-xs sm:text-sm text-zinc-500 mt-1">
-            Vos achats sont strictement confidentiels : seul vous sur cet appareil et le gérant CAPOSTORE221 pouvez voir vos commandes.
+            {isAdmin && showAllAsAdmin
+              ? 'Toutes les commandes passées par vos clients sont affichées ici en temps réel avec leurs coordonnées complètes.'
+              : 'Vos achats sont strictement confidentiels : seul vous sur cet appareil et le gérant CAPOSTORE221 pouvez voir vos commandes.'}
           </p>
         </div>
 
@@ -61,18 +111,22 @@ export const OrderHistoryView: React.FC = () => {
         </button>
       </div>
 
-      {/* Orders List for THIS client */}
-      {myOrders.length === 0 ? (
+      {/* Orders List */}
+      {displayedOrders.length === 0 ? (
         <div className="space-y-6">
           <div className="bg-white rounded-2xl p-8 sm:p-12 text-center border border-zinc-200 shadow-sm">
             <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-400">
               <Package className="w-8 h-8" />
             </div>
             <h2 className="font-display font-bold text-lg text-zinc-900">
-              Aucune commande passée sur cet appareil pour le moment
+              {isAdmin && showAllAsAdmin 
+                ? 'Aucune commande enregistrée pour le moment' 
+                : 'Aucune commande passée sur cet appareil pour le moment'}
             </h2>
             <p className="text-xs text-zinc-500 mt-1.5 max-w-md mx-auto">
-              Par mesure de stricte confidentialité, seules les commandes passées par vous sur cet appareil s'affichent ici.
+              {isAdmin && showAllAsAdmin
+                ? 'Dès qu\'un client passe commande sur le site, elle apparaîtra ici et dans votre console administrateur.'
+                : 'Par mesure de stricte confidentialité, seules les commandes passées par vous sur cet appareil s\'affichent ici.'}
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -94,7 +148,7 @@ export const OrderHistoryView: React.FC = () => {
               </h3>
             </div>
             <p className="text-xs text-zinc-500 mb-4">
-              Si vous avez commandé depuis un autre téléphone ou via WhatsApp, entrez votre référence unique (ex: <strong className="font-mono text-zinc-700">CAPO-8924</strong>) pour la rattacher en toute sécurité.
+              Si vous avez commandé depuis un autre téléphone ou via WhatsApp, entrez votre référence unique (ex: <strong className="font-mono text-zinc-700">CAPO-2063</strong>) pour la rattacher en toute sécurité.
             </p>
 
             <form onSubmit={handleLookupSubmit} className="flex flex-col sm:flex-row gap-2.5 max-w-md">
@@ -105,7 +159,7 @@ export const OrderHistoryView: React.FC = () => {
                   setLookupId(e.target.value);
                   setLookupError(null);
                 }}
-                placeholder="Ex: CAPO-8924"
+                placeholder="Ex: CAPO-2063"
                 className="flex-1 px-4 py-2.5 text-xs font-mono uppercase bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
               />
               <button
@@ -125,7 +179,7 @@ export const OrderHistoryView: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          {myOrders.map((order) => {
+          {displayedOrders.map((order) => {
             const statusConfig = (order.status && ORDER_STATUS_CONFIG[order.status]) || {
               label: 'Transmise',
               badgeClass: 'bg-zinc-100 text-zinc-800 border-zinc-200',
@@ -173,6 +227,25 @@ export const OrderHistoryView: React.FC = () => {
                     </span>
                   </div>
                 </div>
+
+                {/* Admin Client Info Banner (Visible if Owner Admin) */}
+                {isAdmin && (
+                  <div className="bg-amber-500/10 border-b border-amber-500/20 px-5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="w-4 h-4 text-amber-700" />
+                      <span className="font-bold text-amber-950">
+                        Client : {order.customerName} • Tél : {order.customerPhone}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => goToAdmin('orders')}
+                      className="text-[11px] font-bold text-[#B85D19] hover:underline flex items-center gap-1"
+                    >
+                      <span>Modifier le statut dans l'Admin</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
 
                 {/* Order Body */}
                 <div className="p-5 sm:p-6 space-y-4">

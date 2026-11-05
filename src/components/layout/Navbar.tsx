@@ -4,6 +4,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
+import { isSessionValid } from '../../utils/security';
 import { 
   FACEBOOK_URL, 
   INSTAGRAM_URL, 
@@ -20,7 +21,9 @@ export const Navbar: React.FC = () => {
   const { totalCount, openCart } = useCart();
   const { wishlistCount } = useWishlist();
   const { goToHome, goToCatalog, goToWishlist, goToOrders, goToAdmin, openSearch, currentView } = useStore();
-  const { orders } = useOrders();
+  const { orders, myOrders } = useOrders();
+  const isAdmin = isSessionValid();
+  const orderBadgeCount = isAdmin ? orders.length : myOrders.length;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -150,12 +153,12 @@ export const Navbar: React.FC = () => {
               onClick={goToOrders}
               className="relative p-2 text-zinc-800 hover:text-zinc-600 transition-colors focus:outline-none"
               aria-label="Mes commandes et suivi"
-              title="Mes commandes & Suivi de colis"
+              title={isAdmin ? "Commandes boutique & Suivi client" : "Mes commandes & Suivi de colis"}
             >
               <Package className="w-5 h-5" />
-              {orders.length > 0 && (
+              {orderBadgeCount > 0 && (
                 <span className="absolute top-1 right-0.5 min-w-4 h-4 px-1 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">
-                  {orders.length}
+                  {orderBadgeCount}
                 </span>
               )}
             </button>
@@ -246,11 +249,11 @@ export const Navbar: React.FC = () => {
                 >
                   <div className="flex items-center gap-3">
                     <Package className="w-4 h-4 text-amber-600" />
-                    <span>Mes Commandes & Suivi</span>
+                    <span>{isAdmin ? 'Commandes Boutique' : 'Mes Commandes & Suivi'}</span>
                   </div>
-                  {orders.length > 0 && (
+                  {orderBadgeCount > 0 && (
                     <span className="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px]">
-                      {orders.length}
+                      {orderBadgeCount}
                     </span>
                   )}
                 </button>
