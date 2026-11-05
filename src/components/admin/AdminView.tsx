@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
-  ShieldCheck, Lock, Edit3, Save, RotateCcw, Package, 
+  ShieldCheck, Edit3, Save, RotateCcw, Package, 
   Trash2, Search, ArrowLeft, Phone, MessageCircle, 
   Eye, EyeOff, KeyRound, Download, Clock, 
   LogOut, Plus, Upload, RefreshCw, 
   Check, X, Sparkles, Copy, Link as LinkIcon,
-  Database, Server, CheckCircle2, AlertTriangle, ExternalLink
+  Database, Server, CheckCircle2, AlertTriangle, ExternalLink,
+  TrendingUp, Users, DollarSign, ShoppingBag, CreditCard, Award, Activity, ArrowUpRight, BarChart3
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
@@ -79,16 +80,76 @@ export const AdminView: React.FC = () => {
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Active Tab: 'products' | 'orders' | 'security'
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'security'>(() => {
+  // Active Tab: 'dashboard' | 'products' | 'orders' | 'security'
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'orders' | 'security'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab') || params.get('onglet');
+      if (tab === 'dashboard' || tab === 'ventes') return 'dashboard';
       if (tab === 'orders' || tab === 'commandes') return 'orders';
+      if (tab === 'products' || tab === 'articles') return 'products';
       if (tab === 'security' || tab === 'securite') return 'security';
     }
-    return 'products';
+    return 'dashboard';
   });
+
+  // Business Analytics & KPIs for the Store Owner Dashboard
+  const totalRevenue = useMemo(() => {
+    return (orders || []).reduce((sum, o) => sum + (Number(o?.total) || 0), 0);
+  }, [orders]);
+
+  const deliveredRevenue = useMemo(() => {
+    return (orders || [])
+      .filter((o) => o?.status === 'livree')
+      .reduce((sum, o) => sum + (Number(o?.total) || 0), 0);
+  }, [orders]);
+
+  const totalOrdersCount = (orders || []).length;
+  const deliveredOrdersCount = (orders || []).filter((o) => o?.status === 'livree').length;
+  const pendingOrdersCount = (orders || []).filter((o) => o?.status !== 'livree').length;
+
+  const uniqueCustomersCount = useMemo(() => {
+    const clients = new Set(
+      (orders || []).map((o) => (o?.customerPhone || o?.customerName || '').trim().toLowerCase())
+    );
+    clients.delete('');
+    return clients.size;
+  }, [orders]);
+
+  const averageBasket = totalOrdersCount > 0 ? Math.round(totalRevenue / totalOrdersCount) : 0;
+  const deliverySuccessRate = totalOrdersCount > 0 ? Math.round((deliveredOrdersCount / totalOrdersCount) * 100) : 100;
+
+  // Breakdown by payment methods
+  const paymentStats = useMemo(() => {
+    const wave = (orders || []).filter((o) => o?.paymentMethod === 'wave').length;
+    const om = (orders || []).filter((o) => o?.paymentMethod === 'orange_money').length;
+    const cash = (orders || []).filter((o) => o?.paymentMethod === 'especes').length;
+    const free = (orders || []).filter((o) => o?.paymentMethod === 'free_money').length;
+    return { wave, om, cash, free };
+  }, [orders]);
+
+  // Breakdown by city
+  const cityStats = useMemo(() => {
+    const dakar = (orders || []).filter((o) => (o?.customerCity || '').toLowerCase().includes('dakar')).length;
+    const regions = totalOrdersCount - dakar;
+    return { dakar, regions };
+  }, [orders, totalOrdersCount]);
+
+  // Top selling items
+  const topSellingItems = useMemo(() => {
+    const map = new Map<string, { name: string; count: number; revenue: number; image?: string }>();
+    (orders || []).forEach((o) => {
+      (o?.items || []).forEach((item) => {
+        const key = item.productId || item.name;
+        const existing = map.get(key) || { name: item.name, count: 0, revenue: 0, image: item.image };
+        existing.count += item.quantity || 1;
+        existing.revenue += (item.price || 0) * (item.quantity || 1);
+        if (item.image && !existing.image) existing.image = item.image;
+        map.set(key, existing);
+      });
+    });
+    return Array.from(map.values()).sort((a, b) => b.count - a.count).slice(0, 5);
+  }, [orders]);
 
   // Change Password Form State
   const [currentPwd, setCurrentPwd] = useState('');
@@ -740,6 +801,18 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
         {/* Navigation Tabs */}
         <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-zinc-800">
           <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
+              activeTab === 'dashboard'
+                ? 'bg-[#B85D19] text-white shadow-md'
+                : 'bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span>📊 Tableau de Bord & Ventes</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('products')}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
               activeTab === 'products'
@@ -774,11 +847,340 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                 : 'bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
             }`}
           >
-            <Lock className="w-3.5 h-3.5" />
-            <span>Sécurité & Raccourcis Directs</span>
+            <ShieldCheck className="w-4 h-4" />
+            <span>🔒 Sécurité & Base Cloud</span>
           </button>
         </div>
       </div>
+
+      {/* ============================================================
+          TAB 0: EXECUTIVE ANALYTICS & SALES DASHBOARD (DASHBOARD)
+         ============================================================ */}
+      {activeTab === 'dashboard' && (
+        <div className="space-y-8 animate-fadeIn">
+          {/* Welcome & Revenue Overview Banner */}
+          <div className="bg-gradient-to-r from-zinc-900 via-[#1a1714] to-zinc-900 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                    <Activity className="w-3 h-3" />
+                    <span>Performance Commerciale en Direct</span>
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                    PostgreSQL Supabase Connecté
+                  </span>
+                </div>
+                <h2 className="font-display font-black text-2xl sm:text-3xl text-white tracking-tight">
+                  Vue d'Ensemble des Ventes & Clients
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-300 mt-1 max-w-xl">
+                  Suivi en temps réel des encaissements, du volume de commandes et de la fidélité de vos clients à Dakar et dans les régions.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => setActiveTab('orders')}
+                  className="px-5 py-3 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center gap-2"
+                >
+                  <Package className="w-4 h-4" />
+                  <span>Gérer les Commandes ({orders.length})</span>
+                </button>
+                <button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-white/10 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Ajouter une tenue</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Top KPI Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {/* 1. Chiffre d'Affaires */}
+            <div className="bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                  Chiffre d'Affaires Global
+                </span>
+                <div className="w-9 h-9 rounded-xl bg-amber-50 text-[#B85D19] flex items-center justify-center font-bold">
+                  <DollarSign className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="font-display font-black text-2xl sm:text-3xl text-zinc-950 tracking-tight">
+                {formatFCFA(totalRevenue)}
+              </div>
+              <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-100">
+                <span>Encaissé (livré) :</span>
+                <strong className="text-emerald-700 font-bold">{formatFCFA(deliveredRevenue)}</strong>
+              </div>
+            </div>
+
+            {/* 2. Clients Uniques */}
+            <div className="bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                  Clients Uniques
+                </span>
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <Users className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="font-display font-black text-2xl sm:text-3xl text-zinc-950 tracking-tight">
+                {uniqueCustomersCount} {uniqueCustomersCount > 1 ? 'Clients' : 'Client'}
+              </div>
+              <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-100">
+                <span>Répartition :</span>
+                <span className="font-semibold text-zinc-800">{cityStats.dakar} Dakar • {cityStats.regions} Régions</span>
+              </div>
+            </div>
+
+            {/* 3. Total Commandes */}
+            <div className="bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                  Commandes Réalisées
+                </span>
+                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                  <ShoppingBag className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="font-display font-black text-2xl sm:text-3xl text-zinc-950 tracking-tight">
+                {totalOrdersCount}
+              </div>
+              <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-100">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span>{deliveredOrdersCount} livrée(s)</span>
+                </span>
+                <span className="flex items-center gap-1.5 text-amber-700 font-semibold">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  <span>{pendingOrdersCount} en cours</span>
+                </span>
+              </div>
+            </div>
+
+            {/* 4. Panier Moyen */}
+            <div className="bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                  Panier Moyen / Commande
+                </span>
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="font-display font-black text-2xl sm:text-3xl text-zinc-950 tracking-tight">
+                {formatFCFA(averageBasket)}
+              </div>
+              <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-100">
+                <span>Taux de livraison :</span>
+                <strong className="text-zinc-900 font-bold">{deliverySuccessRate}% réussi</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Middle Section: Analytics Panels */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Panel A: Modes de Paiement Utilisés */}
+            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-zinc-200 shadow-sm space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-[#B85D19]" />
+                  <h3 className="font-display font-bold text-sm text-zinc-900">
+                    Modes de Paiement Clients (Sénégal)
+                  </h3>
+                </div>
+                <span className="text-[10px] uppercase font-bold text-zinc-400">
+                  {totalOrdersCount} transaction(s)
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                {/* Wave */}
+                <div>
+                  <div className="flex items-center justify-between text-xs font-semibold mb-1">
+                    <span className="text-zinc-700">Wave Sénégal (🌊)</span>
+                    <span className="font-mono text-zinc-900">{paymentStats.wave} commande(s) ({totalOrdersCount > 0 ? Math.round((paymentStats.wave / totalOrdersCount) * 100) : 0}%)</span>
+                  </div>
+                  <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-500 rounded-full"
+                      style={{ width: `${totalOrdersCount > 0 ? (paymentStats.wave / totalOrdersCount) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Orange Money */}
+                <div>
+                  <div className="flex items-center justify-between text-xs font-semibold mb-1">
+                    <span className="text-zinc-700">Orange Money (🍊)</span>
+                    <span className="font-mono text-zinc-900">{paymentStats.om} commande(s) ({totalOrdersCount > 0 ? Math.round((paymentStats.om / totalOrdersCount) * 100) : 0}%)</span>
+                  </div>
+                  <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-orange-500 rounded-full"
+                      style={{ width: `${totalOrdersCount > 0 ? (paymentStats.om / totalOrdersCount) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Espèces */}
+                <div>
+                  <div className="flex items-center justify-between text-xs font-semibold mb-1">
+                    <span className="text-zinc-700">Paiement à la Livraison (💵 Espèces)</span>
+                    <span className="font-mono text-zinc-900">{paymentStats.cash} commande(s) ({totalOrdersCount > 0 ? Math.round((paymentStats.cash / totalOrdersCount) * 100) : 0}%)</span>
+                  </div>
+                  <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-500 rounded-full"
+                      style={{ width: `${totalOrdersCount > 0 ? (paymentStats.cash / totalOrdersCount) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Free Money */}
+                <div>
+                  <div className="flex items-center justify-between text-xs font-semibold mb-1">
+                    <span className="text-zinc-700">Free Money (🔴)</span>
+                    <span className="font-mono text-zinc-900">{paymentStats.free} commande(s) ({totalOrdersCount > 0 ? Math.round((paymentStats.free / totalOrdersCount) * 100) : 0}%)</span>
+                  </div>
+                  <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-red-500 rounded-full"
+                      style={{ width: `${totalOrdersCount > 0 ? (paymentStats.free / totalOrdersCount) * 100 : 0}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Panel B: Top Articles les plus Demandés */}
+            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-zinc-200 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-amber-500" />
+                  <h3 className="font-display font-bold text-sm text-zinc-900">
+                    Articles les plus Demandés
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setActiveTab('products')}
+                  className="text-[11px] font-bold text-[#B85D19] hover:underline"
+                >
+                  Gérer les prix →
+                </button>
+              </div>
+
+              {topSellingItems.length === 0 ? (
+                <div className="py-8 text-center text-zinc-400 text-xs">
+                  Aucune vente enregistrée pour le moment.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {topSellingItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-zinc-50 hover:bg-zinc-100 transition-colors">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="font-display font-black text-xs text-zinc-400 w-4">
+                          #{idx + 1}
+                        </span>
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-10 h-10 object-cover rounded-lg bg-zinc-200 border border-zinc-200 shrink-0"
+                          />
+                        )}
+                        <div className="truncate">
+                          <p className="font-bold text-xs text-zinc-900 truncate">{item.name}</p>
+                          <p className="text-[10px] text-zinc-500">{item.count} exemplaire(s) vendu(s)</p>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="font-mono font-bold text-xs text-[#B85D19]">
+                          {formatFCFA(item.revenue)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Bottom Row: Recent Live Orders Table */}
+          <div className="bg-white rounded-2xl p-6 sm:p-7 border border-zinc-200 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100">
+              <div>
+                <h3 className="font-display font-bold text-sm text-zinc-900">
+                  Dernières Commandes Clients Reçues
+                </h3>
+                <p className="text-xs text-zinc-500">
+                  Flux synchronisé en direct depuis Supabase.
+                </p>
+              </div>
+              <button
+                onClick={() => setActiveTab('orders')}
+                className="text-xs font-bold text-[#B85D19] hover:underline flex items-center gap-1 self-start sm:self-auto"
+              >
+                <span>Voir et traiter toutes les commandes ({orders.length})</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {orders.length === 0 ? (
+              <div className="py-8 text-center text-zinc-400 text-xs">
+                Aucune commande enregistrée.
+              </div>
+            ) : (
+              <div className="divide-y divide-zinc-100">
+                {orders.slice(0, 5).map((order) => {
+                  const statusConfig = ORDER_STATUS_CONFIG[order.status] || {
+                    label: order.status,
+                    badgeClass: 'bg-zinc-100 text-zinc-800',
+                  };
+                  return (
+                    <div key={order.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono font-black text-xs text-zinc-900 bg-zinc-100 px-2.5 py-1 rounded-md">
+                          {order.id}
+                        </span>
+                        <div>
+                          <p className="font-bold text-xs text-zinc-900">
+                            {order.customerName} • <span className="font-mono text-zinc-600">{order.customerPhone}</span>
+                          </p>
+                          <p className="text-[11px] text-zinc-500">
+                            {order.customerCity} • {order.items?.length || 0} article(s) • {getPaymentMethodLabel(order.paymentMethod)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 justify-between sm:justify-end">
+                        <span className="font-mono font-bold text-xs text-zinc-900">
+                          {formatFCFA(order.total)}
+                        </span>
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusConfig.badgeClass}`}>
+                          {statusConfig.label}
+                        </span>
+                        <button
+                          onClick={() => setActiveTab('orders')}
+                          className="p-1.5 hover:bg-zinc-100 text-zinc-500 hover:text-black rounded-lg transition-colors"
+                          title="Gérer cette commande"
+                        >
+                          <ArrowUpRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ============================================================
           TAB 1: PRODUCTS / OUTFITS MANAGEMENT & ADD NEW ARTICLE
