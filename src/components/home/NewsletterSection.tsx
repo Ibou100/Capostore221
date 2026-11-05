@@ -29,70 +29,70 @@ export const NewsletterSection: React.FC = () => {
   };
 
   return (
-    <section className="py-16 lg:py-20 bg-[#FAF8F5] border-b border-[#E7E2D9]">
+    <section className="py-16 lg:py-24 bg-gradient-to-b from-white to-[#FAF8F5] border-b border-stone-200/80">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
         
         {/* Header */}
         <div className="space-y-3">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-[#B85D19]">
-            Nouveautés & Réassorts
-          </p>
-          <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-zinc-900 tracking-tight">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-[#B85D19] text-[10px] font-bold uppercase tracking-widest">
+            <span>Privilège Client</span>
+          </div>
+          <h2 className="font-display font-black text-2xl sm:text-4xl text-[#0C0A09] tracking-tight">
             Soyez averti des prochains arrivages
           </h2>
-          <p className="text-xs sm:text-sm text-zinc-500 max-w-lg mx-auto">
-            Recevez nos sélections de pièces en stock avant tout le monde. Zéro spam, uniquement nos nouveaux vêtements et accessoires.
+          <p className="text-xs sm:text-sm text-stone-500 max-w-lg mx-auto leading-relaxed">
+            Recevez nos pièces exclusives et alertes réassorts en priorité. Zéro spam, uniquement nos nouveaux vêtements, lunettes et maroquinerie.
           </p>
         </div>
 
         {/* Form */}
         <div className="max-w-md mx-auto">
           {isSubscribed ? (
-            <div className="flex items-center justify-center gap-2 text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 py-3.5 px-4 rounded-sm">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Votre adresse a été enregistrée avec succès.</span>
+            <div className="flex items-center justify-center gap-2.5 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 py-4 px-6 rounded-2xl shadow-xs">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              <span>Votre adresse a été enregistrée avec succès. Bienvenue !</span>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex gap-2">
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2.5 p-1.5 bg-white border border-stone-200 rounded-2xl shadow-sm focus-within:border-stone-900 transition-all">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Votre adresse email..."
+                placeholder="Votre adresse email personnelle..."
                 required
-                className="flex-1 bg-white border border-[#D9D3C7] text-zinc-900 text-xs px-4 py-3 rounded-sm focus:outline-none focus:border-zinc-900 placeholder:text-zinc-400"
+                className="flex-1 bg-transparent text-stone-900 text-xs px-4 py-3 focus:outline-none placeholder:text-stone-400 font-medium"
               />
               <button
                 type="submit"
-                className="bg-[#141210] hover:bg-[#2C2723] text-white px-5 py-3 rounded-sm text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shrink-0"
+                className="bg-[#0C0A09] hover:bg-[#201D1A] text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
               >
-                <span>S'inscrire</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>Rejoindre</span>
+                <ArrowRight className="w-4 h-4 text-amber-400" />
               </button>
             </form>
           )}
         </div>
 
         {/* Direct Contact Links Strip */}
-        <div className="pt-6 border-t border-[#EAE5DC] flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-zinc-600">
+        <div className="pt-6 border-t border-stone-200/80 flex flex-wrap items-center justify-center gap-5 sm:gap-7 text-xs text-stone-600">
           <a
             href={`https://wa.me/${STORE_WHATSAPP_PHONE}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 hover:text-emerald-700 transition-colors"
+            className="inline-flex items-center gap-2 hover:text-emerald-700 transition-colors font-medium"
           >
-            <MessageCircle className="w-3.5 h-3.5" />
-            <span>WhatsApp : {STORE_PHONE_WHATSAPP_DISPLAY}</span>
+            <MessageCircle className="w-4 h-4 text-emerald-600" />
+            <span>WhatsApp : <strong>{STORE_PHONE_WHATSAPP_DISPLAY}</strong></span>
           </a>
 
-          <span className="text-zinc-300 hidden sm:inline">•</span>
+          <span className="text-stone-300 hidden sm:inline">•</span>
 
           <a
             href={`tel:+${STORE_CALL_PHONE}`}
-            className="inline-flex items-center gap-1.5 hover:text-zinc-900 transition-colors"
+            className="inline-flex items-center gap-2 hover:text-stone-900 transition-colors font-medium"
           >
-            <Phone className="w-3.5 h-3.5" />
-            <span>Appel : {STORE_PHONE_CALL_DISPLAY}</span>
+            <Phone className="w-4 h-4 text-stone-700" />
+            <span>Appel direct : <strong>{STORE_PHONE_CALL_DISPLAY}</strong></span>
           </a>
 
           <span className="text-zinc-300 hidden sm:inline">•</span>

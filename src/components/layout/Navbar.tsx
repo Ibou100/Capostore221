@@ -61,8 +61,8 @@ export const Navbar: React.FC = () => {
     <header
       className={`sticky top-0 z-40 w-full transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-zinc-200/90 py-3.5'
-          : 'bg-white border-b border-zinc-200/60 py-4'
+          ? 'bg-white/90 backdrop-blur-md shadow-[0_4px_25px_rgba(0,0,0,0.04)] border-b border-stone-200/80 py-3'
+          : 'bg-[#FAF8F5]/95 backdrop-blur-xs border-b border-stone-200/60 py-4'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,44 +72,44 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center lg:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 -ml-2 text-zinc-900 hover:text-zinc-600 transition-colors focus:outline-none"
+              className="p-2 -ml-2 text-stone-900 hover:text-stone-600 transition-colors focus:outline-none"
               aria-label="Ouvrir le menu"
             >
               <Menu className="w-5 h-5" />
             </button>
             <button
               onClick={openSearch}
-              className="p-2 text-zinc-900 hover:text-zinc-600 transition-colors focus:outline-none ml-0.5"
+              className="p-2 text-stone-900 hover:text-stone-600 transition-colors focus:outline-none ml-0.5"
               aria-label="Rechercher"
             >
               <Search className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Brand Logo */}
+          {/* Brand Logo - Luxury Atelier Identity */}
           <div className="flex items-center justify-center lg:justify-start">
             <button
               onClick={goToHome}
-              className="group flex items-center gap-2.5 text-left focus:outline-none"
+              className="group flex items-center gap-3 text-left focus:outline-none"
               aria-label="CAPOSTORE221 - Accueil"
             >
-              <div className="w-8 h-8 rounded bg-[#141210] flex items-center justify-center text-white font-display font-bold text-xs tracking-tighter group-hover:bg-[#2C2723] transition-colors">
+              <div className="w-9 h-9 rounded-xl bg-[#0C0A09] flex items-center justify-center text-white font-display font-black text-xs tracking-tighter shadow-md group-hover:bg-[#B85D19] transition-all duration-300 border border-amber-500/20">
                 <span>CS</span>
-                <span className="text-[#B85D19] text-[9px] font-mono ml-0.5">221</span>
+                <span className="text-[#D4AF37] text-[9px] font-mono ml-0.5 font-bold">221</span>
               </div>
               <div className="flex flex-col">
-                <span className="font-display font-black tracking-tight text-xl text-[#141210] leading-none">
+                <span className="font-display font-black tracking-tight text-xl sm:text-2xl text-[#0C0A09] leading-none group-hover:text-[#B85D19] transition-colors">
                   CAPOSTORE<span className="text-[#B85D19] font-medium text-lg ml-0.5">221</span>
                 </span>
-                <span className="text-[9px] tracking-widest uppercase text-zinc-500 font-semibold mt-0.5">
-                  Boutique en ligne
+                <span className="text-[8.5px] tracking-[0.25em] uppercase text-stone-400 font-bold mt-1">
+                  Dakar • Maison de Mode
                 </span>
               </div>
             </button>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-9">
             {navLinks.map((link) => {
               const isActive =
                 (!link.category && !link.filterType && currentView.type === 'home') ||
@@ -121,15 +121,15 @@ export const Navbar: React.FC = () => {
                 <button
                   key={link.label}
                   onClick={() => handleNavClick(link)}
-                  className={`text-xs font-semibold tracking-wider uppercase transition-colors relative py-1 ${
+                  className={`text-xs font-bold tracking-widest uppercase transition-all relative py-1.5 ${
                     isActive
-                      ? 'text-[#141210]'
-                      : 'text-zinc-500 hover:text-[#141210]'
+                      ? 'text-[#0C0A09]'
+                      : 'text-stone-500 hover:text-[#0C0A09]'
                   }`}
                 >
-                  {link.label}
+                  <span>{link.label}</span>
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#141210] rounded-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#B85D19] to-[#D4AF37] rounded-full animate-fadeIn" />
                   )}
                 </button>
               );
@@ -141,26 +141,26 @@ export const Navbar: React.FC = () => {
             {/* Desktop Search Button */}
             <button
               onClick={openSearch}
-              className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs text-zinc-500 bg-zinc-100 hover:bg-zinc-200/70 hover:text-zinc-900 transition-colors focus:outline-none border border-zinc-200/80"
+              className="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-full text-xs text-stone-500 bg-white hover:bg-stone-50 hover:text-stone-900 transition-all focus:outline-none border border-stone-200/90 shadow-2xs hover:shadow-xs"
               aria-label="Rechercher des pièces"
             >
-              <Search className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Rechercher...</span>
-              <kbd className="text-[10px] bg-white px-1.5 py-0.5 rounded text-zinc-400 border border-zinc-200 font-mono">
-                /
+              <Search className="w-3.5 h-3.5 text-stone-400" />
+              <span className="font-medium">Rechercher...</span>
+              <kbd className="text-[10px] bg-stone-100 px-1.5 py-0.5 rounded text-stone-400 border border-stone-200 font-mono">
+                ⌘K
               </kbd>
             </button>
 
             {/* Order Tracking & History Button */}
             <button
               onClick={goToOrders}
-              className="relative p-2 text-zinc-800 hover:text-zinc-600 transition-colors focus:outline-none"
+              className="relative p-2.5 text-stone-800 hover:text-stone-900 hover:bg-stone-100/70 rounded-full transition-colors focus:outline-none"
               aria-label="Mes commandes et suivi"
               title={isAdmin ? "Commandes boutique & Suivi client" : "Mes commandes & Suivi de colis"}
             >
               <Package className="w-5 h-5" />
               {orderBadgeCount > 0 && (
-                <span className="absolute top-1 right-0.5 min-w-4 h-4 px-1 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">
+                <span className="absolute top-1 right-1 min-w-4 h-4 px-1 rounded-full bg-[#B85D19] text-white text-[9px] font-bold flex items-center justify-center shadow-xs">
                   {orderBadgeCount}
                 </span>
               )}
@@ -169,12 +169,12 @@ export const Navbar: React.FC = () => {
             {/* Wishlist Button */}
             <button
               onClick={goToWishlist}
-              className="relative p-2 text-zinc-800 hover:text-zinc-600 transition-colors focus:outline-none"
+              className="relative p-2.5 text-stone-800 hover:text-stone-900 hover:bg-stone-100/70 rounded-full transition-colors focus:outline-none"
               aria-label="Voir mes favoris"
             >
               <Heart className="w-5 h-5" />
               {wishlistCount > 0 && (
-                <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#141210] text-white text-[9px] font-bold flex items-center justify-center">
+                <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#0C0A09] text-white text-[9px] font-bold flex items-center justify-center shadow-xs">
                   {wishlistCount}
                 </span>
               )}
@@ -183,14 +183,17 @@ export const Navbar: React.FC = () => {
             {/* Cart Button */}
             <button
               onClick={openCart}
-              className="relative p-2 text-zinc-800 hover:text-zinc-600 transition-colors focus:outline-none group"
+              className="relative flex items-center gap-2 px-3.5 py-2 bg-[#0C0A09] hover:bg-[#1E1B18] text-white rounded-full transition-all shadow-sm hover:shadow-md focus:outline-none group"
               aria-label={`Panier (${totalCount} articles)`}
             >
-              <ShoppingBag className="w-5 h-5 transition-transform group-hover:scale-105" />
-              {totalCount > 0 && (
-                <span className="absolute top-1 right-0.5 min-w-4 h-4 px-1 rounded-full bg-[#B85D19] text-white text-[10px] font-bold flex items-center justify-center">
+              <ShoppingBag className="w-4 h-4 text-amber-400 transition-transform group-hover:scale-110" />
+              <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">Panier</span>
+              {totalCount > 0 ? (
+                <span className="w-5 h-5 rounded-full bg-[#B85D19] text-white text-[10px] font-bold flex items-center justify-center">
                   {totalCount}
                 </span>
+              ) : (
+                <span className="text-[11px] text-stone-400 font-mono">0</span>
               )}
             </button>
           </div>
