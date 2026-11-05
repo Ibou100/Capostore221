@@ -34,6 +34,7 @@ export interface Order {
 export interface ProductCustomOverride {
   name?: string;
   price?: number;
+  compareAtPrice?: number | null;
   availableSizes?: string[];
   stock?: number;
   published?: boolean;
@@ -60,7 +61,7 @@ export interface Product {
   subCategory: string;
   gender: ProductGender;
   price: number; // in FCFA (XOF)
-  compareAtPrice?: number; // optional original price for discounts/archive
+  compareAtPrice?: number | null; // optional original price for discounts/archive
   images: string[];
   description: string;
   details: string[];

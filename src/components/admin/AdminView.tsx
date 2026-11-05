@@ -108,6 +108,7 @@ export const AdminView: React.FC = () => {
   // Edit form state for selected product
   const [editName, setEditName] = useState('');
   const [editPrice, setEditPrice] = useState<number>(5000);
+  const [editCompareAtPrice, setEditCompareAtPrice] = useState<number | ''>('');
   const [editSizes, setEditSizes] = useState<string[]>([]);
   const [editStock, setEditStock] = useState<number>(10);
   const [editPublished, setEditPublished] = useState<boolean>(true);
@@ -116,6 +117,7 @@ export const AdminView: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newName, setNewName] = useState('');
   const [newPrice, setNewPrice] = useState<number | ''>(15000);
+  const [newCompareAtPrice, setNewCompareAtPrice] = useState<number | ''>('');
   const [newCategory, setNewCategory] = useState<CategoryId>('vetements');
   const [newSubCategory, setNewSubCategory] = useState('Boubous & Costumes');
   const [newSizes, setNewSizes] = useState<string[]>(['M', 'L', 'XL']);
@@ -285,6 +287,7 @@ export const AdminView: React.FC = () => {
         subCategory: newSubCategory.trim() || 'Nouvelle Collection',
         gender: 'homme',
         price: Number(newPrice),
+        compareAtPrice: newCompareAtPrice && Number(newCompareAtPrice) > Number(newPrice) ? Number(newCompareAtPrice) : undefined,
         images: [newImageData],
         description: newDescription.trim() || `${cleanName} – Confection artisanale haut de gamme par CAPOSTORE221. Finitions d'exception.`,
         details: [
@@ -311,6 +314,7 @@ export const AdminView: React.FC = () => {
       // Reset modal state
       setNewName('');
       setNewPrice(15000);
+      setNewCompareAtPrice('');
       setNewCategory('vetements');
       setNewSubCategory('Boubous & Costumes');
       setNewSizes(['M', 'L', 'XL']);
@@ -333,6 +337,7 @@ export const AdminView: React.FC = () => {
     setEditingProductId(product.id);
     setEditName(product.name);
     setEditPrice(product.price);
+    setEditCompareAtPrice(product.compareAtPrice && product.compareAtPrice > 0 ? product.compareAtPrice : '');
     setEditSizes(product.availableSizes ? [...product.availableSizes] : []);
     setEditStock(product.stock);
     setEditPublished(product.published);
@@ -355,15 +360,21 @@ export const AdminView: React.FC = () => {
       return;
     }
 
+    const comparePrice = editCompareAtPrice !== '' && Number(editCompareAtPrice) > 0 
+      ? Number(editCompareAtPrice) 
+      : null;
+
     updateProductOverride(productId, {
       name: editName.trim(),
       price: editPrice,
+      compareAtPrice: comparePrice,
       availableSizes: editSizes,
       stock: editStock,
       published: editPublished,
     });
 
-    addAuditLog(`Tenue modifiée (${productId})`, `Nouveau nom : "${editName.trim()}" | Prix : ${formatFCFA(editPrice)}`);
+    const promoInfo = comparePrice && comparePrice > editPrice ? ` (Ancien prix barré : ${formatFCFA(comparePrice)})` : '';
+    addAuditLog(`Tenue modifiée (${productId})`, `Nouveau nom : "${editName.trim()}" | Prix : ${formatFCFA(editPrice)}${promoInfo}`);
     setEditingProductId(null);
   };
 
@@ -914,19 +925,40 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                        Prix de vente (FCFA) *
-                      </label>
-                      <input
-                        type="number"
-                        step={500}
-                        required
-                        value={newPrice}
-                        onChange={(e) => setNewPrice(e.target.value === '' ? '' : Number(e.target.value))}
-                        placeholder="Ex: 25000"
-                        className="w-full text-xs font-mono font-bold px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
-                      />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
+                          Prix de vente / Promo (FCFA) *
+                        </label>
+                        <input
+                          type="number"
+                          step={500}
+                          required
+                          value={newPrice}
+                          onChange={(e) => setNewPrice(e.target.value === '' ? '' : Number(e.target.value))}
+                          placeholder="Ex: 5000"
+                          className="w-full text-xs font-mono font-bold px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
+                          Ancien Prix Barré (FCFA) - Optionnel
+                        </label>
+                        <input
+                          type="number"
+                          step={500}
+                          value={newCompareAtPrice}
+                          onChange={(e) => setNewCompareAtPrice(e.target.value === '' ? '' : Number(e.target.value))}
+                          placeholder="Ex: 8000 (s'affichera barré)"
+                          className="w-full text-xs font-mono px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+                        />
+                        <span className="text-[10px] text-zinc-400 mt-0.5 block">
+                          {newCompareAtPrice && Number(newCompareAtPrice) > Number(newPrice)
+                            ? `Badge Promo : -${Math.round(((Number(newCompareAtPrice) - Number(newPrice)) / Number(newCompareAtPrice)) * 100)}%`
+                            : 'Laissez vide si l\'article n\'est pas en promotion.'}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -1164,10 +1196,10 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                             />
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                               <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-800 mb-1">
-                                Prix de vente (FCFA) *
+                                Prix de vente / Promo (FCFA) *
                               </label>
                               <input
                                 type="number"
@@ -1177,6 +1209,25 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                                 onChange={(e) => setEditPrice(Number(e.target.value))}
                                 className="w-full text-sm font-mono font-bold px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                               />
+                            </div>
+
+                            <div>
+                              <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-800 mb-1">
+                                Ancien Prix Barré (FCFA) - Optionnel
+                              </label>
+                              <input
+                                type="number"
+                                step={500}
+                                value={editCompareAtPrice}
+                                onChange={(e) => setEditCompareAtPrice(e.target.value === '' ? '' : Number(e.target.value))}
+                                placeholder="Ex: 8000 (s'affichera barré)"
+                                className="w-full text-sm font-mono px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+                              />
+                              <span className="text-[10px] text-zinc-400 mt-0.5 block">
+                                {editCompareAtPrice && Number(editCompareAtPrice) > editPrice
+                                  ? `Promo : -${Math.round(((Number(editCompareAtPrice) - editPrice) / Number(editCompareAtPrice)) * 100)}%`
+                                  : 'Laissez vide si non barré.'}
+                              </span>
                             </div>
 
                             <div>
@@ -1204,7 +1255,7 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                                       : 'bg-zinc-50 text-zinc-500 border-zinc-200'
                                   }`}
                                 >
-                                  ✕ Masqué du catalogue
+                                  ✕ Masqué
                                 </button>
                               </div>
                             </div>
@@ -1301,6 +1352,16 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                             <span className="font-mono font-bold text-xs text-[#B85D19]">
                               {formatFCFA(product.price)}
                             </span>
+                            {product.compareAtPrice && product.compareAtPrice > product.price && (
+                              <>
+                                <span className="font-mono text-[11px] text-zinc-400 line-through">
+                                  {formatFCFA(product.compareAtPrice)}
+                                </span>
+                                <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-red-100 text-red-800">
+                                  Promo -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
+                                </span>
+                              </>
+                            )}
                             <span className="text-zinc-300">•</span>
                             <span className="text-[11px] text-zinc-600">
                               Tailles dispo :{' '}

@@ -333,6 +333,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         ...baseProduct,
         name: override.name !== undefined && override.name.trim() !== '' ? override.name.trim() : baseProduct.name,
         price: override.price !== undefined && override.price > 0 ? override.price : baseProduct.price,
+        compareAtPrice: override.compareAtPrice !== undefined 
+          ? (override.compareAtPrice && override.compareAtPrice > 0 ? override.compareAtPrice : undefined) 
+          : baseProduct.compareAtPrice,
         availableSizes: override.availableSizes !== undefined ? override.availableSizes : baseProduct.availableSizes,
         stock: override.stock !== undefined ? override.stock : baseProduct.stock,
         published: override.published !== undefined ? override.published : baseProduct.published,
@@ -362,6 +365,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           upsertSupabaseProduct({
             ...fullProd,
             ...override,
+            compareAtPrice: override.compareAtPrice !== undefined ? override.compareAtPrice : (fullProd.compareAtPrice || null),
           }).catch((err) => console.warn('Supabase price update error:', err));
         }
       }

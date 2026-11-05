@@ -100,10 +100,20 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
             </div>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3 pb-3 border-b border-[#EFECE5]">
-              <span className="font-display font-bold text-2xl text-zinc-900">
+            <div className="flex flex-wrap items-baseline gap-2 pb-3 border-b border-[#EFECE5]">
+              <span className="font-display font-black text-2xl text-zinc-900">
                 {formatFCFA(product.price)}
               </span>
+              {product.compareAtPrice && product.compareAtPrice > product.price && (
+                <>
+                  <span className="text-sm text-zinc-400 line-through font-medium">
+                    {formatFCFA(product.compareAtPrice)}
+                  </span>
+                  <span className="text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
+                    -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
+                  </span>
+                </>
+              )}
               <span className="ml-auto text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-sm">
                 En stock
               </span>

@@ -86,7 +86,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
 
         {/* Minimalist Badges */}
-        <div className="absolute top-2 left-2 z-10">
+        <div className="absolute top-2 left-2 z-10 flex flex-col gap-1 items-start">
+          {product.compareAtPrice && product.compareAtPrice > product.price && (
+            <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-red-600 text-white rounded-xs shadow-xs">
+              Promo -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
+            </span>
+          )}
           {isOutOfStock ? (
             <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider bg-zinc-900 text-white rounded-sm">
               Épuisé
@@ -133,10 +138,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </h3>
 
           {/* Price */}
-          <div className="flex items-baseline gap-2 mb-2 sm:mb-3">
-            <span className="font-display font-bold text-xs sm:text-base text-zinc-900">
+          <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+            <span className="font-display font-black text-xs sm:text-base text-zinc-900">
               {formatFCFA(product.price)}
             </span>
+            {product.compareAtPrice && product.compareAtPrice > product.price && (
+              <>
+                <span className="text-[10px] sm:text-xs text-zinc-400 line-through font-medium">
+                  {formatFCFA(product.compareAtPrice)}
+                </span>
+                <span className="text-[9px] font-bold text-red-600 bg-red-50 border border-red-200 px-1 py-0.2 rounded">
+                  -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
+                </span>
+              </>
+            )}
           </div>
         </div>
 

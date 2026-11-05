@@ -140,9 +140,16 @@ export const SearchModal: React.FC = () => {
                       <h4 className="font-display font-medium text-sm text-zinc-900 group-hover:text-black truncate">
                         {product.name}
                       </h4>
-                      <p className="text-xs font-semibold text-capo-black mt-0.5">
-                        {formatFCFA(product.price)}
-                      </p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-xs font-bold text-capo-black">
+                          {formatFCFA(product.price)}
+                        </span>
+                        {product.compareAtPrice && product.compareAtPrice > product.price && (
+                          <span className="text-[10px] text-zinc-400 line-through">
+                            {formatFCFA(product.compareAtPrice)}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <CornerDownLeft className="w-4 h-4 text-zinc-300 group-hover:text-black transition-colors" />
                   </div>
