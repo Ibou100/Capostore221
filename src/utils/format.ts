@@ -230,3 +230,64 @@ export function getWhatsAppCheckoutLink(
 
   return `https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
 }
+
+/**
+ * Normalizes phone numbers for secure verification
+ * Strips non-digits, international dialing prefixes (+221, 00221, 221)
+ */
+export function normalizePhoneNumber(rawPhone: string): string {
+  if (!rawPhone) return '';
+  let digits = rawPhone.replace(/\D/g, '');
+  if (digits.startsWith('00221')) {
+    digits = digits.slice(5);
+  } else if (digits.startsWith('221') && digits.length > 9) {
+    digits = digits.slice(3);
+  }
+  if (digits.startsWith('0') && digits.length === 10) {
+    digits = digits.slice(1);
+  }
+  return digits;
+}
+
+/**
+ * Compares two phone numbers to verify ownership
+ */
+export function arePhoneNumbersMatching(phoneA: string, phoneB: string): boolean {
+  const normA = normalizePhoneNumber(phoneA);
+  const normB = normalizePhoneNumber(phoneB);
+  if (!normA || !normB) return false;
+  // Match exact or trailing (e.g. 771234567 matching 771234567)
+  return normA === normB || normA.endsWith(normB) || normB.endsWith(normA);
+}
+
+/**
+ * Masks customer phone number for confidential display (e.g. "77 ••• •• 12")
+ */
+export function maskPhoneNumber(phone?: string): string {
+  if (!phone) return '••• ••• •• ••';
+  const clean = phone.trim();
+  const digits = clean.replace(/\D/g, '');
+  if (digits.length >= 9) {
+    const firstTwo = digits.slice(-9, -7);
+    const lastTwo = digits.slice(-2);
+    return `${firstTwo} ••• •• ${lastTwo}`;
+  }
+  if (clean.length > 4) {
+    return `${clean.slice(0, 2)} •••• ${clean.slice(-2)}`;
+  }
+  return '••• ••• •• ••';
+}
+
+/**
+ * Masks customer name for confidential display (e.g. "Ibr•••• G•••")
+ */
+export function maskCustomerName(name?: string): string {
+  if (!name) return 'Client Privé';
+  const parts = name.trim().split(/\s+/);
+  return parts
+    .map((p) => {
+      if (p.length <= 2) return p;
+      return `${p.slice(0, 2)}${'•'.repeat(Math.min(4, p.length - 2))}`;
+    })
+    .join(' ');
+}

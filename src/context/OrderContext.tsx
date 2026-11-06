@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { Order, OrderItem, OrderStatus, PaymentMethod, Product } from '../types';
-import { generateOrderId } from '../utils/format';
+import { generateOrderId, arePhoneNumbersMatching } from '../utils/format';
 import { fetchCloudOrders, saveCloudOrders } from '../utils/cloudSync';
+import { isSessionValid } from '../utils/security';
 import {
   isSupabaseConfigured,
   fetchSupabaseOrders,
+  fetchSupabaseOrdersByIds,
+  fetchSupabaseOrderById,
   insertSupabaseOrder,
   updateSupabaseOrderStatus,
   deleteSupabaseOrder,
@@ -34,6 +37,7 @@ interface OrderContextType {
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
   deleteOrder: (orderId: string) => void;
   getOrderById: (orderId: string) => Order | undefined;
+  verifyAndLinkOrder: (orderId: string, phone: string) => Promise<{ success: boolean; order?: Order; error?: string }>;
   refreshOrders: () => Promise<void>;
   isSyncing: boolean;
   lastSyncTime: Date | null;
@@ -165,73 +169,78 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [orders]);
 
   /**
-   * Bidirectional cloud synchronization with Supabase Database and local cache fallback
+   * Secure, privacy-preserving synchronization
+   * - If Store Owner (Admin session valid): fetches full store orders from Supabase for management
+   * - If Regular Client: fetches ONLY updates for orders placed on THIS device (myOrderIds)
+   * - Never downloads entire store customer list to non-admin devices
    */
   const refreshOrders = useCallback(async () => {
     setIsSyncing(true);
     try {
-      // 1. Try Supabase first if configured
-      if (isSupabaseConfigured()) {
-        const dbOrders = await fetchSupabaseOrders();
-        if (dbOrders && Array.isArray(dbOrders)) {
-          setOrders(dbOrders);
-          try {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dbOrders));
-          } catch {}
-          setLastSyncTime(new Date());
-          return;
+      const isAdminSession = isSessionValid();
+
+      // 1. If Admin Session Active: Full store orders sync for dashboard
+      if (isAdminSession) {
+        if (isSupabaseConfigured()) {
+          const dbOrders = await fetchSupabaseOrders();
+          if (dbOrders && Array.isArray(dbOrders)) {
+            setOrders(dbOrders);
+            try {
+              localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dbOrders));
+            } catch {}
+            setLastSyncTime(new Date());
+            return;
+          }
         }
+
+        const rawCloudOrders = await fetchCloudOrders();
+        const cloudOrders = Array.isArray(rawCloudOrders)
+          ? rawCloudOrders.map(sanitizeOrder).filter((o): o is Order => o !== null)
+          : [];
+
+        const localOrders = ordersRef.current;
+        const orderMap = new Map<string, Order>();
+        cloudOrders.forEach((o) => {
+          if (o && o.id) orderMap.set(o.id, o);
+        });
+        localOrders.forEach((local) => {
+          if (local && local.id) orderMap.set(local.id, local);
+        });
+        const merged = Array.from(orderMap.values()).sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setOrders(merged);
+        setLastSyncTime(new Date());
+        return;
       }
 
-      // 2. Fallback to Cloud Sync
-      const rawCloudOrders = await fetchCloudOrders();
-      const cloudOrders = Array.isArray(rawCloudOrders)
-        ? rawCloudOrders.map(sanitizeOrder).filter((o): o is Order => o !== null)
-        : [];
-
-      const localOrders = ordersRef.current;
-      const orderMap = new Map<string, Order>();
-
-      // Cloud orders
-      cloudOrders.forEach((o) => {
-        if (o && o.id) orderMap.set(o.id, o);
-      });
-
-      let hadLocalUnsynced = false;
-
-      // Local orders
-      localOrders.forEach((local) => {
-        if (!local || !local.id) return;
-        if (!orderMap.has(local.id)) {
-          orderMap.set(local.id, local);
-          hadLocalUnsynced = true;
-        } else {
-          const cloud = orderMap.get(local.id)!;
-          orderMap.set(local.id, cloud);
+      // 2. Regular Client Session: STRICT PRIVACY ISOLATION
+      // Only fetch the customer's own device orders
+      if (myOrderIds.length > 0) {
+        if (isSupabaseConfigured()) {
+          const clientOrders = await fetchSupabaseOrdersByIds(myOrderIds);
+          if (clientOrders && Array.isArray(clientOrders)) {
+            setOrders(clientOrders);
+            try {
+              localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(clientOrders));
+            } catch {}
+            setLastSyncTime(new Date());
+            return;
+          }
         }
-      });
-
-      const merged = Array.from(orderMap.values()).sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-
-      setOrders(merged);
-      try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(merged));
-      } catch (err) {
-        console.warn('localStorage error:', err);
-      }
-      setLastSyncTime(new Date());
-
-      if (hadLocalUnsynced && merged.length > 0) {
-        await saveCloudOrders(merged);
+      } else {
+        // Clear any old customer orders cached on this device
+        setOrders([]);
+        try {
+          localStorage.removeItem(LOCAL_STORAGE_KEY);
+        } catch {}
       }
     } catch (err) {
-      console.warn('Could not sync orders with cloud:', err);
+      console.warn('Could not sync orders:', err);
     } finally {
       setIsSyncing(false);
     }
-  }, []);
+  }, [myOrderIds]);
 
   // Sync on initial mount and on tab focus
   useEffect(() => {
@@ -381,9 +390,62 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const getOrderById = (orderId: string): Order | undefined => {
     const cleanId = orderId.trim().toUpperCase();
+    if (!cleanId) return undefined;
+    // Strict exact ID matching only (prevent substring leak of other orders)
     return orders.find(
-      (order) => order.id.toUpperCase() === cleanId || order.id.toUpperCase().includes(cleanId)
+      (order) => order.id.toUpperCase() === cleanId
     );
+  };
+
+  /**
+   * Secure identity verification for tracking an order placed elsewhere
+   * Requires BOTH exact Order ID AND customer Phone number to prevent unauthorized snooping!
+   */
+  const verifyAndLinkOrder = async (
+    orderId: string,
+    phone: string
+  ): Promise<{ success: boolean; order?: Order; error?: string }> => {
+    const cleanId = orderId.trim().toUpperCase();
+    const cleanPhone = phone.trim();
+    if (!cleanId) {
+      return { success: false, error: 'Veuillez saisir votre numéro de commande.' };
+    }
+    if (!cleanPhone) {
+      return { success: false, error: 'Veuillez saisir votre numéro de téléphone pour vérifier votre identité.' };
+    }
+
+    // 1. Check in local orders first
+    let targetOrder = orders.find((o) => o.id.toUpperCase() === cleanId);
+
+    // 2. If not found locally, fetch directly from Supabase by exact ID
+    if (!targetOrder && isSupabaseConfigured()) {
+      targetOrder = (await fetchSupabaseOrderById(cleanId)) || undefined;
+    }
+
+    if (!targetOrder) {
+      return { success: false, error: `Aucune commande trouvée sous la référence "${cleanId}".` };
+    }
+
+    // 3. Security verification: Phone number MUST match the buyer's phone
+    const isPhoneMatch = arePhoneNumbersMatching(targetOrder.customerPhone, cleanPhone);
+    if (!isPhoneMatch) {
+      return {
+        success: false,
+        error: 'Numéro de téléphone incorrect pour cette commande. Par mesure de confidentialité, vous devez indiquer le numéro utilisé lors de la commande.',
+      };
+    }
+
+    // 4. Authenticated & verified! Link to this device
+    addOrderToMyOrders(targetOrder.id);
+    setOrders((prev) => {
+      const exists = prev.some((o) => o.id.toUpperCase() === targetOrder!.id.toUpperCase());
+      if (exists) {
+        return prev.map((o) => (o.id.toUpperCase() === targetOrder!.id.toUpperCase() ? targetOrder! : o));
+      }
+      return [targetOrder!, ...prev];
+    });
+
+    return { success: true, order: targetOrder };
   };
 
   const openQuickOrder = (product: Product, initialSize?: string) => {
@@ -406,6 +468,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updateOrderStatus,
         deleteOrder,
         getOrderById,
+        verifyAndLinkOrder,
         refreshOrders,
         isSyncing,
         lastSyncTime,

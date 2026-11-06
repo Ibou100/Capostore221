@@ -352,6 +352,89 @@ export async function fetchSupabaseOrders(): Promise<Order[] | null> {
   }
 }
 
+/**
+ * Fetches ONLY the specific orders belonging to a customer's device IDs
+ * (Zero leak of other customers' orders)
+ */
+export async function fetchSupabaseOrdersByIds(ids: string[]): Promise<Order[]> {
+  const client = getSupabaseClient();
+  if (!client || !ids || ids.length === 0) return [];
+
+  const cleanIds = ids.map((id) => id.trim().toUpperCase()).filter(Boolean);
+  if (cleanIds.length === 0) return [];
+
+  try {
+    const { data, error } = await client
+      .from('orders')
+      .select('*')
+      .in('id', cleanIds)
+      .order('created_at', { ascending: false });
+
+    if (error || !Array.isArray(data)) {
+      return [];
+    }
+
+    return data.map((row: any): Order => ({
+      id: String(row.id),
+      createdAt: row.created_at || new Date().toISOString(),
+      customerName: String(row.customer_name || 'Client CAPOSTORE221'),
+      customerPhone: String(row.customer_phone || ''),
+      customerCity: String(row.customer_city || 'Dakar'),
+      customerAddress: String(row.customer_address || ''),
+      paymentMethod: row.payment_method || 'wave',
+      items: Array.isArray(row.items) ? row.items : [],
+      total: Number(row.total) || 0,
+      shippingFee: Number(row.shipping_fee) || 0,
+      status: (row.status as OrderStatus) || 'transmise',
+      notes: row.notes ? String(row.notes) : undefined,
+    }));
+  } catch (err) {
+    console.warn('Failed to fetch orders by IDs from Supabase:', err);
+    return [];
+  }
+}
+
+/**
+ * Fetches a single order strictly by exact ID
+ */
+export async function fetchSupabaseOrderById(orderId: string): Promise<Order | null> {
+  const client = getSupabaseClient();
+  if (!client || !orderId) return null;
+
+  const cleanId = orderId.trim().toUpperCase();
+  if (!cleanId) return null;
+
+  try {
+    const { data, error } = await client
+      .from('orders')
+      .select('*')
+      .eq('id', cleanId)
+      .maybeSingle();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return {
+      id: String(data.id),
+      createdAt: data.created_at || new Date().toISOString(),
+      customerName: String(data.customer_name || 'Client CAPOSTORE221'),
+      customerPhone: String(data.customer_phone || ''),
+      customerCity: String(data.customer_city || 'Dakar'),
+      customerAddress: String(data.customer_address || ''),
+      paymentMethod: data.payment_method || 'wave',
+      items: Array.isArray(data.items) ? data.items : [],
+      total: Number(data.total) || 0,
+      shippingFee: Number(data.shipping_fee) || 0,
+      status: (data.status as OrderStatus) || 'transmise',
+      notes: data.notes ? String(data.notes) : undefined,
+    };
+  } catch (err) {
+    console.warn('Failed to fetch single order from Supabase:', err);
+    return null;
+  }
+}
+
 export async function insertSupabaseOrder(order: Order): Promise<boolean> {
   const client = getSupabaseClient();
   if (!client) return false;

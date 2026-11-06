@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, MessageCircle, ShoppingBag, Eye, Search, ShieldCheck, ArrowRight, UserCheck, CheckCircle2 } from 'lucide-react';
+import { Package, MessageCircle, ShoppingBag, Eye, Search, ShieldCheck, ArrowRight, Lock, CheckCircle2 } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
 import { isSessionValid } from '../../utils/security';
@@ -7,36 +7,62 @@ import {
   formatFCFA, 
   ORDER_STATUS_CONFIG, 
   getPaymentMethodLabel, 
-  STORE_WHATSAPP_PHONE 
+  STORE_WHATSAPP_PHONE,
+  maskPhoneNumber,
+  maskCustomerName 
 } from '../../utils/format';
 
 export const OrderHistoryView: React.FC = () => {
-  const { orders, myOrders, getOrderById, addOrderToMyOrders } = useOrders();
+  const { myOrders, verifyAndLinkOrder } = useOrders();
   const { goToCatalog, goToTracking, goToAdmin, showToast } = useStore();
 
   const isAdmin = isSessionValid();
-  const [showAllAsAdmin, setShowAllAsAdmin] = useState<boolean>(isAdmin);
 
+  // Dual-credential lookup for guest or multi-device tracking
   const [lookupId, setLookupId] = useState('');
+  const [lookupPhone, setLookupPhone] = useState('');
   const [lookupError, setLookupError] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  const handleLookupSubmit = (e: React.FormEvent) => {
+  const handleLookupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanId = lookupId.trim().toUpperCase();
-    if (!cleanId) return;
+    setLookupError(null);
 
-    const order = getOrderById(cleanId);
-    if (order) {
-      addOrderToMyOrders(order.id);
-      showToast(`Commande ${order.id} retrouvée avec succès !`, 'success');
-      goToTracking(order.id);
-    } else {
-      setLookupError(`Aucune commande trouvée pour "${cleanId}". Vérifiez le numéro reçu sur votre reçu WhatsApp.`);
+    const cleanId = lookupId.trim().toUpperCase();
+    const cleanPhone = lookupPhone.trim();
+
+    if (!cleanId) {
+      setLookupError('Veuillez renseigner votre numéro de commande (ex: CAPO-2063).');
+      return;
+    }
+    if (!cleanPhone) {
+      setLookupError('Veuillez renseigner votre numéro de téléphone pour vérifier votre identité.');
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      const res = await verifyAndLinkOrder(cleanId, cleanPhone);
+      if (res.success && res.order) {
+        showToast(`Commande ${res.order.id} retrouvée avec succès !`, 'success');
+        setLookupId('');
+        setLookupPhone('');
+        goToTracking(res.order.id);
+      } else {
+        setLookupError(
+          res.error || 'Numéro de commande ou de téléphone non reconnu. Vérifiez les informations reçues sur WhatsApp.'
+        );
+      }
+    } catch {
+      setLookupError('Erreur de vérification. Veuillez réessayer.');
+    } finally {
+      setIsVerifying(false);
     }
   };
 
-  // If owner is logged in and chooses to see store orders, show all; otherwise show this device's orders
-  const displayedOrders = (isAdmin && showAllAsAdmin) ? orders : myOrders;
+  // STRICT PRIVACY: This view displays ONLY orders placed on THIS device.
+  // All global store management belongs exclusively to the Admin console.
+  const displayedOrders = myOrders;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -50,34 +76,22 @@ export const OrderHistoryView: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                  Mode Propriétaire Actif
-                </span>
-                <span className="text-[10px] bg-amber-500 text-black font-black px-2 py-0.5 rounded-full">
-                  {orders.length} commande(s) en base Supabase
+                  Session Propriétaire Active
                 </span>
               </div>
               <p className="text-xs text-zinc-300 mt-0.5">
-                Vous consultez l'espace client. Les commandes réelles des clients sont synchronisées en direct.
+                Pour piloter toutes les commandes de la boutique et modifier les statuts, accédez à votre console sécurisée.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button
-              onClick={() => goToAdmin('orders')}
-              className="flex-1 sm:flex-none px-4 py-2.5 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
-            >
-              <span>Console Admin Commandes ({orders.length})</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => setShowAllAsAdmin(!showAllAsAdmin)}
-              className="px-3 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold rounded-xl border border-zinc-700 transition-colors"
-              title="Basculer entre la vue de toutes les commandes et la vue client restreinte"
-            >
-              {showAllAsAdmin ? 'Vue Client' : 'Tout afficher'}
-            </button>
-          </div>
+          <button
+            onClick={() => goToAdmin('orders')}
+            className="w-full sm:w-auto px-4 py-2.5 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span>Console Admin Commandes</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
@@ -86,25 +100,23 @@ export const OrderHistoryView: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-              {isAdmin && showAllAsAdmin ? 'Toutes les Commandes Clients (Supabase)' : 'Espace Client Privé & Confidentiel'}
+              Espace Client Privé & Confidentiel
             </span>
             <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
               <ShieldCheck className="w-3 h-3" /> Données protégées
             </span>
           </div>
           <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-zinc-900 tracking-tight">
-            {isAdmin && showAllAsAdmin ? 'Commandes Reçues sur CAPOSTORE221' : 'Historique de vos commandes'}
+            Historique de vos commandes
           </h1>
           <p className="text-xs sm:text-sm text-zinc-500 mt-1">
-            {isAdmin && showAllAsAdmin
-              ? 'Toutes les commandes passées par vos clients sont affichées ici en temps réel avec leurs coordonnées complètes.'
-              : 'Vos achats sont strictement confidentiels : seul vous sur cet appareil et le gérant CAPOSTORE221 pouvez voir vos commandes.'}
+            Vos achats sont strictement confidentiels : seul vous sur cet appareil et le gérant CAPOSTORE221 pouvez voir vos commandes.
           </p>
         </div>
 
         <button
           onClick={() => goToCatalog({ category: 'tous' })}
-          className="self-start sm:self-auto px-4 py-2 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-sm"
+          className="self-start sm:self-auto px-4 py-2 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
         >
           <ShoppingBag className="w-3.5 h-3.5" />
           <span>Continuer mes achats</span>
@@ -119,54 +131,82 @@ export const OrderHistoryView: React.FC = () => {
               <Package className="w-8 h-8" />
             </div>
             <h2 className="font-display font-bold text-lg text-zinc-900">
-              {isAdmin && showAllAsAdmin 
-                ? 'Aucune commande enregistrée pour le moment' 
-                : 'Aucune commande passée sur cet appareil pour le moment'}
+              Aucune commande passée sur cet appareil pour le moment
             </h2>
             <p className="text-xs text-zinc-500 mt-1.5 max-w-md mx-auto">
-              {isAdmin && showAllAsAdmin
-                ? 'Dès qu\'un client passe commande sur le site, elle apparaîtra ici et dans votre console administrateur.'
-                : 'Par mesure de stricte confidentialité, seules les commandes passées par vous sur cet appareil s\'affichent ici.'}
+              Par mesure de stricte confidentialité, seules les commandes passées par vous sur cet appareil s'affichent ici.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <button
                 onClick={() => goToCatalog({ category: 'tous' })}
-                className="px-6 py-3 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors shadow-md"
+                className="px-6 py-3 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors shadow-md cursor-pointer"
               >
                 Découvrir la collection
               </button>
             </div>
           </div>
 
-          {/* Lookup Box: If customer ordered from another phone or cleared browser data */}
+          {/* Secure Lookup Box: Requires both Order ID and Phone Number */}
           <div className="bg-zinc-50 rounded-2xl p-6 sm:p-8 border border-zinc-200">
             <div className="flex items-center gap-2 mb-2">
-              <Search className="w-4 h-4 text-zinc-500" />
+              <Lock className="w-4 h-4 text-amber-600" />
               <h3 className="font-display font-bold text-sm text-zinc-900">
-                Vous avez déjà passé commande avec un numéro de suivi ?
+                Vous avez commandé depuis un autre téléphone ou via WhatsApp ?
               </h3>
             </div>
             <p className="text-xs text-zinc-500 mb-4">
-              Si vous avez commandé depuis un autre téléphone ou via WhatsApp, entrez votre référence unique (ex: <strong className="font-mono text-zinc-700">CAPO-2063</strong>) pour la rattacher en toute sécurité.
+              Pour des raisons de stricte confidentialité, indiquez votre référence unique et votre numéro de téléphone pour rattacher votre commande en toute sécurité.
             </p>
 
-            <form onSubmit={handleLookupSubmit} className="flex flex-col sm:flex-row gap-2.5 max-w-md">
-              <input
-                type="text"
-                value={lookupId}
-                onChange={(e) => {
-                  setLookupId(e.target.value);
-                  setLookupError(null);
-                }}
-                placeholder="Ex: CAPO-2063"
-                className="flex-1 px-4 py-2.5 text-xs font-mono uppercase bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
-              />
+            <form onSubmit={handleLookupSubmit} className="space-y-3 max-w-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
+                    Numéro de commande *
+                  </label>
+                  <input
+                    type="text"
+                    value={lookupId}
+                    onChange={(e) => {
+                      setLookupId(e.target.value);
+                      setLookupError(null);
+                    }}
+                    placeholder="Ex: CAPO-2063"
+                    className="w-full px-3.5 py-2.5 text-xs font-mono uppercase bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">
+                    Téléphone de la commande *
+                  </label>
+                  <input
+                    type="tel"
+                    value={lookupPhone}
+                    onChange={(e) => {
+                      setLookupPhone(e.target.value);
+                      setLookupError(null);
+                    }}
+                    placeholder="Ex: 77 123 45 67"
+                    className="w-full px-3.5 py-2.5 text-xs bg-white border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+                  />
+                </div>
+              </div>
+
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl transition-colors shrink-0 shadow-xs"
+                disabled={isVerifying}
+                className="w-full sm:w-auto px-6 py-2.5 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                Retrouver ma commande
+                {isVerifying ? (
+                  <span>Vérification sécurisée...</span>
+                ) : (
+                  <>
+                    <Search className="w-3.5 h-3.5" />
+                    <span>Retrouver et rattacher ma commande</span>
+                  </>
+                )}
               </button>
             </form>
 
@@ -232,25 +272,6 @@ export const OrderHistoryView: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Admin Client Info Banner (Visible if Owner Admin) */}
-                {isAdmin && (
-                  <div className="bg-amber-500/10 border-b border-amber-500/20 px-5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <div className="flex items-center gap-2">
-                      <UserCheck className="w-4 h-4 text-amber-700" />
-                      <span className="font-bold text-amber-950">
-                        Client : {order.customerName} • Tél : {order.customerPhone}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => goToAdmin('orders')}
-                      className="text-[11px] font-bold text-[#B85D19] hover:underline flex items-center gap-1"
-                    >
-                      <span>Modifier le statut dans l'Admin</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-                )}
-
                 {/* Order Body */}
                 <div className="p-5 sm:p-6 space-y-4">
                   {/* Items */}
@@ -281,10 +302,10 @@ export const OrderHistoryView: React.FC = () => {
                   <div className="pt-4 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-4 text-xs">
                     <div className="space-y-1">
                       <p className="text-zinc-500">
-                        Paiement : <strong className="text-zinc-800">{getPaymentMethodLabel(order.paymentMethod || 'wave')}</strong>
+                        Destinataire : <strong className="text-zinc-800">{maskCustomerName(order.customerName)}</strong> ({maskPhoneNumber(order.customerPhone)})
                       </p>
                       <p className="text-zinc-500">
-                        Livraison : <strong className="text-zinc-800">{order.customerCity || 'Dakar'}</strong> ({order.customerAddress || 'Adresse client'})
+                        Paiement : <strong className="text-zinc-800">{getPaymentMethodLabel(order.paymentMethod || 'wave')}</strong> • Destination : <strong className="text-zinc-800">{order.customerCity || 'Dakar'}</strong>
                       </p>
                     </div>
 
@@ -300,7 +321,7 @@ export const OrderHistoryView: React.FC = () => {
                   <div className="pt-3 border-t border-zinc-100 flex flex-wrap items-center justify-end gap-2.5">
                     <button
                       onClick={() => goToTracking(order.id)}
-                      className="px-4 py-2 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors"
+                      className="px-4 py-2 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <Eye className="w-3.5 h-3.5 text-amber-400" />
                       <span>Suivre ce colis</span>
@@ -323,26 +344,48 @@ export const OrderHistoryView: React.FC = () => {
             );
           })}
 
-          {/* Option to look up another order */}
-          <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <span className="text-zinc-600">
-              Vous avez une autre commande passée sur un autre appareil ?
-            </span>
-            <form onSubmit={handleLookupSubmit} className="flex items-center gap-2 w-full sm:w-auto">
+          {/* Secure Secondary Lookup Box for other devices */}
+          <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-200 text-xs">
+            <div className="flex items-center gap-2 mb-2">
+              <Lock className="w-4 h-4 text-zinc-500" />
+              <span className="font-bold text-zinc-700">
+                Vous avez passé une autre commande sur un autre appareil ?
+              </span>
+            </div>
+            <form onSubmit={handleLookupSubmit} className="flex flex-col sm:flex-row gap-2 mt-2">
               <input
                 type="text"
                 value={lookupId}
-                onChange={(e) => setLookupId(e.target.value)}
+                onChange={(e) => {
+                  setLookupId(e.target.value);
+                  setLookupError(null);
+                }}
                 placeholder="N° CAPO-XXXX"
-                className="px-3 py-1.5 text-xs font-mono uppercase bg-white border border-zinc-300 rounded-lg focus:outline-none"
+                className="px-3 py-2 text-xs font-mono uppercase bg-white border border-zinc-300 rounded-lg focus:outline-none"
+              />
+              <input
+                type="tel"
+                value={lookupPhone}
+                onChange={(e) => {
+                  setLookupPhone(e.target.value);
+                  setLookupError(null);
+                }}
+                placeholder="Téléphone associé"
+                className="px-3 py-2 text-xs bg-white border border-zinc-300 rounded-lg focus:outline-none"
               />
               <button
                 type="submit"
-                className="px-3 py-1.5 bg-zinc-900 text-white rounded-lg text-xs font-semibold hover:bg-black shrink-0"
+                disabled={isVerifying}
+                className="px-4 py-2 bg-zinc-900 text-white rounded-lg text-xs font-semibold hover:bg-black shrink-0 cursor-pointer disabled:opacity-50"
               >
-                Ajouter
+                {isVerifying ? 'Vérification...' : 'Rattacher'}
               </button>
             </form>
+            {lookupError && (
+              <p className="text-xs text-red-600 mt-2">
+                {lookupError}
+              </p>
+            )}
           </div>
         </div>
       )}
