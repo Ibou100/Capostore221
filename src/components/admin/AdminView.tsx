@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
-  ShieldCheck, Edit3, Save, RotateCcw, Package, 
+  ShieldCheck, Filter, Edit3, Save, RotateCcw, Package, 
   Trash2, Search, ArrowLeft, Phone, MessageCircle, 
   Eye, EyeOff, KeyRound, Download, Clock, 
   LogOut, Plus, Upload, RefreshCw, 
@@ -153,6 +153,20 @@ export const AdminView: React.FC = () => {
   // Orders Search
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>('all');
+
+  // Order Status Counts for fast status filter tabs
+  const orderStatusCounts = useMemo(() => {
+    const list = orders || [];
+    return {
+      all: list.length,
+      transmise: list.filter((o) => o?.status === 'transmise').length,
+      confirmee: list.filter((o) => o?.status === 'confirmee').length,
+      en_preparation: list.filter((o) => o?.status === 'en_preparation').length,
+      en_livraison: list.filter((o) => o?.status === 'en_livraison').length,
+      livree: list.filter((o) => o?.status === 'livree').length,
+    };
+  }, [orders]);
+
 
   // Edit form state for selected product
   const [editName, setEditName] = useState('');
@@ -1808,6 +1822,66 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
             </button>
           </div>
 
+          
+          {/* Status Filter Tabs (Top-Level Interactive Status Filters) */}
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-zinc-200 shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-[#B85D19]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-zinc-900">
+                  Filtrer les commandes par état :
+                </span>
+              </div>
+              {orderStatusFilter !== 'all' && (
+                <button
+                  type="button"
+                  onClick={() => setOrderStatusFilter('all')}
+                  className="text-xs font-bold text-[#B85D19] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>Réinitialiser (Tous les colis)</span>
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+              {[
+                { id: 'all', label: 'Tous les colis', count: orderStatusCounts.all, activeBg: 'bg-zinc-900 text-white' },
+                { id: 'transmise', label: '1. Transmises', count: orderStatusCounts.transmise, activeBg: 'bg-amber-600 text-white' },
+                { id: 'confirmee', label: '2. Confirmées', count: orderStatusCounts.confirmee, activeBg: 'bg-blue-600 text-white' },
+                { id: 'en_preparation', label: '3. En préparation', count: orderStatusCounts.en_preparation, activeBg: 'bg-purple-600 text-white' },
+                { id: 'en_livraison', label: '4. En livraison', count: orderStatusCounts.en_livraison, activeBg: 'bg-orange-600 text-white' },
+                { id: 'livree', label: '5. Colis Livrés', count: orderStatusCounts.livree, activeBg: 'bg-emerald-600 text-white' },
+              ].map((tab) => {
+                const isActive = orderStatusFilter === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setOrderStatusFilter(tab.id)}
+                    className={`px-3 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between gap-1.5 cursor-pointer border ${
+                      isActive
+                        ? `${tab.activeBg} border-transparent shadow-md ring-2 ring-black/10 scale-[1.02]`
+                        : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border-zinc-200 hover:border-zinc-300'
+                    }`}
+                  >
+                    <span className="truncate">{tab.label}</span>
+                    <span
+                      className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${
+                        isActive
+                          ? 'bg-white/20 text-white'
+                          : 'bg-zinc-200 text-zinc-800'
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+
           {/* Orders Controls */}
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
@@ -1845,11 +1919,24 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
             <div className="bg-white rounded-2xl p-12 text-center border border-zinc-200">
               <Package className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
               <h3 className="font-display font-bold text-base text-zinc-900">
-                Aucune commande trouvée
+                {orderStatusFilter !== 'all'
+                  ? `Aucune commande avec l'état « ${ORDER_STATUS_CONFIG[orderStatusFilter as OrderStatus]?.label || orderStatusFilter} »`
+                  : 'Aucune commande trouvée'}
               </h3>
               <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
-                Dès qu'un client passe commande sur le site, elle apparaîtra ici et sera conservée dans la plateforme.
+                {orderStatusFilter !== 'all'
+                  ? 'Il n\'y a actuellement aucun colis dans cette étape. Vous pouvez changer l\'état d\'un colis ou réinitialiser le filtre.'
+                  : 'Dès qu\'un client passe commande sur le site, elle apparaîtra ici et sera conservée dans la plateforme.'}
               </p>
+              {orderStatusFilter !== 'all' && (
+                <button
+                  type="button"
+                  onClick={() => setOrderStatusFilter('all')}
+                  className="mt-4 px-5 py-2.5 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl cursor-pointer transition-colors shadow-xs"
+                >
+                  Afficher tous les colis ({orders.length})
+                </button>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -1907,33 +1994,46 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                       </div>
                     </div>
 
-                    {/* Quick Step Buttons for Owner */}
-                    <div className="bg-zinc-100/70 px-4 sm:px-6 py-2 border-b border-zinc-200/80 flex flex-wrap items-center gap-1.5">
-                      <span className="text-[10px] uppercase font-bold text-zinc-500 mr-1">
-                        Changer en 1 clic :
-                      </span>
-                      {(['transmise', 'confirmee', 'en_preparation', 'en_livraison', 'livree'] as OrderStatus[]).map((st, idx) => {
-                        const isAct = order.status === st;
-                        const cfg = ORDER_STATUS_CONFIG[st];
-                        return (
-                          <button
-                            key={st}
-                            type="button"
-                            onClick={() => {
-                              updateOrderStatus(order.id, st);
-                              addAuditLog(`Statut commande ${order.id} mis à jour`, `Nouveau statut : ${st}`);
-                              showToast(`Commande ${order.id} passée à : ${cfg?.label || st} !`, 'success');
-                            }}
-                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                              isAct
-                                ? `${cfg?.badgeClass || 'bg-black text-white'} ring-2 ring-black/10 shadow-xs font-black`
-                                : 'bg-white hover:bg-zinc-200/60 text-zinc-600 border border-zinc-200'
-                            }`}
-                          >
-                            {idx + 1}. {cfg?.label || st} {isAct ? '✓' : ''}
-                          </button>
-                        );
-                      })}
+                    {/* Action Gérant : Modifier l'état de ce colis */}
+                    <div className="bg-zinc-100/90 px-4 sm:px-6 py-2.5 border-b border-zinc-200 flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase font-black text-zinc-500 tracking-wider">
+                          État actuel de ce colis :
+                        </span>
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${statusConfig.badgeClass}`}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                          <span>{statusConfig.label}</span>
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[10px] uppercase font-bold text-zinc-500 mr-1">
+                          Passer ce colis à :
+                        </span>
+                        {(['transmise', 'confirmee', 'en_preparation', 'en_livraison', 'livree'] as OrderStatus[]).map((st, idx) => {
+                          const isAct = order.status === st;
+                          const cfg = ORDER_STATUS_CONFIG[st];
+                          return (
+                            <button
+                              key={st}
+                              type="button"
+                              onClick={() => {
+                                updateOrderStatus(order.id, st);
+                                addAuditLog(`Statut commande ${order.id} mis à jour`, `Nouveau statut : ${st}`);
+                                showToast(`Commande ${order.id} passée à : ${cfg?.label || st} !`, 'success');
+                              }}
+                              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                                isAct
+                                  ? `${cfg?.badgeClass || 'bg-black text-white'} ring-2 ring-black/20 shadow-xs font-black`
+                                  : 'bg-white hover:bg-zinc-200/70 text-zinc-700 border border-zinc-200 hover:border-zinc-400'
+                              }`}
+                              title={`Définir le statut de cette commande sur "${cfg?.label || st}"`}
+                            >
+                              {idx + 1}. {cfg?.label || st} {isAct ? '✓' : ''}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     {/* Content */}
