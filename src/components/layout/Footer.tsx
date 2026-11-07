@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, ShieldCheck, RefreshCw, Phone, MessageCircle, Mail, Package } from 'lucide-react';
+import { Truck, ShieldCheck, RefreshCw, Phone, MessageCircle, Mail } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { 
   FACEBOOK_URL, 
@@ -32,7 +32,7 @@ export const Footer: React.FC = () => {
     }
     lastTapRef.current = now;
   };
-  const { goToHome, goToCatalog, goToOrders, goToTracking } = useStore();
+  const { goToHome, goToCatalog } = useStore();
 
   return (
     <footer className="bg-[#121110] text-[#D4CBBF] border-t border-[#262320]">
@@ -167,33 +167,26 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Col 3: Service Client & Suivi */}
+          {/* Col 3: Service Client & Livraison */}
           <div className="space-y-3">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-white">
-              Suivi & Commandes
+              Service & Livraison
             </h4>
             <ul className="space-y-2 text-xs text-zinc-400">
+              <li>Livraison rapide partout au Sénégal</li>
+              <li>Règlement : Wave, Orange Money, Free ou Espèces</li>
+              <li>Échange de taille garanti sous 7 jours</li>
               <li>
-                <button
-                  onClick={goToOrders}
-                  className="hover:text-amber-400 transition-colors text-left flex items-center gap-1.5"
+                <a
+                  href="https://wa.me/221768321157"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-amber-400 text-[#25D366] transition-colors font-medium flex items-center gap-1.5"
                 >
-                  <Package className="w-3.5 h-3.5" />
-                  <span>Historique de mes commandes</span>
-                </button>
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  <span>Assistance WhatsApp : +221 76 832 11 57</span>
+                </a>
               </li>
-              <li>
-                <button
-                  onClick={() => goToTracking()}
-                  className="hover:text-amber-400 transition-colors text-left"
-                >
-                  Suivre mon colis en direct
-                </button>
-              </li>
-              <li>Livraison à domicile express</li>
-              <li>Règlement : Wave, Orange Money, Espèces ou Free</li>
-              <li>Échange de taille sous 7 jours</li>
-              
             </ul>
           </div>
 

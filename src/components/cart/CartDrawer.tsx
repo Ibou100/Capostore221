@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   X, ShoppingBag, Trash2, ShieldCheck, 
-  Truck, CheckCircle2, MessageCircle, PackageCheck 
+  Truck, CheckCircle2, MessageCircle 
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
@@ -24,7 +24,7 @@ export const CartDrawer: React.FC = () => {
     items, isOpen, closeCart, removeFromCart, updateQuantity, 
     clearCart, totalCount, subtotal, shippingFee, total 
   } = useCart();
-  const { goToCatalog, showToast, goToTracking, goToOrders } = useStore();
+  const { goToCatalog, showToast } = useStore();
   const { createOrder } = useOrders();
 
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
@@ -119,24 +119,7 @@ export const CartDrawer: React.FC = () => {
     closeCart();
   };
 
-  const handleTrackPackage = () => {
-    if (createdOrderId) {
-      clearCart();
-      setIsCheckoutModalOpen(false);
-      setOrderCompleted(false);
-      closeCart();
-      goToTracking(createdOrderId);
-    }
-  };
-
-  const handleGoToOrderHistory = () => {
-    clearCart();
-    setIsCheckoutModalOpen(false);
-    setOrderCompleted(false);
-    closeCart();
-    goToOrders();
-  };
-
+  
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
@@ -564,21 +547,12 @@ export const CartDrawer: React.FC = () => {
                   </a>
                 )}
 
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  <button
-                    onClick={handleTrackPackage}
-                    className="py-2.5 px-3 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+                <button
+                    onClick={handleFinish}
+                    className="w-full py-3 px-4 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 text-xs font-semibold uppercase tracking-wider rounded-xl transition-colors cursor-pointer"
                   >
-                    <PackageCheck className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Suivre ce colis</span>
+                    Continuer mes achats
                   </button>
-                  <button
-                    onClick={handleGoToOrderHistory}
-                    className="py-2.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold rounded-xl transition-colors"
-                  >
-                    Mes commandes
-                  </button>
-                </div>
 
                 <button
                   onClick={handleFinish}

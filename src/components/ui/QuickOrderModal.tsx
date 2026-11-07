@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, ArrowRight, MessageCircle, ExternalLink, PackageCheck } from 'lucide-react';
+import { X, CheckCircle2, ArrowRight, MessageCircle, ExternalLink } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
 import type { PaymentMethod } from '../../types';
@@ -13,7 +13,7 @@ import {
 
 export const QuickOrderModal: React.FC = () => {
   const { quickOrderProduct, closeQuickOrder, createOrder } = useOrders();
-  const { showToast, goToTracking, goToOrders } = useStore();
+  const { showToast } = useStore();
 
   const [selectedSize, setSelectedSize] = useState<string | undefined>(undefined);
   const [customerName, setCustomerName] = useState('');
@@ -120,18 +120,7 @@ export const QuickOrderModal: React.FC = () => {
     }
   };
 
-  const handleTrackDirectly = () => {
-    if (createdOrderId) {
-      closeQuickOrder();
-      goToTracking(createdOrderId);
-    }
-  };
-
-  const handleViewOrders = () => {
-    closeQuickOrder();
-    goToOrders();
-  };
-
+  
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
@@ -235,23 +224,13 @@ export const QuickOrderModal: React.FC = () => {
                     <ExternalLink className="w-4 h-4 opacity-80 shrink-0" />
                   </a>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={handleTrackDirectly}
-                      className="py-2.5 px-3 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
-                    >
-                      <PackageCheck className="w-4 h-4 text-amber-400" />
-                      <span>Suivre ce colis</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleViewOrders}
-                      className="py-2.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold rounded-xl transition-colors"
-                    >
-                      Mes commandes
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={closeQuickOrder}
+                    className="w-full py-2.5 px-4 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+                  >
+                    Continuer mes achats
+                  </button>
                 </div>
               </div>
             ) : (

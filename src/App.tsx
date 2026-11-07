@@ -13,8 +13,7 @@ import { CatalogView } from './components/catalog/CatalogView';
 import { ProductDetailView } from './components/product/ProductDetailView';
 import { WishlistView } from './components/catalog/WishlistView';
 import { EditorialStoryView } from './components/home/EditorialStoryView';
-import { OrderHistoryView } from './components/orders/OrderHistoryView';
-import { OrderTrackingView } from './components/orders/OrderTrackingView';
+// Public orders/tracking views removed: order management is exclusive to AdminView
 import { AdminView } from './components/admin/AdminView';
 
 import { CartDrawer } from './components/cart/CartDrawer';
@@ -104,9 +103,8 @@ const AppContent: React.FC = () => {
       case 'editorial':
         return <EditorialStoryView />;
       case 'orders':
-        return <OrderHistoryView />;
       case 'tracking':
-        return <OrderTrackingView initialOrderId={currentView.orderId} />;
+        return <HomeView />;
       case 'admin':
         return <AdminView />;
       default:

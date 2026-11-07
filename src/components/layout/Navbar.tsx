@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ShoppingBag, Heart, Menu, X, ArrowUpRight, Phone, MessageCircle, Mail, Package } from 'lucide-react';
+import { Search, ShoppingBag, Heart, Menu, X, ArrowUpRight, Phone, MessageCircle, Mail } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useStore } from '../../context/StoreContext';
-import { useOrders } from '../../context/OrderContext';
 import { 
   FACEBOOK_URL, 
   INSTAGRAM_URL, 
@@ -19,10 +18,7 @@ import type { CategoryId } from '../../types';
 export const Navbar: React.FC = () => {
   const { totalCount, openCart } = useCart();
   const { wishlistCount } = useWishlist();
-  const { goToHome, goToCatalog, goToWishlist, goToOrders, openSearch, currentView } = useStore();
-  const { myOrders } = useOrders();
-  // Notification badge strictly for this client's device orders
-  const orderBadgeCount = myOrders.filter((o) => o.status !== 'livree').length;
+  const { goToHome, goToCatalog, goToWishlist, openSearch, currentView } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -147,21 +143,6 @@ export const Navbar: React.FC = () => {
               </kbd>
             </button>
 
-            {/* Order Tracking & History Button */}
-            <button
-              onClick={goToOrders}
-              className="relative p-2 text-zinc-800 hover:text-zinc-600 transition-colors focus:outline-none"
-              aria-label="Mes commandes et suivi"
-              title="Mes commandes & Suivi de colis"
-            >
-              <Package className="w-5 h-5" />
-              {orderBadgeCount > 0 && (
-                <span className="absolute top-1 right-0.5 min-w-4 h-4 px-1 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">
-                  {orderBadgeCount}
-                </span>
-              )}
-            </button>
-
             {/* Wishlist Button */}
             <button
               onClick={goToWishlist}
@@ -239,23 +220,6 @@ export const Navbar: React.FC = () => {
 
               {/* Quick links */}
               <div className="mt-6 pt-6 border-t border-zinc-100 space-y-2">
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    goToOrders();
-                  }}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-zinc-800 hover:text-black hover:bg-zinc-50 rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <Package className="w-4 h-4 text-amber-600" />
-                    <span>'Mes Commandes & Suivi'</span>
-                  </div>
-                  {orderBadgeCount > 0 && (
-                    <span className="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px]">
-                      {orderBadgeCount}
-                    </span>
-                  )}
-                </button>
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);
