@@ -37,7 +37,7 @@ export const AdminView: React.FC = () => {
     resetProductOverrides, 
     customProducts,
     addCustomProduct,
-    deleteCustomProduct,
+    deleteProduct,
     goToHome, 
     showToast 
   } = useStore();
@@ -409,10 +409,10 @@ export const AdminView: React.FC = () => {
     setEditingProductId(null);
   };
 
-  const handleDeleteCustomProduct = async (product: Product) => {
+  const handleDeleteProduct = async (product: Product) => {
     if (window.confirm(`Voulez-vous vraiment supprimer définitivement l'article "${product.name}" du site ?`)) {
-      await deleteCustomProduct(product.id);
-      addAuditLog(`Suppression article personnalisé (${product.id})`, `Nom : "${product.name}"`);
+      await deleteProduct(product.id);
+      addAuditLog(`Suppression article (${product.id})`, `Nom : "${product.name}"`);
     }
   };
 
@@ -1542,14 +1542,23 @@ export const AdminView: React.FC = () => {
                       </div>
 
                       {/* Action buttons */}
-                      <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-3">
+                      <div className="pt-3 border-t border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <button
                           type="button"
-                          onClick={() => setEditingProductId(null)}
-                          className="px-4 py-2.5 text-xs font-semibold text-zinc-600 hover:text-black transition-colors"
+                          onClick={() => handleDeleteProduct(product)}
+                          className="px-3.5 py-2 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-200/80 rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                         >
-                          Annuler
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Supprimer cet article</span>
                         </button>
+                        <div className="flex items-center justify-end gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setEditingProductId(null)}
+                            className="px-4 py-2.5 text-xs font-semibold text-zinc-600 hover:text-black transition-colors cursor-pointer"
+                          >
+                            Annuler
+                          </button>
                         <button
                           type="button"
                           onClick={() => handleSaveProduct(product.id)}
@@ -1560,6 +1569,7 @@ export const AdminView: React.FC = () => {
                         </button>
                       </div>
                     </div>
+                  </div>
                   ) : (
                     // DISPLAY ROW
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1615,24 +1625,25 @@ export const AdminView: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 self-end sm:self-auto">
+                      <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
                         <button
+                          type="button"
                           onClick={() => handleStartEdit(product)}
-                          className="px-4 py-2 bg-[#141210] hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs"
+                          className="px-3.5 py-2 bg-[#141210] hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
                         >
                           <Edit3 className="w-3.5 h-3.5 text-amber-400" />
                           <span>Modifier</span>
                         </button>
 
-                        {isCustom && (
-                          <button
-                            onClick={() => handleDeleteCustomProduct(product)}
-                            className="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
-                            title="Supprimer cet article personnalisé"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteProduct(product)}
+                          className="px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 border border-red-200/80 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
+                          title={`Supprimer l'article "${product.name}"`}
+                        >
+                          <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                          <span>Supprimer</span>
+                        </button>
                       </div>
                     </div>
                   )}

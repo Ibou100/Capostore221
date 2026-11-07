@@ -40,6 +40,7 @@ interface StoreContextType {
   customProducts: Product[];
   addCustomProduct: (product: Product) => Promise<boolean>;
   deleteCustomProduct: (productId: string) => Promise<boolean>;
+  deleteProduct: (productId: string) => Promise<boolean>;
   refreshCloudCatalog: () => Promise<void>;
 
   // Search Modal
@@ -71,6 +72,7 @@ const DEFAULT_FILTERS: FilterState = {
 
 const OVERRIDES_STORAGE_KEY = 'capostore_product_overrides_v1';
 const CUSTOM_PRODUCTS_STORAGE_KEY = 'capostore_custom_products_v1';
+const DELETED_PRODUCTS_STORAGE_KEY = 'capostore_deleted_products_v1';
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
@@ -88,6 +90,25 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
     return {};
   });
+
+  const [deletedProductIds, setDeletedProductIds] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const stored = localStorage.getItem(DELETED_PRODUCTS_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+    } catch (e) {
+      console.error('Failed to parse deleted products from localStorage', e);
+    }
+    return [];
+  });
+
+  const deletedProductIdsRef = useRef<string[]>(deletedProductIds);
+  useEffect(() => {
+    deletedProductIdsRef.current = deletedProductIds;
+  }, [deletedProductIds]);
 
   const [customProducts, setCustomProducts] = useState<Product[]>(() => {
     if (typeof window === 'undefined') return [];
@@ -300,15 +321,26 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return saved;
   };
 
-  // Delete custom product from owner admin
-  const deleteCustomProduct = async (productId: string): Promise<boolean> => {
-    const updated = customProductsRef.current.filter((p) => p.id !== productId);
-    setCustomProducts(updated);
+  // Delete any product from owner admin (both catalog and custom products)
+  const deleteProduct = async (productId: string): Promise<boolean> => {
+    // 1. Remove from customProducts if present
+    const updatedCustoms = customProductsRef.current.filter((p) => p.id !== productId);
+    setCustomProducts(updatedCustoms);
     try {
-      localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(updatedCustoms));
     } catch (e) {
       console.error(e);
     }
+
+    // 2. Add to deletedProductIds
+    const updatedDeleted = Array.from(new Set([...deletedProductIdsRef.current, productId]));
+    setDeletedProductIds(updatedDeleted);
+    try {
+      localStorage.setItem(DELETED_PRODUCTS_STORAGE_KEY, JSON.stringify(updatedDeleted));
+    } catch (e) {
+      console.error(e);
+    }
+
     showToast('Article supprimé du catalogue.', 'info');
 
     if (isSupabaseConfigured()) {
@@ -316,13 +348,15 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     // Cloud push fallback
-    const saved = await saveCloudProducts(updated, productOverridesRef.current);
+    const saved = await saveCloudProducts(updatedCustoms, productOverridesRef.current);
     return saved;
   };
 
+  const deleteCustomProduct = deleteProduct;
+
   // Compute merged products (Base 23 products + Owner custom products + Overrides)
   const products = useMemo(() => {
-    const allBase = [...INITIAL_PRODUCTS, ...customProducts];
+    const allBase = [...INITIAL_PRODUCTS, ...customProducts].filter((p) => !deletedProductIds.includes(p.id));
     return allBase.map((baseProduct) => {
       const override = productOverrides[baseProduct.id];
       if (!override) return baseProduct;
@@ -339,7 +373,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         published: override.published !== undefined ? override.published : baseProduct.published,
       };
     });
-  }, [productOverrides, customProducts]);
+  }, [productOverrides, customProducts, deletedProductIds]);
 
   const updateProductOverride = (productId: string, override: ProductCustomOverride) => {
     setProductOverrides((prev) => {
@@ -612,6 +646,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         customProducts,
         addCustomProduct,
         deleteCustomProduct,
+        deleteProduct,
         refreshCloudCatalog,
         isSearchOpen,
         openSearch,
