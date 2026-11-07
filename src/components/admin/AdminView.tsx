@@ -1850,7 +1850,7 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                 { id: 'transmise', label: '1. Transmises', count: orderStatusCounts.transmise, activeBg: 'bg-amber-600 text-white' },
                 { id: 'confirmee', label: '2. Confirmées', count: orderStatusCounts.confirmee, activeBg: 'bg-blue-600 text-white' },
                 { id: 'en_preparation', label: '3. En préparation', count: orderStatusCounts.en_preparation, activeBg: 'bg-purple-600 text-white' },
-                { id: 'en_livraison', label: '4. En livraison', count: orderStatusCounts.en_livraison, activeBg: 'bg-orange-600 text-white' },
+                { id: 'en_livraison', label: "4. En cours d'acheminement", count: orderStatusCounts.en_livraison, activeBg: 'bg-orange-600 text-white' },
                 { id: 'livree', label: '5. Colis Livrés', count: orderStatusCounts.livree, activeBg: 'bg-emerald-600 text-white' },
               ].map((tab) => {
                 const isActive = orderStatusFilter === tab.id;
@@ -1880,6 +1880,30 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
               })}
             </div>
           </div>
+
+
+          
+          {/* Active Filter Context Banner */}
+          {orderStatusFilter !== 'all' && (
+            <div className="bg-zinc-50 border border-zinc-200 p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#B85D19] animate-pulse shrink-0" />
+                <span className="text-zinc-700">
+                  Vue filtrée : <strong>{filteredOrders.length} commande(s)</strong> avec l'état{' '}
+                  <strong className="text-zinc-950 font-bold">
+                    « {ORDER_STATUS_CONFIG[orderStatusFilter as OrderStatus]?.label || orderStatusFilter} »
+                  </strong>
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOrderStatusFilter('all')}
+                className="text-xs font-bold text-[#B85D19] hover:underline flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+              >
+                <span>Voir toutes les commandes ({orders.length})</span>
+              </button>
+            </div>
+          )}
 
 
           {/* Orders Controls */}
@@ -1993,6 +2017,57 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                         </select>
                       </div>
                     </div>
+
+                    
+                    {/* Visual Status Banner distinguishing each step */}
+                    {order.status === 'en_livraison' && (
+                      <div className="bg-orange-50 border-b border-orange-200 px-4 sm:px-6 py-2 flex items-center justify-between text-xs text-orange-950 font-semibold">
+                        <span className="flex items-center gap-2">
+                          <span>🚚</span>
+                          <span><strong>COLIS CHEZ LE LIVREUR :</strong> En cours d'acheminement vers l'adresse du client ({order.customerCity})</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            updateOrderStatus(order.id, 'livree');
+                            addAuditLog(`Statut commande ${order.id} mis à jour`, 'Nouveau statut : livree');
+                            showToast(`Colis ${order.id} marqué comme Livré avec succès !`, 'success');
+                          }}
+                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-bold shrink-0 cursor-pointer shadow-xs transition-colors"
+                        >
+                          ✓ Valider la livraison
+                        </button>
+                      </div>
+                    )}
+
+                    {order.status === 'livree' && (
+                      <div className="bg-emerald-50 border-b border-emerald-200 px-4 sm:px-6 py-2 flex items-center gap-2 text-xs text-emerald-950 font-semibold">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span><strong>COMMANDE LIVRÉE & TERMINÉE :</strong> Colis remis au client avec succès. Paiement encaissé ({formatFCFA(order.total)}).</span>
+                      </div>
+                    )}
+
+                    {order.status === 'transmise' && (
+                      <div className="bg-amber-50 border-b border-amber-200 px-4 sm:px-6 py-2 flex items-center gap-2 text-xs text-amber-950 font-semibold">
+                        <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                        <span><strong>COMMANDE TRANSMISE :</strong> Nouvelle commande reçue via le site, en attente de confirmation.</span>
+                      </div>
+                    )}
+
+                    {order.status === 'confirmee' && (
+                      <div className="bg-blue-50 border-b border-blue-200 px-4 sm:px-6 py-2 flex items-center gap-2 text-xs text-blue-950 font-semibold">
+                        <Check className="w-4 h-4 text-blue-600 shrink-0" />
+                        <span><strong>COMMANDE CONFIRMÉE :</strong> Validée par CAPOSTORE221. Prête pour mise en préparation.</span>
+                      </div>
+                    )}
+
+                    {order.status === 'en_preparation' && (
+                      <div className="bg-purple-50 border-b border-purple-200 px-4 sm:px-6 py-2 flex items-center gap-2 text-xs text-purple-950 font-semibold">
+                        <Package className="w-4 h-4 text-purple-600 shrink-0" />
+                        <span><strong>EN PRÉPARATION :</strong> Les articles sont en cours d'emballage et d'étiquetage à l'atelier.</span>
+                      </div>
+                    )}
+
 
                     {/* Action Gérant : Modifier l'état de ce colis */}
                     <div className="bg-zinc-100/90 px-4 sm:px-6 py-2.5 border-b border-zinc-200 flex flex-wrap items-center justify-between gap-2">
