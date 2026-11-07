@@ -74,8 +74,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // 2. Validate mandatory size if product has available sizes
-    if (product.availableSizes && product.availableSizes.length > 0 && !selectedSize) {
-      return { success: false, message: 'Veuillez sélectionner une taille avant d\'ajouter au panier.' };
+    // Size is optional
+    if (!selectedSize && product.availableSizes && product.availableSizes.length > 0) {
+      selectedSize = product.availableSizes[0];
     }
 
     // 3. Validate mandatory color if product has available colors

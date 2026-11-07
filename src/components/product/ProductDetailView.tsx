@@ -51,12 +51,7 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
 
   const handleAddToCart = () => {
     setValidationError(null);
-
-    // Validate size selection if sizes exist for product
-    if (product.availableSizes && product.availableSizes.length > 0 && !selectedSize) {
-      setValidationError('Veuillez sélectionner votre taille.');
-      return;
-    }
+    const sizeToUse = selectedSize || (product.availableSizes && product.availableSizes.length > 0 ? product.availableSizes[0] : undefined);
 
     // Validate color selection if colors exist
     if (product.availableColors && product.availableColors.length > 0 && !selectedColor) {
@@ -64,7 +59,7 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
       return;
     }
 
-    const result = addToCart(product, quantity, selectedSize, selectedColor);
+    const result = addToCart(product, quantity, sizeToUse, selectedColor);
     if (result.success) {
       showToast(result.message || 'Pièce ajoutée au panier avec succès !', 'success');
     } else {

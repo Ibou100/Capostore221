@@ -174,7 +174,7 @@ export const AdminView: React.FC = () => {
   const [newCompareAtPrice, setNewCompareAtPrice] = useState<number | ''>('');
   const [newCategory, setNewCategory] = useState<CategoryId>('vetements');
   const [newSubCategory, setNewSubCategory] = useState('Boubous & Costumes');
-  const [newSizes, setNewSizes] = useState<string[]>(['M', 'L', 'XL']);
+  const [newSizes, setNewSizes] = useState<string[]>([]);
   const [newDescription, setNewDescription] = useState('');
   const [newInStock, setNewInStock] = useState(true);
   const [newImageData, setNewImageData] = useState<string>('');
@@ -348,7 +348,7 @@ export const AdminView: React.FC = () => {
       setNewCompareAtPrice('');
       setNewCategory('vetements');
       setNewSubCategory('Boubous & Costumes');
-      setNewSizes(['M', 'L', 'XL']);
+      setNewSizes([]);
       setNewDescription('');
       setNewImageData('');
       setNewImageFileName('');

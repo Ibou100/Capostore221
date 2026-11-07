@@ -24,7 +24,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Lavage délicat à 30°C ou pressing'
     ],
     materials: '65% Viscose, 30% Coton peigné, 5% Élasthanne',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Prince de Galles Gris', hex: '#4A4B50' }
     ],
@@ -62,7 +61,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Passants de ceinture renforcés'
     ],
     materials: '100% Coton sergé naturel résistant',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Blanc Écru Naturel', hex: '#F0ECE4' }
     ],
@@ -100,7 +98,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Finition bas de jambe droit net'
     ],
     materials: '100% Coton biologique épais 340 g/m²',
-    availableSizes: ['XS', 'S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Écru Minéral', hex: '#EDE8E0' }
     ],
@@ -139,7 +136,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Étiquette jacron en cuir patiné à la ceinture'
     ],
     materials: '100% Denim coton lourd prélavé',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Indigo Brut Délavé', hex: '#2B394A' }
     ],
@@ -177,7 +173,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Boutons nacrés gravés cousus croisés'
     ],
     materials: '100% Coton peigné haute finesse',
-    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
     availableColors: [
       { name: 'Madras Ambré & Marine', hex: '#B86F36' }
     ],
@@ -216,7 +211,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Poignets de manche ajustables à double boutonnerie'
     ],
     materials: '100% Coton peigné haute densité',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Rayures Rose & Craie', hex: '#E05A74' }
     ],
@@ -254,7 +248,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Jacron noir siglé à la ceinture au dos'
     ],
     materials: '100% Coton denim lavé',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Bleu Denim Stone Washed', hex: '#4A6984' }
     ],
@@ -292,7 +285,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Ourlet inférieur renforcé'
     ],
     materials: '100% Coton denim haute tenue',
-    availableSizes: ['XS', 'S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Bleu Céleste Décoloré', hex: '#8BA9C6' }
     ],
@@ -330,7 +322,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Bas de corps légèrement arrondi'
     ],
     materials: '100% Coton piqué flammé chiné',
-    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
     availableColors: [
       { name: 'Grenat Flammé Chiné', hex: '#8B1E28' }
     ],
@@ -369,7 +360,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Finition bas de jambe droit net'
     ],
     materials: '100% Coton denim brut haute qualité',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Indigo Brut Profond', hex: '#1E2C3D' }
     ],
@@ -407,7 +397,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Hirondelles de renfort écrues à la base'
     ],
     materials: '100% Coton peigné haute finesse',
-    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
     availableColors: [
       { name: 'Vichy Rouge & Craie', hex: '#D23E4B' }
     ],
@@ -480,7 +469,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Idéal pour les sorties quotidiennes comme pour les moments de détente'
     ],
     materials: '88% Polyamide technique micro-aéré, 12% Élasthanne',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Gris Graphite Technique', hex: '#4B4B52' }
     ],
@@ -518,7 +506,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Boutons cousus croisés haute résistance'
     ],
     materials: '100% Coton peigné Oxford 220 g/m²',
-    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
     availableColors: [
       { name: 'Rayures Brique & Craie', hex: '#B35848' }
     ],
@@ -556,7 +543,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Idéal porté seul ou sous une surchemise ouverte'
     ],
     materials: '100% Coton peigné flammé',
-    availableSizes: ['M', 'L', 'XL', 'XXL'],
     availableColors: [
       { name: 'Gris Chiné Perle', hex: '#B8B9BD' }
     ],
@@ -594,7 +580,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Poignets arrondis réglables à deux boutons'
     ],
     materials: '100% Coton peigné double retors',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Bleu Azur Éclatant', hex: '#688EE6' }
     ],
@@ -632,7 +617,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Poignets biseautés ajustables renforcés'
     ],
     materials: '100% Coton peigné tissé teint',
-    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
     availableColors: [
       { name: 'Tartan Taupe & Slate', hex: '#877568' }
     ],
@@ -706,7 +690,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Bas droit fendu sur les côtés pour un tombé naturel'
     ],
     materials: '100% Coton piqué peigné lourd',
-    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
     availableColors: [
       { name: 'Vert Forêt & Crème', hex: '#2A4736' }
     ],
@@ -746,7 +729,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Poignets biseautés à double boutonnage'
     ],
     materials: '100% Coton popeline peigné 140 g/m²',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Bleu Ciel Pastel', hex: '#A8C4E6' }
     ],
@@ -821,7 +803,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Polyvalent : chic formel au bureau ou décontracté avec des sneakers épurées'
     ],
     materials: 'Viscose peignée, Coton & Polyester technique infroissable',
-    availableSizes: ['S', 'M', 'L', 'XL'],
     availableColors: [
       { name: 'Noir Ébène Profond', hex: '#141414' }
     ],
@@ -860,7 +841,6 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Ourlet inférieur incurvé adapté porté rentré ou sorti'
     ],
     materials: '100% Coton Oxford double retors haut grammage',
-    availableSizes: ['S', 'M', 'L', 'XL', 'XXL'],
     availableColors: [
       { name: 'Lilas Parme Pastel', hex: '#A89BC7' }
     ],

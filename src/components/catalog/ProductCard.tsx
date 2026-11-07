@@ -167,7 +167,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           >
             <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
             <span className="truncate">
-              {product.availableSizes && product.availableSizes.length > 0 ? 'Choisir taille' : 'Ajouter'}
+              'Ajouter'
             </span>
           </button>
 
