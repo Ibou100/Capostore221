@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, ArrowRight, MessageCircle, ExternalLink } from 'lucide-react';
+import { X, CheckCircle2, ArrowRight, MessageCircle, ExternalLink, Truck, Store } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
 import type { PaymentMethod } from '../../types';
@@ -16,6 +16,7 @@ export const QuickOrderModal: React.FC = () => {
   const { showToast } = useStore();
 
   const [selectedSize, setSelectedSize] = useState<string | undefined>(undefined);
+  const [deliveryMode, setDeliveryMode] = useState<'livraison' | 'retrait'>('livraison');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -61,22 +62,29 @@ export const QuickOrderModal: React.FC = () => {
       return;
     }
 
-    if (!customerCity.trim()) {
-      showToast('Veuillez renseigner votre ville ou localité.', 'error');
-      return;
+    if (deliveryMode === 'livraison') {
+      if (!customerCity.trim()) {
+        showToast('Veuillez renseigner votre ville ou localité.', 'error');
+        return;
+      }
+
+      if (!customerAddress.trim()) {
+        showToast('Veuillez préciser votre adresse ou quartier de livraison.', 'error');
+        return;
+      }
     }
 
-    if (!customerAddress.trim()) {
-      showToast('Veuillez préciser votre adresse ou quartier de livraison.', 'error');
-      return;
-    }
+    const finalCity = deliveryMode === 'retrait' ? 'Sur place (Boutique)' : customerCity.trim();
+    const finalAddress = deliveryMode === 'retrait'
+      ? '🏪 Récupération sur place par le client'
+      : `🚚 Livraison à domicile : ${customerAddress.trim()}`;
 
     // 1. Create order in platform system
     const newOrder = createOrder({
       customerName: customerName.trim() || 'Client',
       customerPhone: phoneValidation.formatted,
-      customerCity: customerCity.trim(),
-      customerAddress: customerAddress.trim(),
+      customerCity: finalCity,
+      customerAddress: finalAddress,
       paymentMethod,
       items: [
         {
@@ -90,6 +98,7 @@ export const QuickOrderModal: React.FC = () => {
       ],
       total: product.price,
       shippingFee: 0,
+      notes: deliveryMode,
     });
 
     // 2. Generate WhatsApp link with tracking ID, phone, payment mode & direct photo link
@@ -102,9 +111,10 @@ export const QuickOrderModal: React.FC = () => {
         orderId: newOrder.id,
         customerName: newOrder.customerName,
         customerPhone: newOrder.customerPhone,
-        customerCity: newOrder.customerCity,
-        customerAddress: newOrder.customerAddress,
+        customerCity: customerCity.trim() || 'Dakar',
+        customerAddress: customerAddress.trim(),
         paymentMethod: newOrder.paymentMethod,
+        deliveryMode,
       }
     );
 
@@ -287,9 +297,52 @@ export const QuickOrderModal: React.FC = () => {
                 )}
 
                 {/* Customer Contact & Delivery Info */}
-                <div className="space-y-3">
-                  <h5 className="font-display font-bold text-xs uppercase tracking-wider text-zinc-900">
-                    Vos coordonnées de livraison
+                <div className="space-y-3.5">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-zinc-900 mb-2">
+                      Comment souhaitez-vous recevoir votre commande ? *
+                    </label>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMode('livraison')}
+                        className={`p-3 rounded-xl border text-left transition-all flex items-start gap-2.5 cursor-pointer ${
+                          deliveryMode === 'livraison'
+                            ? 'border-[#B85D19] bg-amber-50/70 ring-2 ring-[#B85D19]/30'
+                            : 'border-zinc-200 bg-white hover:bg-zinc-50'
+                        }`}
+                      >
+                        <Truck className={`w-4 h-4 shrink-0 mt-0.5 ${deliveryMode === 'livraison' ? 'text-[#B85D19]' : 'text-zinc-500'}`} />
+                        <div>
+                          <p className="font-bold text-xs text-zinc-900">Me faire livrer</p>
+                          <p className="text-[10px] text-zinc-500 mt-0.5 leading-snug">
+                            Livraison à votre adresse
+                          </p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMode('retrait')}
+                        className={`p-3 rounded-xl border text-left transition-all flex items-start gap-2.5 cursor-pointer ${
+                          deliveryMode === 'retrait'
+                            ? 'border-[#B85D19] bg-amber-50/70 ring-2 ring-[#B85D19]/30'
+                            : 'border-zinc-200 bg-white hover:bg-zinc-50'
+                        }`}
+                      >
+                        <Store className={`w-4 h-4 shrink-0 mt-0.5 ${deliveryMode === 'retrait' ? 'text-[#B85D19]' : 'text-zinc-500'}`} />
+                        <div>
+                          <p className="font-bold text-xs text-zinc-900">Venir récupérer</p>
+                          <p className="text-[10px] text-zinc-500 mt-0.5 leading-snug">
+                            Je viens moi-même chercher
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <h5 className="font-display font-bold text-xs uppercase tracking-wider text-zinc-900 pt-1">
+                    Vos coordonnées
                   </h5>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -338,34 +391,43 @@ export const QuickOrderModal: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] font-bold text-zinc-800 mb-1">
-                        Ville / Région *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={customerCity}
-                        onChange={(e) => setCustomerCity(e.target.value)}
-                        placeholder="Ex: Dakar, Thiès, Mbour..."
-                        className="w-full text-xs px-3 py-2.5 rounded-lg border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-black"
-                      />
+                  {deliveryMode === 'livraison' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-800 mb-1">
+                          Ville / Région *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={customerCity}
+                          onChange={(e) => setCustomerCity(e.target.value)}
+                          placeholder="Ex: Dakar, Thiès, Mbour..."
+                          className="w-full text-xs px-3 py-2.5 rounded-lg border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-black"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-zinc-800 mb-1">
+                          Adresse ou Quartier *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={customerAddress}
+                          onChange={(e) => setCustomerAddress(e.target.value)}
+                          placeholder="Ex: Sacré-Cœur 3, près de la boulangerie"
+                          className="w-full text-xs px-3 py-2.5 rounded-lg border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-black"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-zinc-800 mb-1">
-                        Adresse ou Quartier *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={customerAddress}
-                        onChange={(e) => setCustomerAddress(e.target.value)}
-                        placeholder="Ex: Sacré-Cœur 3, près de la boulangerie"
-                        className="w-full text-xs px-3 py-2.5 rounded-lg border border-zinc-300 focus:outline-none focus:ring-1 focus:ring-black"
-                      />
+                  ) : (
+                    <div className="p-3 bg-emerald-50/80 border border-emerald-200 rounded-xl text-xs text-emerald-950 flex items-center gap-2.5">
+                      <Store className="w-4 h-4 text-emerald-700 shrink-0" />
+                      <span>
+                        <strong>Récupération sur place :</strong> Vous viendrez récupérer votre commande vous-même. L'adresse exacte vous sera confirmée sur WhatsApp.
+                      </span>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Payment Method Selector (REQUIRED by user: Wave, Orange Money, Espèces, Free Money) */}

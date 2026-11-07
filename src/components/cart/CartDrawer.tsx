@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   X, ShoppingBag, Trash2, ShieldCheck, 
-  Truck, CheckCircle2, MessageCircle 
+  Truck, Store, CheckCircle2, MessageCircle 
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
@@ -28,6 +28,7 @@ export const CartDrawer: React.FC = () => {
   const { createOrder } = useOrders();
 
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [deliveryMode, setDeliveryMode] = useState<'livraison' | 'retrait'>('livraison');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -59,22 +60,29 @@ export const CartDrawer: React.FC = () => {
       return;
     }
 
-    if (!city || city.length < 2) {
-      showToast('Veuillez renseigner votre ville ou localité.', 'error');
-      return;
+    if (deliveryMode === 'livraison') {
+      if (!city || city.length < 2) {
+        showToast('Veuillez renseigner votre ville ou localité.', 'error');
+        return;
+      }
+
+      if (!address || address.length < 3) {
+        showToast('Veuillez préciser votre adresse de livraison.', 'error');
+        return;
+      }
     }
 
-    if (!address || address.length < 3) {
-      showToast('Veuillez préciser votre adresse de livraison.', 'error');
-      return;
-    }
+    const finalCity = deliveryMode === 'retrait' ? 'Sur place (Boutique)' : city;
+    const finalAddress = deliveryMode === 'retrait'
+      ? '🏪 Récupération sur place par le client'
+      : `🚚 Livraison à domicile : ${address}`;
 
     // 1. Enregistrer la commande sur la plateforme avec son N° de suivi unique
     const newOrder = createOrder({
       customerName: name,
       customerPhone: phoneValidation.formatted,
-      customerCity: city,
-      customerAddress: address,
+      customerCity: finalCity,
+      customerAddress: finalAddress,
       paymentMethod,
       items: items.map((i) => ({
         productId: i.product.id,
@@ -86,16 +94,18 @@ export const CartDrawer: React.FC = () => {
       })),
       total,
       shippingFee,
+      notes: deliveryMode,
     });
 
     // 2. Générer le lien WhatsApp complet incluant N° de suivi, téléphone, paiement et photos
     const checkoutUrl = getWhatsAppCheckoutLink(items, total, {
       orderId: newOrder.id,
       name,
-      phone,
-      city,
-      address,
-      paymentMethod
+      phone: phoneValidation.formatted,
+      city: finalCity,
+      address: deliveryMode === 'retrait' ? 'Récupération sur place' : address,
+      paymentMethod,
+      deliveryMode,
     });
 
     setCreatedOrderId(newOrder.id);
@@ -363,20 +373,58 @@ export const CartDrawer: React.FC = () => {
                 {/* Shipping form */}
                 <form onSubmit={handleOrderSubmit} className="space-y-3.5">
                   <div>
-                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-1">
-                      Nom complet
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-900 mb-2">
+                      Comment souhaitez-vous recevoir votre commande ? *
                     </label>
-                    <input
-                      type="text"
-                      required
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder="Votre nom et prénom"
-                      className="w-full text-xs px-3 py-2.5 border border-zinc-300 rounded-sm focus:border-black focus:outline-none"
-                    />
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMode('livraison')}
+                        className={`p-2.5 rounded-lg border text-left transition-all flex items-start gap-2 cursor-pointer ${
+                          deliveryMode === 'livraison'
+                            ? 'border-[#B85D19] bg-amber-50/70 ring-1 ring-[#B85D19]'
+                            : 'border-zinc-200 bg-white hover:bg-zinc-50'
+                        }`}
+                      >
+                        <Truck className={`w-4 h-4 shrink-0 mt-0.5 ${deliveryMode === 'livraison' ? 'text-[#B85D19]' : 'text-zinc-500'}`} />
+                        <div>
+                          <p className="font-bold text-xs text-zinc-900">Me faire livrer</p>
+                          <p className="text-[10px] text-zinc-500 mt-0.5">Livraison à domicile</p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMode('retrait')}
+                        className={`p-2.5 rounded-lg border text-left transition-all flex items-start gap-2 cursor-pointer ${
+                          deliveryMode === 'retrait'
+                            ? 'border-[#B85D19] bg-amber-50/70 ring-1 ring-[#B85D19]'
+                            : 'border-zinc-200 bg-white hover:bg-zinc-50'
+                        }`}
+                      >
+                        <Store className={`w-4 h-4 shrink-0 mt-0.5 ${deliveryMode === 'retrait' ? 'text-[#B85D19]' : 'text-zinc-500'}`} />
+                        <div>
+                          <p className="font-bold text-xs text-zinc-900">Venir récupérer</p>
+                          <p className="text-[10px] text-zinc-500 mt-0.5">Je viens chercher</p>
+                        </div>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-1">
+                        Nom complet *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        placeholder="Votre nom et prénom"
+                        className="w-full text-xs px-3 py-2.5 border border-zinc-300 rounded-sm focus:border-black focus:outline-none"
+                      />
+                    </div>
                     <div>
                       <label className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-1">
                         Téléphone * <span className="text-amber-700 font-normal">(WhatsApp / Appel)</span>
@@ -408,34 +456,45 @@ export const CartDrawer: React.FC = () => {
                         </p>
                       )}
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-1">
-                        Ville / Localité
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={customerCity}
-                        onChange={(e) => setCustomerCity(e.target.value)}
-                        placeholder="Votre ville"
-                        className="w-full text-xs px-3 py-2.5 border border-zinc-300 rounded-sm focus:border-black focus:outline-none bg-white"
-                      />
-                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-1">
-                      Adresse de livraison précise
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={customerAddress}
-                      onChange={(e) => setCustomerAddress(e.target.value)}
-                      placeholder="Rue, repère ou quartier de livraison"
-                      className="w-full text-xs px-3 py-2.5 border border-zinc-300 rounded-sm focus:border-black focus:outline-none"
-                    />
-                  </div>
+                  {deliveryMode === 'livraison' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-1">
+                          Ville / Localité *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={customerCity}
+                          onChange={(e) => setCustomerCity(e.target.value)}
+                          placeholder="Votre ville"
+                          className="w-full text-xs px-3 py-2.5 border border-zinc-300 rounded-sm focus:border-black focus:outline-none bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-1">
+                          Adresse de livraison précise *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={customerAddress}
+                          onChange={(e) => setCustomerAddress(e.target.value)}
+                          placeholder="Rue, repère ou quartier"
+                          className="w-full text-xs px-3 py-2.5 border border-zinc-300 rounded-sm focus:border-black focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-emerald-50/80 border border-emerald-200 rounded-lg text-xs text-emerald-950 flex items-center gap-2.5">
+                      <Store className="w-4 h-4 text-emerald-700 shrink-0" />
+                      <span>
+                        <strong>Récupération sur place :</strong> Vous viendrez récupérer votre commande vous-même. L'adresse exacte vous sera confirmée sur WhatsApp.
+                      </span>
+                    </div>
+                  )}
 
                   {/* Payment Method Selector */}
                   <div className="space-y-2">
@@ -530,7 +589,12 @@ export const CartDrawer: React.FC = () => {
 
                 <div className="p-3 bg-zinc-50 rounded-xl text-xs text-zinc-700 text-left space-y-1 border border-zinc-200">
                   <p><strong>Destinataire :</strong> {customerName} ({customerPhone})</p>
-                  <p><strong>Lieu :</strong> {customerAddress}, {customerCity}</p>
+                  <p>
+                    <strong>Mode de réception :</strong>{' '}
+                    {deliveryMode === 'retrait'
+                      ? '🏪 Récupération sur place (Je viens récupérer)'
+                      : `🚚 Livraison à domicile (${customerAddress}, ${customerCity})`}
+                  </p>
                   <p><strong>Moyen de paiement :</strong> <span className="text-emerald-700 font-bold">{getPaymentMethodLabel(paymentMethod)}</span></p>
                   <p><strong>Total à régler :</strong> {formatFCFA(total)}</p>
                 </div>

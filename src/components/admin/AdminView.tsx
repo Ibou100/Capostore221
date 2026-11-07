@@ -2022,9 +2022,20 @@ export const AdminView: React.FC = () => {
                           </div>
                         </div>
                         <div>
-                          <span className="text-zinc-400 block text-[10px] uppercase font-bold">Paiement & Adresse</span>
-                          <span className="text-emerald-700 font-bold block">{getPaymentMethodLabel(order.paymentMethod)}</span>
-                          <span className="text-zinc-600 block mt-0.5 truncate">{order.customerCity} - {order.customerAddress}</span>
+                          <span className="text-zinc-400 block text-[10px] uppercase font-bold">Paiement & Mode de Réception</span>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                            <span className="text-emerald-700 font-bold">{getPaymentMethodLabel(order.paymentMethod)}</span>
+                            {(order.notes === 'retrait' || (order.customerAddress || '').toLowerCase().includes('récupération') || (order.customerCity || '').toLowerCase().includes('sur place')) ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-300">
+                                🏪 Récupération sur place
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-900 border border-blue-300">
+                                🚚 Livraison à domicile
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-zinc-600 block mt-1 truncate">{order.customerCity} - {order.customerAddress}</span>
                         </div>
                       </div>
 

@@ -32,7 +32,7 @@ export const Footer: React.FC = () => {
     }
     lastTapRef.current = now;
   };
-  const { goToHome, goToCatalog } = useStore();
+  const { goToHome } = useStore();
 
   return (
     <footer className="bg-[#121110] text-[#D4CBBF] border-t border-[#262320]">
@@ -74,7 +74,7 @@ export const Footer: React.FC = () => {
 
       {/* Main 4-Column Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-left">
           
           {/* Col 1: Brand & Contact */}
           <div className="space-y-4">
@@ -124,47 +124,6 @@ export const Footer: React.FC = () => {
                 </a>
               </p>
             </div>
-          </div>
-
-          {/* Col 2: Collections */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white">
-              Départements
-            </h4>
-            <ul className="space-y-2 text-xs text-zinc-400">
-              <li>
-                <button
-                  onClick={() => goToCatalog({ category: 'vetements' })}
-                  className="hover:text-white transition-colors text-left"
-                >
-                  Vêtements & Tailleur (5 000 FCFA)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => goToCatalog({ category: 'lunettes' })}
-                  className="hover:text-white transition-colors text-left"
-                >
-                  Lunettes & Montures (3 000 FCFA)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => goToCatalog({ category: 'accessoires' })}
-                  className="hover:text-white transition-colors text-left"
-                >
-                  Maroquinerie & Sacs (3 000 FCFA)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => goToCatalog({ category: 'tous' })}
-                  className="hover:text-white transition-colors text-left"
-                >
-                  Tout le catalogue (23 pièces)
-                </button>
-              </li>
-            </ul>
           </div>
 
           {/* Col 3: Service Client & Livraison */}

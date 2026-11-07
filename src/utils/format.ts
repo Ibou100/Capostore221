@@ -182,6 +182,7 @@ export function getWhatsAppOrderLink(
     customerCity?: string;
     customerAddress?: string;
     paymentMethod?: PaymentMethod;
+    deliveryMode?: 'livraison' | 'retrait';
   }
 ): string {
   const origin = getSiteOrigin();
@@ -191,14 +192,19 @@ export function getWhatsAppOrderLink(
     : '';
 
   const orderIdText = extra?.orderId ? `📦 COMMANDE N° : ${extra.orderId}\n` : '';
+  const isRetrait = extra?.deliveryMode === 'retrait' || (extra?.customerAddress || '').toLowerCase().includes('récupération') || (extra?.customerCity || '').toLowerCase().includes('sur place');
+  const modeText = isRetrait
+    ? '🏪 Mode de réception : Récupération sur place (Je viens récupérer ma commande)'
+    : `🚚 Mode de réception : Livraison à domicile\n📍 Adresse : ${extra?.customerCity || 'Dakar'} - ${extra?.customerAddress || 'À préciser'}`;
+
   const clientText = extra?.customerPhone
-    ? `\n👤 Client : ${extra.customerName || 'Client CAPOSTORE221'}\n📞 Téléphone : ${extra.customerPhone}\n📍 Adresse : ${extra.customerCity || 'Dakar'} - ${extra.customerAddress || 'À préciser'}`
+    ? `\n👤 Client : ${extra.customerName || 'Client CAPOSTORE221'}\n📞 Téléphone : ${extra.customerPhone}\n${modeText}`
     : '';
   const paymentText = extra?.paymentMethod 
     ? `\n💳 Mode de paiement : ${getPaymentMethodLabel(extra.paymentMethod)}`
     : '';
 
-  const message = `Bonjour CAPOSTORE221,\n${orderIdText}Je valide ma commande sur votre boutique en ligne :${clientText}${paymentText}\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}${photoText}\n\nMerci de me confirmer la prise en charge et le délai de livraison.`;
+  const message = `Bonjour CAPOSTORE221,\n${orderIdText}Je valide ma commande sur votre boutique en ligne :${clientText}${paymentText}\n\n• Article : ${productName}\n• Prix : ${formatFCFA(price)}${sizeText}${photoText}\n\nMerci de me confirmer la prise en charge !`;
   return `https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
 }
 
@@ -215,6 +221,7 @@ export function getWhatsAppCheckoutLink(
     city: string; 
     address: string;
     paymentMethod: PaymentMethod;
+    deliveryMode?: 'livraison' | 'retrait';
   }
 ): string {
   const origin = getSiteOrigin();
@@ -225,8 +232,12 @@ export function getWhatsAppCheckoutLink(
   }).join('\n\n');
 
   const orderIdHeader = customer.orderId ? `📦 COMMANDE N° : ${customer.orderId}\n` : '';
+  const isRetrait = customer.deliveryMode === 'retrait' || customer.address.toLowerCase().includes('récupération') || customer.city.toLowerCase().includes('sur place');
+  const modeAndLocationText = isRetrait
+    ? `🏪 Mode de réception : Récupération sur place (Je viens récupérer ma commande)`
+    : `🚚 Mode de réception : Livraison à domicile\n📍 Ville : ${customer.city}\n🏠 Adresse : ${customer.address}`;
 
-  const message = `Bonjour CAPOSTORE221,\n${orderIdHeader}Nouvelle commande validée sur votre boutique en ligne :\n\n👤 Client : ${customer.name}\n📞 Téléphone : ${customer.phone}\n📍 Ville : ${customer.city}\n🏠 Adresse : ${customer.address}\n💳 Mode de paiement : ${getPaymentMethodLabel(customer.paymentMethod)}\n\n📦 Articles commandés :\n${itemsText}\n\n💰 Total : ${formatFCFA(total)}\n\nMerci de me confirmer la prise en charge et la livraison !`;
+  const message = `Bonjour CAPOSTORE221,\n${orderIdHeader}Nouvelle commande validée sur votre boutique en ligne :\n\n👤 Client : ${customer.name}\n📞 Téléphone : ${customer.phone}\n${modeAndLocationText}\n💳 Mode de paiement : ${getPaymentMethodLabel(customer.paymentMethod)}\n\n📦 Articles commandés :\n${itemsText}\n\n💰 Total : ${formatFCFA(total)}\n\nMerci de me confirmer la prise en charge !`;
 
   return `https://wa.me/${STORE_WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
 }
