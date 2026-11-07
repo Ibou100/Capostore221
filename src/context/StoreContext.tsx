@@ -195,6 +195,22 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (isSupabaseConfigured()) {
         const dbProducts = await fetchSupabaseProducts();
         if (dbProducts && Array.isArray(dbProducts) && dbProducts.length > 0) {
+          // Identify any initial products that have been deleted in Supabase
+          const existingIds = new Set(dbProducts.map((p) => p.id));
+          const deletedBaseIds = INITIAL_PRODUCTS
+            .filter((p) => !existingIds.has(p.id))
+            .map((p) => p.id);
+
+          if (deletedBaseIds.length > 0) {
+            setDeletedProductIds((prev) => {
+              const merged = Array.from(new Set([...prev, ...deletedBaseIds]));
+              try {
+                localStorage.setItem(DELETED_PRODUCTS_STORAGE_KEY, JSON.stringify(merged));
+              } catch {}
+              return merged;
+            });
+          }
+
           const customs = dbProducts.filter((p) => p.id.startsWith('capo-custom-'));
           setCustomProducts(customs);
           try {
@@ -208,6 +224,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               overrides[p.id] = {
                 name: p.name,
                 price: p.price,
+                compareAtPrice: p.compareAtPrice,
                 stock: p.stock,
                 published: p.published,
                 availableSizes: p.availableSizes,
@@ -239,6 +256,19 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           const merged = Array.from(map.values());
           try {
             localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(merged));
+          } catch (e) {
+            console.error(e);
+          }
+          return merged;
+        });
+      }
+
+      // Merge deleted products
+      if (cloudData.deletedProductIds && Array.isArray(cloudData.deletedProductIds) && cloudData.deletedProductIds.length > 0) {
+        setDeletedProductIds((prev) => {
+          const merged = Array.from(new Set([...prev, ...(cloudData.deletedProductIds || [])]));
+          try {
+            localStorage.setItem(DELETED_PRODUCTS_STORAGE_KEY, JSON.stringify(merged));
           } catch (e) {
             console.error(e);
           }
@@ -348,7 +378,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     // Cloud push fallback
-    const saved = await saveCloudProducts(updatedCustoms, productOverridesRef.current);
+    const saved = await saveCloudProducts(updatedCustoms, productOverridesRef.current, updatedDeleted);
     return saved;
   };
 

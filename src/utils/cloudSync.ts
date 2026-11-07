@@ -67,6 +67,7 @@ export async function saveCloudOrders(orders: Order[]): Promise<boolean> {
 export async function fetchCloudProducts(): Promise<{
   customProducts: Product[];
   overrides: Record<string, ProductCustomOverride>;
+  deletedProductIds?: string[];
 }> {
   try {
     const response = await fetch(CLOUD_PRODUCTS_ENDPOINT, {
@@ -75,16 +76,17 @@ export async function fetchCloudProducts(): Promise<{
       cache: 'no-store',
     });
 
-    if (!response.ok) return { customProducts: [], overrides: {} };
+    if (!response.ok) return { customProducts: [], overrides: {}, deletedProductIds: [] };
 
     const json = await response.json();
     return {
       customProducts: Array.isArray(json?.data?.customProducts) ? json.data.customProducts : [],
       overrides: json?.data?.overrides && typeof json.data.overrides === 'object' ? json.data.overrides : {},
+      deletedProductIds: Array.isArray(json?.data?.deletedProductIds) ? json.data.deletedProductIds : [],
     };
   } catch (err) {
     console.warn('Could not fetch cloud products:', err);
-    return { customProducts: [], overrides: {} };
+    return { customProducts: [], overrides: {}, deletedProductIds: [] };
   }
 }
 
@@ -93,7 +95,8 @@ export async function fetchCloudProducts(): Promise<{
  */
 export async function saveCloudProducts(
   customProducts: Product[],
-  overrides: Record<string, ProductCustomOverride>
+  overrides: Record<string, ProductCustomOverride>,
+  deletedProductIds: string[] = []
 ): Promise<boolean> {
   try {
     const response = await fetch(CLOUD_PRODUCTS_ENDPOINT, {
@@ -106,6 +109,7 @@ export async function saveCloudProducts(
         data: {
           customProducts,
           overrides,
+          deletedProductIds,
           lastUpdated: new Date().toISOString(),
         },
       }),
