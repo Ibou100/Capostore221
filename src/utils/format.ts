@@ -117,10 +117,10 @@ export const ORDER_STATUS_CONFIG: Record<
   }
 > = {
   transmise: {
-    label: 'Transmise via WhatsApp',
+    label: '1. Reçue en Ligne',
     step: 1,
     badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-    description: 'Commande enregistrée sur la plateforme et transmise au vendeur.',
+    description: 'Nouvelle commande reçue en ligne, en attente de confirmation avec le client.',
   },
   confirmee: {
     label: 'Confirmée par CAPOSTORE221',
@@ -258,6 +258,92 @@ export function arePhoneNumbersMatching(phoneA: string, phoneB: string): boolean
   if (!normA || !normB) return false;
   // Match exact or trailing (e.g. 771234567 matching 771234567)
   return normA === normB || normA.endsWith(normB) || normB.endsWith(normA);
+}
+
+/**
+ * Strict Senegalese phone number validation:
+ * Mobile numbers must be exactly 9 digits and start with 70, 75, 76, 77, 78 (or 33 for landline).
+ */
+export function validateSenegalPhone(rawPhone: string): {
+  isValid: boolean;
+  digits: string;
+  formatted: string;
+  error?: string;
+} {
+  if (!rawPhone || !rawPhone.trim()) {
+    return {
+      isValid: false,
+      digits: '',
+      formatted: '',
+      error: 'Veuillez renseigner votre numéro de téléphone.',
+    };
+  }
+
+  let clean = rawPhone.replace(/\D/g, '');
+
+  // Strip international prefix if entered (+221, 00221, 221)
+  if (clean.startsWith('00221')) {
+    clean = clean.slice(5);
+  } else if (clean.startsWith('221') && clean.length >= 11) {
+    clean = clean.slice(3);
+  } else if (clean.startsWith('0') && clean.length === 10) {
+    clean = clean.slice(1);
+  }
+
+  if (clean.length < 9) {
+    return {
+      isValid: false,
+      digits: clean,
+      formatted: clean,
+      error: `Numéro trop court (${clean.length}/9 chiffres). Un numéro sénégalais doit comporter exactement 9 chiffres (ex: 77 455 23 41).`,
+    };
+  }
+
+  if (clean.length > 9) {
+    return {
+      isValid: false,
+      digits: clean,
+      formatted: clean,
+      error: `Numéro trop long (${clean.length} chiffres). Un numéro sénégalais doit comporter exactement 9 chiffres (ex: 77 455 23 41).`,
+    };
+  }
+
+  const prefix = clean.slice(0, 2);
+  const validPrefixes = ['77', '78', '76', '70', '75', '33'];
+  if (!validPrefixes.includes(prefix)) {
+    return {
+      isValid: false,
+      digits: clean,
+      formatted: clean,
+      error: `Préfixe "${prefix}" non reconnu. Un numéro mobile sénégalais doit commencer par 77, 78, 76, 70 ou 75.`,
+    };
+  }
+
+  const formatted = `${clean.slice(0, 2)} ${clean.slice(2, 5)} ${clean.slice(5, 7)} ${clean.slice(7, 9)}`;
+
+  return {
+    isValid: true,
+    digits: clean,
+    formatted,
+  };
+}
+
+/**
+ * Formats user typing into Senegalese phone pattern "XX XXX XX XX", capped at 9 digits
+ */
+export function formatSenegalPhoneInput(input: string): string {
+  let digits = input.replace(/\D/g, '');
+  if (digits.startsWith('00221')) digits = digits.slice(5);
+  else if (digits.startsWith('221') && digits.length >= 11) digits = digits.slice(3);
+  else if (digits.startsWith('0') && digits.length === 10) digits = digits.slice(1);
+
+  // Strictly cap at 9 digits
+  digits = digits.slice(0, 9);
+
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 5) return `${digits.slice(0, 2)} ${digits.slice(2)}`;
+  if (digits.length <= 7) return `${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5)}`;
+  return `${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5, 7)} ${digits.slice(7, 9)}`;
 }
 
 /**

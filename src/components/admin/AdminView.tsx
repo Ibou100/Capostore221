@@ -1725,7 +1725,7 @@ export const AdminView: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
               {[
                 { id: 'all', label: 'Tous les colis', count: orderStatusCounts.all, activeBg: 'bg-zinc-900 text-white' },
-                { id: 'transmise', label: '1. Transmises', count: orderStatusCounts.transmise, activeBg: 'bg-amber-600 text-white' },
+                { id: 'transmise', label: '1. Reçues en Ligne', count: orderStatusCounts.transmise, activeBg: 'bg-amber-600 text-white' },
                 { id: 'confirmee', label: '2. Confirmées', count: orderStatusCounts.confirmee, activeBg: 'bg-blue-600 text-white' },
                 { id: 'en_preparation', label: '3. En préparation', count: orderStatusCounts.en_preparation, activeBg: 'bg-purple-600 text-white' },
                 { id: 'en_livraison', label: "4. En cours d'acheminement", count: orderStatusCounts.en_livraison, activeBg: 'bg-orange-600 text-white' },
@@ -1804,7 +1804,7 @@ export const AdminView: React.FC = () => {
                 className="py-2.5 px-3 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-semibold text-zinc-700 focus:outline-none"
               >
                 <option value="all">Tous les statuts ({orders.length})</option>
-                <option value="transmise">1. Transmise via WhatsApp</option>
+                <option value="transmise">1. Reçue en Ligne</option>
                 <option value="confirmee">2. Confirmée</option>
                 <option value="en_preparation">3. En préparation</option>
                 <option value="en_livraison">4. En livraison</option>
@@ -1887,7 +1887,7 @@ export const AdminView: React.FC = () => {
                           }}
                           className={`text-xs font-bold px-3 py-1.5 rounded-lg border ${statusConfig.badgeClass} focus:outline-none`}
                         >
-                          <option value="transmise">1. Transmise via WhatsApp</option>
+                          <option value="transmise">1. Reçue en Ligne</option>
                           <option value="confirmee">2. Confirmée par CAPOSTORE221</option>
                           <option value="en_preparation">3. En cours de préparation</option>
                           <option value="en_livraison">4. En cours de livraison</option>
@@ -1928,7 +1928,7 @@ export const AdminView: React.FC = () => {
                     {order.status === 'transmise' && (
                       <div className="bg-amber-50 border-b border-amber-200 px-4 sm:px-6 py-2 flex items-center gap-2 text-xs text-amber-950 font-semibold">
                         <Clock className="w-4 h-4 text-amber-600 shrink-0" />
-                        <span><strong>COMMANDE TRANSMISE :</strong> Nouvelle commande reçue via le site, en attente de confirmation.</span>
+                        <span><strong>NOUVELLE COMMANDE REÇUE :</strong> Commande passée sur le site par le client, en attente de confirmation par WhatsApp ou téléphone.</span>
                       </div>
                     )}
 

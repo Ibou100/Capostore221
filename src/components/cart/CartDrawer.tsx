@@ -14,7 +14,9 @@ import {
   STORE_PHONE_CALL_DISPLAY,
   getWhatsAppCheckoutLink,
   PAYMENT_METHODS_DATA,
-  getPaymentMethodLabel
+  getPaymentMethodLabel,
+  validateSenegalPhone,
+  formatSenegalPhoneInput
 } from '../../utils/format';
 
 export const CartDrawer: React.FC = () => {
@@ -28,6 +30,7 @@ export const CartDrawer: React.FC = () => {
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const [customerAddress, setCustomerAddress] = useState('');
   const [customerCity, setCustomerCity] = useState('Dakar');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('wave');
@@ -49,9 +52,10 @@ export const CartDrawer: React.FC = () => {
       return;
     }
 
-    const digitsOnly = phone.replace(/\D/g, '');
-    if (digitsOnly.length < 7) {
-      showToast('Veuillez renseigner un numéro de téléphone valide.', 'error');
+    const phoneValidation = validateSenegalPhone(phone);
+    if (!phoneValidation.isValid) {
+      setPhoneError(phoneValidation.error || 'Numéro invalide');
+      showToast(phoneValidation.error || 'Veuillez saisir un numéro sénégalais valide à 9 chiffres.', 'error');
       return;
     }
 
@@ -68,7 +72,7 @@ export const CartDrawer: React.FC = () => {
     // 1. Enregistrer la commande sur la plateforme avec son N° de suivi unique
     const newOrder = createOrder({
       customerName: name,
-      customerPhone: phone,
+      customerPhone: phoneValidation.formatted,
       customerCity: city,
       customerAddress: address,
       paymentMethod,
@@ -392,16 +396,34 @@ export const CartDrawer: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-1">
-                        Téléphone
+                        Téléphone * <span className="text-amber-700 font-normal">(WhatsApp / Appel)</span>
                       </label>
-                      <input
-                        type="tel"
-                        required
-                        value={customerPhone}
-                        onChange={(e) => setCustomerPhone(e.target.value)}
-                        placeholder="Ex: 77 000 00 00"
-                        className="w-full text-xs px-3 py-2.5 border border-zinc-300 rounded-sm focus:border-black focus:outline-none"
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-zinc-500 font-mono select-none">
+                          🇸🇳 +221
+                        </span>
+                        <input
+                          type="tel"
+                          required
+                          value={customerPhone}
+                          onChange={(e) => {
+                            setCustomerPhone(formatSenegalPhoneInput(e.target.value));
+                            setPhoneError(null);
+                          }}
+                          placeholder="77 455 23 41"
+                          maxLength={12}
+                          className={`w-full text-xs font-semibold pl-16 pr-3 py-2.5 border rounded-sm focus:outline-none transition-colors ${
+                            phoneError ? 'border-red-400 bg-red-50/20' : 'border-zinc-300 focus:border-black'
+                          }`}
+                        />
+                      </div>
+                      {phoneError ? (
+                        <p className="text-[10px] text-red-600 mt-1 font-medium">{phoneError}</p>
+                      ) : (
+                        <p className="text-[10px] text-zinc-500 mt-1">
+                          Format Sénégal : 9 chiffres (ex : 77 455 23 41)
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-1">
@@ -492,12 +514,24 @@ export const CartDrawer: React.FC = () => {
                   <CheckCircle2 className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="font-display font-bold text-lg text-zinc-900 uppercase">
-                    Commande validée !
+                  <span className="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-[10px] font-bold uppercase tracking-wider mb-2">
+                    Étape 2 sur 2 : Confirmation WhatsApp
+                  </span>
+                  <h3 className="font-display font-black text-lg text-zinc-900 uppercase">
+                    Commande Enregistrée !
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">
+                  <p className="text-xs text-zinc-600 mt-1 max-w-sm mx-auto leading-relaxed">
                     Merci <strong>{customerName}</strong>. Votre commande a été enregistrée sur notre plateforme.
                   </p>
+
+                  <div className="p-3.5 bg-amber-50/90 border border-amber-200 rounded-xl mt-3 text-xs text-amber-950 text-left space-y-1">
+                    <p className="font-bold flex items-center gap-1.5 text-amber-950">
+                      <span>⚠️</span> Action requise pour confirmer :
+                    </p>
+                    <p className="text-[11px] text-amber-900 leading-relaxed">
+                      Cliquez sur le bouton vert ci-dessous pour ouvrir WhatsApp puis appuyez sur <strong>« Envoyer »</strong> afin que nous traitions votre commande.
+                    </p>
+                  </div>
                 </div>
 
                 {createdOrderId && (
@@ -523,10 +557,10 @@ export const CartDrawer: React.FC = () => {
                     href={lastWhatsAppUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white py-3 px-4 rounded-xl text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-sm"
+                    className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white py-3.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md"
                   >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Ouvrir WhatsApp avec le vendeur</span>
+                    <MessageCircle className="w-5 h-5 shrink-0" />
+                    <span>ENVOYER MA COMMANDE SUR WHATSAPP</span>
                   </a>
                 )}
 
