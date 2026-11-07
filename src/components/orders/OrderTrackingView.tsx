@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   Package, Search, CheckCircle2, Clock, Truck, 
   MapPin, Phone, CreditCard, MessageCircle, ArrowLeft,
-  AlertCircle, ShieldCheck, Lock, ArrowRight
+  AlertCircle, ShieldCheck, Lock
 } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
@@ -37,7 +37,7 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
     verifyAndLinkOrder 
   } = useOrders();
 
-  const { goToCatalog, goToOrders, goToAdmin, showToast } = useStore();
+  const { goToCatalog, goToOrders, showToast } = useStore();
 
   const isAdmin = isSessionValid();
 
@@ -146,25 +146,6 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({ initialOrd
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      {/* OWNER ADMIN NOTICE */}
-      {isAdmin && (
-        <div className="bg-gradient-to-r from-[#141210] to-zinc-900 text-white p-4 rounded-2xl mb-8 shadow-lg border border-amber-500/30 flex items-center justify-between gap-4 animate-fadeIn">
-          <div className="flex items-center gap-3">
-            <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
-            <p className="text-xs text-zinc-300">
-              <strong className="text-amber-400">Mode Administrateur :</strong> Pour changer le statut ou imprimer le bordereau, utilisez la console de gestion.
-            </p>
-          </div>
-          <button
-            onClick={() => goToAdmin('orders')}
-            className="px-4 py-2 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shrink-0 flex items-center gap-1.5 cursor-pointer"
-          >
-            <span>Gérer dans l'Admin</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
-
       {/* Top Navigation */}
       <div className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-200">
         <button

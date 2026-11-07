@@ -8,8 +8,8 @@
 const ADMIN_STORAGE_KEY = 'capostore_admin_auth_v3';
 const SESSION_STORAGE_KEY = 'capostore_admin_session_v3';
 
-// 30 days session duration so the owner remains authenticated on their phone and PC
-const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
+// Ephemeral 2-hour session stored ONLY in sessionStorage (never permanently in localStorage)
+const SESSION_DURATION_MS = 2 * 60 * 60 * 1000;
 
 // Single default master PIN
 export const DEFAULT_OWNER_PIN = '2210';
@@ -35,9 +35,13 @@ export interface SecurityAuditLog {
 
 const AUDIT_LOG_STORAGE_KEY = 'capostore_security_audit_log_v1';
 
-// Immediately clear any old lockout locks from previous versions
+// Immediately purge any old persistent admin sessions from localStorage
+// This guarantees that visitors and customers NEVER inherit admin privileges.
 if (typeof window !== 'undefined') {
   try {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+    localStorage.removeItem('capostore_admin_session_v2');
+    localStorage.removeItem('capostore_admin_session_v1');
     localStorage.removeItem('capostore_admin_attempts_v2');
     localStorage.removeItem('capostore_admin_attempts_v1');
   } catch {}
@@ -130,7 +134,8 @@ export async function verifyOwnerPassword(candidatePassword: string): Promise<{ 
 }
 
 /**
- * Creates persistent 30-day admin session
+ * Creates temporary secure session strictly in sessionStorage
+ * Automatically clears when tab or browser is closed.
  */
 export function createAdminSession(): void {
   if (typeof window === 'undefined') return;
@@ -142,24 +147,26 @@ export function createAdminSession(): void {
     loginTime: new Date().toISOString(),
   };
   try {
-    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
     sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+    // Purge localStorage to prevent cross-tab leaks
+    localStorage.removeItem(SESSION_STORAGE_KEY);
   } catch {}
 }
 
 /**
- * Checks if current admin session is valid (persists across tab closes)
+ * Checks if current admin session is valid in active sessionStorage
  */
 export function isSessionValid(): boolean {
   if (typeof window === 'undefined') return false;
   try {
-    // Check localStorage first (persistent), then sessionStorage
-    const raw = localStorage.getItem(SESSION_STORAGE_KEY) || sessionStorage.getItem(SESSION_STORAGE_KEY);
+    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY);
     if (!raw) return false;
     const session = JSON.parse(raw) as AdminSession;
-    if (session.expiresAt > Date.now()) {
+    if (session && session.expiresAt > Date.now()) {
       return true;
     }
+    // Expired
+    sessionStorage.removeItem(SESSION_STORAGE_KEY);
   } catch {}
   return false;
 }
@@ -170,8 +177,8 @@ export function isSessionValid(): boolean {
 export function revokeAdminSession(): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.removeItem(SESSION_STORAGE_KEY);
     sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    localStorage.removeItem(SESSION_STORAGE_KEY);
   } catch {}
   addAuditLog('Déconnexion de l\'administrateur');
 }

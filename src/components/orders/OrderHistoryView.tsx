@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Package, MessageCircle, ShoppingBag, Eye, Search, ShieldCheck, ArrowRight, Lock, CheckCircle2 } from 'lucide-react';
+import { Package, MessageCircle, ShoppingBag, Eye, Search, ShieldCheck, Lock, CheckCircle2 } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
-import { isSessionValid } from '../../utils/security';
 import { 
   formatFCFA, 
   ORDER_STATUS_CONFIG, 
@@ -14,10 +13,9 @@ import {
 
 export const OrderHistoryView: React.FC = () => {
   const { myOrders, verifyAndLinkOrder } = useOrders();
-  const { goToCatalog, goToTracking, goToAdmin, showToast } = useStore();
+  const { goToCatalog, goToTracking, showToast } = useStore();
 
-  const isAdmin = isSessionValid();
-
+  
   // Dual-credential lookup for guest or multi-device tracking
   const [lookupId, setLookupId] = useState('');
   const [lookupPhone, setLookupPhone] = useState('');
@@ -66,35 +64,6 @@ export const OrderHistoryView: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      {/* OWNER ADMIN QUICK ACCESS BANNER */}
-      {isAdmin && (
-        <div className="bg-gradient-to-r from-[#141210] to-zinc-900 text-white p-4 sm:p-5 rounded-2xl mb-8 shadow-xl border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fadeIn">
-          <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold shrink-0 border border-amber-500/30">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                  Session Propriétaire Active
-                </span>
-              </div>
-              <p className="text-xs text-zinc-300 mt-0.5">
-                Pour piloter toutes les commandes de la boutique et modifier les statuts, accédez à votre console sécurisée.
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={() => goToAdmin('orders')}
-            className="w-full sm:w-auto px-4 py-2.5 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
-          >
-            <span>Console Admin Commandes</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-200 mb-8">
         <div>

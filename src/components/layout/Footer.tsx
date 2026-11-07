@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, ShieldCheck, RefreshCw, Phone, MessageCircle, Mail, Package, Lock } from 'lucide-react';
+import { Truck, ShieldCheck, RefreshCw, Phone, MessageCircle, Mail, Package } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { 
   FACEBOOK_URL, 
@@ -15,7 +15,24 @@ import {
 const CURRENT_YEAR = new Date().getFullYear();
 
 export const Footer: React.FC = () => {
-  const { goToHome, goToCatalog, goToOrders, goToTracking, goToAdmin } = useStore();
+  const [tapCount, setTapCount] = React.useState(0);
+  const lastTapRef = React.useRef(0);
+
+  const handleSecretAdminTap = () => {
+    const now = Date.now();
+    if (now - lastTapRef.current > 3000) {
+      setTapCount(1);
+    } else {
+      const next = tapCount + 1;
+      if (next >= 5) {
+        window.location.href = '/admin';
+        return;
+      }
+      setTapCount(next);
+    }
+    lastTapRef.current = now;
+  };
+  const { goToHome, goToCatalog, goToOrders, goToTracking } = useStore();
 
   return (
     <footer className="bg-[#121110] text-[#D4CBBF] border-t border-[#262320]">
@@ -176,15 +193,7 @@ export const Footer: React.FC = () => {
               <li>Livraison à domicile express</li>
               <li>Règlement : Wave, Orange Money, Espèces ou Free</li>
               <li>Échange de taille sous 7 jours</li>
-              <li className="pt-2 border-t border-[#24211E]">
-                <button
-                  onClick={goToAdmin}
-                  className="text-zinc-500 hover:text-white transition-colors flex items-center gap-1.5 text-[11px]"
-                >
-                  <Lock className="w-3 h-3 text-zinc-600" />
-                  <span>Espace Propriétaire (Gestion)</span>
-                </button>
-              </li>
+              
             </ul>
           </div>
 
@@ -237,7 +246,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom bar */}
         <div className="pt-10 mt-10 border-t border-[#24211E] flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
-          <p>© {CURRENT_YEAR} CAPOSTORE221. Tous droits réservés.</p>
+          <p onClick={handleSecretAdminTap} className="cursor-default select-none">© {CURRENT_YEAR} CAPOSTORE221. Tous droits réservés.</p>
           <div className="flex items-center gap-6">
             <span>Devise : FCFA (XOF)</span>
             <span>Vente en ligne • Tu commandes, on te livre</span>

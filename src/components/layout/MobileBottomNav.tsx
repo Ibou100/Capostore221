@@ -4,18 +4,13 @@ import { useStore } from '../../context/StoreContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useOrders } from '../../context/OrderContext';
-import { isSessionValid } from '../../utils/security';
 
 export const MobileBottomNav: React.FC = () => {
   const { currentView, goToHome, goToCatalog, goToWishlist, goToOrders } = useStore();
   const { openCart, totalCount } = useCart();
   const { wishlistCount } = useWishlist();
-  const { orders, myOrders } = useOrders();
-  const isAdmin = isSessionValid();
-  // Notification badge only counts orders pending action (not delivered ones)
-  const pendingOrdersCount = orders.filter((o) => o.status !== 'livree').length;
-  const pendingMyOrdersCount = myOrders.filter((o) => o.status !== 'livree').length;
-  const orderBadgeCount = isAdmin ? pendingOrdersCount : pendingMyOrdersCount;
+  const { myOrders } = useOrders();
+  const orderBadgeCount = myOrders.filter((o) => o.status !== 'livree').length;
 
   const isHome = currentView.type === 'home';
   const isCatalog = currentView.type === 'catalog';

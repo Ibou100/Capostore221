@@ -4,7 +4,6 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
-import { isSessionValid } from '../../utils/security';
 import { 
   FACEBOOK_URL, 
   INSTAGRAM_URL, 
@@ -20,13 +19,10 @@ import type { CategoryId } from '../../types';
 export const Navbar: React.FC = () => {
   const { totalCount, openCart } = useCart();
   const { wishlistCount } = useWishlist();
-  const { goToHome, goToCatalog, goToWishlist, goToOrders, goToAdmin, openSearch, currentView } = useStore();
-  const { orders, myOrders } = useOrders();
-  const isAdmin = isSessionValid();
-  // Notification badge only counts orders pending action (not delivered ones)
-  const pendingOrdersCount = orders.filter((o) => o.status !== 'livree').length;
-  const pendingMyOrdersCount = myOrders.filter((o) => o.status !== 'livree').length;
-  const orderBadgeCount = isAdmin ? pendingOrdersCount : pendingMyOrdersCount;
+  const { goToHome, goToCatalog, goToWishlist, goToOrders, openSearch, currentView } = useStore();
+  const { myOrders } = useOrders();
+  // Notification badge strictly for this client's device orders
+  const orderBadgeCount = myOrders.filter((o) => o.status !== 'livree').length;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -156,7 +152,7 @@ export const Navbar: React.FC = () => {
               onClick={goToOrders}
               className="relative p-2 text-zinc-800 hover:text-zinc-600 transition-colors focus:outline-none"
               aria-label="Mes commandes et suivi"
-              title={isAdmin ? "Commandes boutique & Suivi client" : "Mes commandes & Suivi de colis"}
+              title="Mes commandes & Suivi de colis"
             >
               <Package className="w-5 h-5" />
               {orderBadgeCount > 0 && (
@@ -252,7 +248,7 @@ export const Navbar: React.FC = () => {
                 >
                   <div className="flex items-center gap-3">
                     <Package className="w-4 h-4 text-amber-600" />
-                    <span>{isAdmin ? 'Commandes Boutique' : 'Mes Commandes & Suivi'}</span>
+                    <span>'Mes Commandes & Suivi'</span>
                   </div>
                   {orderBadgeCount > 0 && (
                     <span className="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px]">
@@ -280,15 +276,7 @@ export const Navbar: React.FC = () => {
                   <ShoppingBag className="w-4 h-4" />
                   <span>Mon Panier ({totalCount})</span>
                 </button>
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    goToAdmin();
-                  }}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-[11px] font-semibold text-zinc-500 hover:text-zinc-900 pt-2 border-t border-zinc-100"
-                >
-                  <span>⚙️ Espace Propriétaire (Gestion)</span>
-                </button>
+                
               </div>
 
               {/* Social links */}

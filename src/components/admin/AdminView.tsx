@@ -632,7 +632,7 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
                 <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-300">
                   Mot de passe *
                 </label>
-                <span className="text-[10px] text-zinc-500 font-mono">Session 30 jours</span>
+                <span className="text-[10px] text-zinc-500 font-mono">Session Sécurisée</span>
               </div>
               <div className="relative">
                 <input
@@ -680,7 +680,7 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
 
           <div className="mt-8 pt-5 border-t border-zinc-800 text-center space-y-3">
             <p className="text-[11px] text-zinc-500">
-              ✓ Une fois connecté, votre session reste active 30 jours sur cet appareil.
+              ✓ Console protégée : connexion requise par mot de passe.
             </p>
           </div>
 
@@ -711,7 +711,7 @@ CREATE POLICY "Orders delete access" ON public.orders FOR DELETE USING (true);`;
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/30">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Propriétaire Authentifié (Session 30 Jours)</span>
+                <span>Propriétaire Authentifié (Session Sécurisée)</span>
               </span>
             </div>
             <h1 className="font-display font-black text-2xl sm:text-3xl tracking-tight text-white">
