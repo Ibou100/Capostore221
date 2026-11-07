@@ -20,7 +20,7 @@ import {
 export const CartDrawer: React.FC = () => {
   const { 
     items, isOpen, closeCart, removeFromCart, updateQuantity, 
-    clearCart, totalCount, subtotal, shippingFee, total, freeShippingThreshold 
+    clearCart, totalCount, subtotal, shippingFee, total 
   } = useCart();
   const { goToCatalog, showToast, goToTracking, goToOrders } = useStore();
   const { createOrder } = useOrders();
@@ -36,9 +36,6 @@ export const CartDrawer: React.FC = () => {
   const [lastWhatsAppUrl, setLastWhatsAppUrl] = useState('');
 
   if (!isOpen) return null;
-
-  const amountRemainingForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
-  const progressPercent = Math.min(100, Math.round((subtotal / freeShippingThreshold) * 100));
 
   const handleOrderSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,26 +162,17 @@ export const CartDrawer: React.FC = () => {
               </button>
             </div>
 
-            {/* Free Shipping Progress bar */}
+            {/* Free Shipping Banner */}
             {items.length > 0 && (
               <div className="mt-4 pt-3 border-t border-zinc-100">
-                <div className="flex justify-between text-[11px] text-zinc-600 mb-1.5">
-                  {amountRemainingForFreeShipping === 0 ? (
-                    <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                      <Truck className="w-3.5 h-3.5" /> Livraison offerte !
-                    </span>
-                  ) : (
-                    <span>
-                      Plus que <strong className="text-zinc-900">{formatFCFA(amountRemainingForFreeShipping)}</strong> pour la livraison offerte
-                    </span>
-                  )}
-                  <span className="font-medium text-zinc-900">{progressPercent}%</span>
-                </div>
-                <div className="w-full bg-zinc-100 h-1 rounded-full overflow-hidden">
-                  <div
-                    className="bg-[#141210] h-full rounded-full transition-all duration-500"
-                    style={{ width: `${progressPercent}%` }}
-                  />
+                <div className="flex items-center justify-between text-xs text-emerald-800 font-semibold bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200/70">
+                  <span className="flex items-center gap-1.5">
+                    <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Livraison offerte sur toute commande</span>
+                  </span>
+                  <span className="text-[10px] uppercase font-bold bg-emerald-600 text-white px-2 py-0.5 rounded">
+                    0 FCFA
+                  </span>
                 </div>
               </div>
             )}
@@ -297,8 +285,8 @@ export const CartDrawer: React.FC = () => {
                   <span className="font-semibold text-zinc-900">{formatFCFA(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Livraison</span>
-                  <span>{shippingFee === 0 ? <strong className="text-emerald-700">Offerte</strong> : formatFCFA(shippingFee)}</span>
+                  <span>Frais de livraison</span>
+                  <span className="font-bold text-emerald-700">Offerts (0 FCFA)</span>
                 </div>
                 <div className="flex justify-between text-sm font-bold text-zinc-900 pt-2 border-t border-zinc-200">
                   <span>Total</span>

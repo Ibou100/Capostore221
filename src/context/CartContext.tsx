@@ -30,8 +30,7 @@ interface CartContextType {
 }
 
 const CART_STORAGE_KEY = 'capo221_cart_items_v1';
-const FREE_SHIPPING_THRESHOLD = 25000; // Free shipping over 25 000 FCFA
-const STANDARD_SHIPPING = 2500; // 2 500 FCFA standard delivery fee
+const FREE_SHIPPING_THRESHOLD = 0; // Livraison offerte sur toutes les commandes
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -189,8 +188,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0 ? 0 : STANDARD_SHIPPING;
-  const total = subtotal + shippingFee;
+  const shippingFee = 0; // Aucun frais de livraison ajouté
+  const total = subtotal;
 
   return (
     <CartContext.Provider
