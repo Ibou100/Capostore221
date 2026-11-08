@@ -56,6 +56,7 @@ export const PAYMENT_METHODS_DATA: {
   id: PaymentMethod;
   label: string;
   icon: string;
+  logo?: string;
   badge: string;
   description: string;
 }[] = [
@@ -63,6 +64,7 @@ export const PAYMENT_METHODS_DATA: {
     id: 'wave',
     label: 'Wave',
     icon: '🌊',
+    logo: '/payments/wave.png',
     badge: 'Recommandé',
     description: 'Paiement sans frais via votre compte Wave',
   },
@@ -70,15 +72,17 @@ export const PAYMENT_METHODS_DATA: {
     id: 'orange_money',
     label: 'Orange Money',
     icon: '🟠',
+    logo: '/payments/orange-money.png',
     badge: 'Instantané',
     description: 'Paiement direct par transfert Orange Money',
   },
   {
     id: 'free_money',
-    label: 'Free Money',
-    icon: '🔴',
+    label: 'Yas / Mixx',
+    icon: '💛',
+    logo: '/payments/yas.png',
     badge: 'Disponible',
-    description: 'Paiement simple via votre compte Free Money',
+    description: 'Paiement simple via votre compte Yas (ex-Free Money)',
   },
   {
     id: 'especes',
@@ -96,7 +100,7 @@ export function getPaymentMethodLabel(method: PaymentMethod): string {
     case 'orange_money':
       return 'Orange Money (🟠)';
     case 'free_money':
-      return 'Free Money (🔴)';
+      return 'Yas / Mixx (💛)';
     case 'especes':
       return 'Espèces à la livraison (💵)';
     default:

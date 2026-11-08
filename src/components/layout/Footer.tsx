@@ -133,7 +133,12 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-xs text-zinc-400">
               <li>Livraison rapide partout au Sénégal</li>
-              <li>Règlement : Wave, Orange Money, Free ou Espèces</li>
+              <li>Règlement : Wave, Orange Money, Yas ou Espèces</li>
+              <li className="pt-1 flex items-center gap-2">
+                <img src="/payments/wave.png" alt="Wave" className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 shadow-xs" title="Wave" />
+                <img src="/payments/orange-money.png" alt="Orange Money" className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 shadow-xs" title="Orange Money" />
+                <img src="/payments/yas.png" alt="Yas" className="w-7 h-7 rounded-lg object-contain bg-white p-0.5 shadow-xs" title="Yas / Mixx" />
+              </li>
               <li>Échange de taille garanti sous 7 jours</li>
               <li>
                 <a

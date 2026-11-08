@@ -216,7 +216,7 @@ export const QuickOrderModal: React.FC = () => {
                       {selectedSize ? `Taille : ${selectedSize}` : 'Taille unique'} • {formatFCFA(product.price)}
                     </p>
                     <p className="text-[10px] text-emerald-700 font-medium mt-0.5">
-                      Paiement : {paymentMethod === 'wave' ? 'Wave' : paymentMethod === 'orange_money' ? 'Orange Money' : paymentMethod === 'free_money' ? 'Free Money' : 'Espèces à la livraison'}
+                      Paiement : {paymentMethod === 'wave' ? 'Wave' : paymentMethod === 'orange_money' ? 'Orange Money' : paymentMethod === 'free_money' ? 'Yas / Mixx' : 'Espèces à la livraison'}
                     </p>
                   </div>
                 </div>
@@ -439,7 +439,7 @@ export const QuickOrderModal: React.FC = () => {
                     <span className="text-[10px] text-zinc-400">Règlement sécurisé</span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2.5">
                     {PAYMENT_METHODS_DATA.map((method) => {
                       const isSelected = paymentMethod === method.id;
                       return (
@@ -447,25 +447,37 @@ export const QuickOrderModal: React.FC = () => {
                           key={method.id}
                           type="button"
                           onClick={() => setPaymentMethod(method.id)}
-                          className={`p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                          className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
                             isSelected
-                              ? 'border-[#B85D19] bg-amber-50/60 ring-2 ring-[#B85D19]/30'
-                              : 'border-zinc-200 bg-white hover:bg-zinc-50'
+                              ? 'border-[#B85D19] bg-amber-50/70 ring-2 ring-[#B85D19]/30 shadow-xs'
+                              : 'border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-300'
                           }`}
                         >
                           <div className="flex items-center justify-between w-full">
-                            <span className="text-base">{method.icon}</span>
-                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                              isSelected ? 'bg-[#B85D19] text-white' : 'bg-zinc-100 text-zinc-500'
+                            {method.logo ? (
+                              <div className="w-10 h-10 rounded-lg bg-white border border-zinc-200 p-1 flex items-center justify-center overflow-hidden shadow-2xs shrink-0">
+                                <img
+                                  src={method.logo}
+                                  alt={method.label}
+                                  className="w-full h-full object-contain"
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-lg shrink-0">
+                                {method.icon}
+                              </div>
+                            )}
+                            <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                              isSelected ? 'bg-[#B85D19] text-white' : 'bg-zinc-100 text-zinc-600'
                             }`}>
                               {method.badge}
                             </span>
                           </div>
-                          <div className="mt-1.5">
+                          <div className="mt-2">
                             <p className="font-bold text-xs text-zinc-900 leading-tight">
                               {method.label}
                             </p>
-                            <p className="text-[9px] text-zinc-500 mt-0.5 line-clamp-1">
+                            <p className="text-[10px] text-zinc-500 mt-0.5 line-clamp-1">
                               {method.description}
                             </p>
                           </div>

@@ -315,9 +315,17 @@ export const CartDrawer: React.FC = () => {
                 </a>
               </div>
 
-              <div className="flex items-center justify-center gap-2 text-[11px] text-zinc-500 pt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-zinc-600" />
-                <span>Paiement à la livraison ou Wave / Orange Money</span>
+              <div className="flex flex-col items-center justify-center gap-2 text-[11px] text-zinc-500 pt-1">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-zinc-600" />
+                  <span>Paiement sécurisé accepté :</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <img src="/payments/wave.png" alt="Wave" className="w-6 h-6 rounded-md object-contain bg-white border border-zinc-200 p-0.5" title="Wave" />
+                  <img src="/payments/orange-money.png" alt="Orange Money" className="w-6 h-6 rounded-md object-contain bg-white border border-zinc-200 p-0.5" title="Orange Money" />
+                  <img src="/payments/yas.png" alt="Yas" className="w-6 h-6 rounded-md object-contain bg-white border border-zinc-200 p-0.5" title="Yas / Mixx" />
+                  <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-md text-[10px] font-bold">💵 Espèces</span>
+                </div>
               </div>
             </div>
           )}
@@ -501,7 +509,7 @@ export const CartDrawer: React.FC = () => {
                     <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-900">
                       Mode de règlement souhaité *
                     </label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2.5">
                       {PAYMENT_METHODS_DATA.map((method) => {
                         const isSelected = paymentMethod === method.id;
                         return (
@@ -509,21 +517,33 @@ export const CartDrawer: React.FC = () => {
                             key={method.id}
                             type="button"
                             onClick={() => setPaymentMethod(method.id)}
-                            className={`p-2 rounded-lg border text-left transition-all ${
+                            className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                               isSelected
-                                ? 'border-[#B85D19] bg-amber-50/70 ring-1 ring-[#B85D19]'
-                                : 'border-zinc-200 bg-white hover:bg-zinc-50'
+                                ? 'border-[#B85D19] bg-amber-50/70 ring-2 ring-[#B85D19]/30 shadow-xs'
+                                : 'border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-300'
                             }`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-sm">{method.icon}</span>
-                              <span className={`text-[8px] font-bold px-1 py-0.5 rounded ${
-                                isSelected ? 'bg-[#B85D19] text-white' : 'bg-zinc-100 text-zinc-500'
+                              {method.logo ? (
+                                <div className="w-9 h-9 rounded-lg bg-white border border-zinc-200 p-1 flex items-center justify-center overflow-hidden shadow-2xs shrink-0">
+                                  <img
+                                    src={method.logo}
+                                    alt={method.label}
+                                    className="w-full h-full object-contain"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-9 h-9 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-base shrink-0">
+                                  {method.icon}
+                                </div>
+                              )}
+                              <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${
+                                isSelected ? 'bg-[#B85D19] text-white' : 'bg-zinc-100 text-zinc-600'
                               }`}>
                                 {method.badge}
                               </span>
                             </div>
-                            <p className="font-bold text-[11px] text-zinc-900 mt-1">
+                            <p className="font-bold text-xs text-zinc-900 mt-1.5">
                               {method.label}
                             </p>
                           </button>
