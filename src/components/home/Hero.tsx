@@ -17,6 +17,7 @@ interface FeaturedHeroItem {
 export const Hero: React.FC = () => {
   const { goToProduct, goToCatalog, products } = useStore();
   const { openQuickOrder } = useOrders();
+  const publishedCount = products.filter((p) => p.published).length;
 
   const featuredPieces: FeaturedHeroItem[] = [
     {
@@ -136,7 +137,7 @@ export const Hero: React.FC = () => {
                 onClick={() => goToCatalog({ category: 'tous' })}
                 className="flex-1 sm:flex-initial bg-[#141210] hover:bg-[#2C2723] text-white px-4 sm:px-7 py-3 sm:py-3.5 rounded-sm text-[11px] sm:text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 sm:gap-2 transition-colors shadow-sm"
               >
-                <span>Explorer (23 pièces)</span>
+                <span>Explorer ({publishedCount} articles)</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
 

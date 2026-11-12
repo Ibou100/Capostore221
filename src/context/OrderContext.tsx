@@ -11,6 +11,8 @@ import {
   insertSupabaseOrder,
   updateSupabaseOrderStatus,
   deleteSupabaseOrder,
+  fetchPublicOrderActivity,
+  type PublicOrderActivity,
   getSupabaseClient
 } from '../lib/supabase';
 
@@ -42,6 +44,10 @@ interface OrderContextType {
   isSyncing: boolean;
   lastSyncTime: Date | null;
   
+  // Public anonymized live social proof (no PII)
+  publicActivity: PublicOrderActivity[];
+  soldCounts: Record<string, number>;
+
   // Quick Order Modal (Direct Order for single product)
   quickOrderProduct: { product: Product; initialSize?: string } | null;
   openQuickOrder: (product: Product, initialSize?: string) => void;
@@ -150,8 +156,27 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const [publicActivity, setPublicActivity] = useState<PublicOrderActivity[]>([]);
   const [quickOrderProduct, setQuickOrderProduct] = useState<{ product: Product; initialSize?: string } | null>(null);
   const [activeTrackingId, setActiveTrackingId] = useState<string | null>(null);
+
+  const soldCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const act of publicActivity) {
+      if (act.productId) {
+        counts[act.productId] = (counts[act.productId] || 0) + (act.quantity || 1);
+      }
+    }
+    return counts;
+  }, [publicActivity]);
+
+  const refreshPublicActivity = useCallback(async () => {
+    if (!isSupabaseConfigured()) return;
+    const activities = await fetchPublicOrderActivity();
+    if (activities.length > 0) {
+      setPublicActivity(activities);
+    }
+  }, []);
 
   // Reference to always have latest orders in async callbacks
   const ordersRef = useRef<Order[]>(orders);
@@ -261,8 +286,10 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [refreshOrders]);
 
-  // Real-time Supabase Subscription for orders
+  // Real-time Supabase Subscription for orders & public activity
   useEffect(() => {
+    refreshPublicActivity();
+
     if (!isSupabaseConfigured()) return;
     const client = getSupabaseClient();
     if (!client) return;
@@ -271,13 +298,14 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       .channel('public:orders_channel')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
         refreshOrders();
+        refreshPublicActivity();
       })
       .subscribe();
 
     return () => {
       client.removeChannel(channel);
     };
-  }, [refreshOrders]);
+  }, [refreshOrders, refreshPublicActivity]);
 
   const createOrder = (input: CreateOrderInput): Order => {
     const newOrder: Order = {
@@ -297,6 +325,17 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Immediately record in this client's confidential device order history
     setMyOrderIds((prev) => (prev.includes(newOrder.id) ? prev : [newOrder.id, ...prev]));
+
+    // Immediately reflect in public anonymized live activity
+    const newActivities: PublicOrderActivity[] = newOrder.items.map((item) => ({
+      productId: item.productId,
+      productName: item.name,
+      image: item.image,
+      quantity: item.quantity || 1,
+      city: (newOrder.customerCity || 'Dakar').replace(/\s*\(Boutique\)/i, '').trim() || 'Sénégal',
+      createdAt: newOrder.createdAt,
+    }));
+    setPublicActivity((prev) => [...newActivities, ...prev]);
 
     setOrders((prev) => {
       const updated = [newOrder, ...prev.filter((o) => o.id !== newOrder.id)];
@@ -472,6 +511,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         refreshOrders,
         isSyncing,
         lastSyncTime,
+        publicActivity,
+        soldCounts,
         quickOrderProduct,
         openQuickOrder,
         closeQuickOrder,

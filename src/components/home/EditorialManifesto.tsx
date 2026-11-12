@@ -3,7 +3,8 @@ import { ArrowRight } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export const EditorialManifesto: React.FC = () => {
-  const { goToCatalog } = useStore();
+  const { goToCatalog, products } = useStore();
+  const publishedCount = products.filter((p) => p.published).length;
 
   return (
     <section className="py-10 sm:py-16 lg:py-24 bg-[#121110] text-white border-y border-[#26221E]">
@@ -74,7 +75,7 @@ export const EditorialManifesto: React.FC = () => {
                 onClick={() => goToCatalog({ category: 'tous' })}
                 className="bg-white hover:bg-zinc-200 text-[#141210] px-5 py-3 text-xs font-semibold uppercase tracking-wider inline-flex items-center gap-2 rounded-sm transition-colors"
               >
-                <span>Voir toutes les pièces (23 articles)</span>
+                <span>Voir toutes les pièces ({publishedCount} articles)</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

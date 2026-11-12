@@ -864,7 +864,7 @@ export const CATEGORIES_META = [
   {
     id: 'tous',
     name: 'Tout le Catalogue',
-    description: 'L\'ensemble des 23 pièces réelles CAPOSTORE221 disponibles en ligne. Tu commandes, on te livre.'
+    description: 'L\'ensemble des pièces réelles CAPOSTORE221 disponibles en ligne. Tu commandes, on te livre.'
   },
   {
     id: 'vetements',

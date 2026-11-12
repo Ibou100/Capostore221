@@ -1,37 +1,57 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowRight, SlidersHorizontal } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { useOrders } from '../../context/OrderContext';
 import { ProductCard } from '../catalog/ProductCard';
 
-type TabType = 'tous' | 'pantalons' | 'hauts' | 'lunettes' | 'accessoires';
+type TabType = 'tous' | 'vendus' | 'pantalons' | 'hauts' | 'lunettes' | 'accessoires';
 
 export const NewArrivals: React.FC = () => {
   const { products, goToCatalog } = useStore();
+  const { soldCounts } = useOrders();
   const [activeTab, setActiveTab] = useState<TabType>('tous');
+
+  const publishedProducts = useMemo(
+    () => products.filter((p) => p.published),
+    [products]
+  );
+
+  const soldProducts = useMemo(
+    () =>
+      publishedProducts
+        .filter((p) => (soldCounts[p.id] || 0) > 0)
+        .sort((a, b) => (soldCounts[b.id] || 0) - (soldCounts[a.id] || 0)),
+    [publishedProducts, soldCounts]
+  );
 
   // Filter products by active tab
   const filteredProducts = useMemo(() => {
     switch (activeTab) {
+      case 'vendus':
+        return soldProducts;
       case 'pantalons':
-        return products.filter((p) => p.category === 'vetements' && p.subCategory === 'Pantalons');
+        return publishedProducts.filter((p) => p.category === 'vetements' && p.subCategory === 'Pantalons');
       case 'hauts':
-        return products.filter((p) => p.category === 'vetements' && p.subCategory === 'T-shirts & Hauts');
+        return publishedProducts.filter((p) => p.category === 'vetements' && p.subCategory === 'T-shirts & Hauts');
       case 'lunettes':
-        return products.filter((p) => p.category === 'lunettes');
+        return publishedProducts.filter((p) => p.category === 'lunettes');
       case 'accessoires':
-        return products.filter((p) => p.category === 'accessoires');
+        return publishedProducts.filter((p) => p.category === 'accessoires');
       case 'tous':
       default:
-        return products;
+        return publishedProducts;
     }
-  }, [products, activeTab]);
+  }, [publishedProducts, soldProducts, activeTab]);
 
   const tabs: { id: TabType; label: string; count: number }[] = [
-    { id: 'tous', label: 'Toutes les pièces', count: products.length },
-    { id: 'pantalons', label: 'Pantalons & Bermudas', count: products.filter(p => p.category === 'vetements' && p.subCategory === 'Pantalons').length },
-    { id: 'hauts', label: 'Chemises & Polos', count: products.filter(p => p.category === 'vetements' && p.subCategory === 'T-shirts & Hauts').length },
-    { id: 'lunettes', label: 'Lunettes', count: products.filter(p => p.category === 'lunettes').length },
-    { id: 'accessoires', label: 'Maroquinerie & Sacs', count: products.filter(p => p.category === 'accessoires').length },
+    { id: 'tous', label: 'Toutes les pièces', count: publishedProducts.length },
+    ...(soldProducts.length > 0
+      ? [{ id: 'vendus' as TabType, label: '🔥 Articles vendus', count: soldProducts.length }]
+      : []),
+    { id: 'pantalons', label: 'Pantalons & Bermudas', count: publishedProducts.filter(p => p.category === 'vetements' && p.subCategory === 'Pantalons').length },
+    { id: 'hauts', label: 'Chemises & Polos', count: publishedProducts.filter(p => p.category === 'vetements' && p.subCategory === 'T-shirts & Hauts').length },
+    { id: 'lunettes', label: 'Lunettes', count: publishedProducts.filter(p => p.category === 'lunettes').length },
+    { id: 'accessoires', label: 'Maroquinerie & Sacs', count: publishedProducts.filter(p => p.category === 'accessoires').length },
   ];
 
   return (
@@ -48,7 +68,7 @@ export const NewArrivals: React.FC = () => {
               Catalogue Disponible
             </h2>
             <p className="text-xs sm:text-sm text-zinc-500 mt-0.5 max-w-xl">
-              23 pièces sélectionnées en stock réel. Cliquez sur un article pour voir les détails et choisir votre taille.
+              {publishedProducts.length} article{publishedProducts.length > 1 ? 's' : ''} disponible{publishedProducts.length > 1 ? 's' : ''} en stock réel. Cliquez sur un article pour voir les détails et commander.
             </p>
           </div>
 

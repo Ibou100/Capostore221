@@ -23,7 +23,8 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
   const { products, goToCatalog, showToast } = useStore();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
-  const { openQuickOrder } = useOrders();
+  const { openQuickOrder, soldCounts } = useOrders();
+  const soldCount = soldCounts[product.id] || 0;
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | undefined>(undefined);
@@ -186,6 +187,11 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                 <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-zinc-900 tracking-tight leading-tight">
                   {product.name}
                 </h1>
+                {soldCount > 0 && (
+                  <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
+                    <span>🔥 {soldCount} article{soldCount > 1 ? 's' : ''} déjà vendu{soldCount > 1 ? 's' : ''} en ligne</span>
+                  </div>
+                )}
               </div>
 
               {/* Pricing in FCFA - Jumia Marketing Style */}

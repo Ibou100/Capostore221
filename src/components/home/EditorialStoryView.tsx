@@ -3,7 +3,8 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export const EditorialStoryView: React.FC = () => {
-  const { goToCatalog, goToHome } = useStore();
+  const { goToCatalog, goToHome, products } = useStore();
+  const publishedCount = products.filter((p) => p.published).length;
 
   return (
     <div className="bg-[#FAF8F5] min-h-screen py-12">
@@ -109,7 +110,7 @@ export const EditorialStoryView: React.FC = () => {
               onClick={() => goToCatalog({ category: 'tous' })}
               className="bg-[#141210] hover:bg-[#2C2723] text-white px-7 py-3.5 text-xs font-semibold uppercase tracking-wider inline-flex items-center gap-2 rounded-sm transition-colors shadow-sm"
             >
-              <span>Découvrir la collection (23 pièces)</span>
+              <span>Découvrir la collection ({publishedCount} articles)</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

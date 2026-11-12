@@ -22,6 +22,7 @@ import { QuickViewModal } from './components/ui/QuickViewModal';
 import { QuickOrderModal } from './components/ui/QuickOrderModal';
 import { ToastNotification } from './components/ui/ToastNotification';
 import { MobileBottomNav } from './components/layout/MobileBottomNav';
+import { LivePurchaseToast } from './components/home/LiveActivityBar';
 
 // Error Boundary to prevent any blank screen in production
 interface ErrorBoundaryState {
@@ -137,6 +138,7 @@ const AppContent: React.FC = () => {
       <QuickViewModal />
       <QuickOrderModal />
       <ToastNotification />
+      <LivePurchaseToast />
     </div>
   );
 };

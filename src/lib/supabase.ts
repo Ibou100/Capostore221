@@ -503,3 +503,56 @@ export async function deleteSupabaseOrder(orderId: string): Promise<boolean> {
     return false;
   }
 }
+
+export interface PublicOrderActivity {
+  productId: string;
+  productName: string;
+  image?: string;
+  quantity: number;
+  city: string;
+  createdAt: string;
+}
+
+/**
+ * Fetches anonymized recent order activity (city, product, time) without exposing customer PII
+ */
+export async function fetchPublicOrderActivity(): Promise<PublicOrderActivity[]> {
+  const client = getSupabaseClient();
+  if (!client) return [];
+
+  try {
+    const { data, error } = await client
+      .from('orders')
+      .select('created_at, customer_city, items')
+      .order('created_at', { ascending: false })
+      .limit(80);
+
+    if (error || !Array.isArray(data)) {
+      return [];
+    }
+
+    const activities: PublicOrderActivity[] = [];
+    for (const row of data) {
+      const rawItems = Array.isArray(row.items) ? row.items : [];
+      const city = String(row.customer_city || 'Dakar').replace(/\s*\(Boutique\)/i, '').trim() || 'Sénégal';
+      const createdAt = row.created_at || new Date().toISOString();
+
+      for (const item of rawItems) {
+        if (!item) continue;
+        activities.push({
+          productId: String(item.productId || ''),
+          productName: String(item.name || 'Article CAPOSTORE221'),
+          image: item.image ? String(item.image) : undefined,
+          quantity: typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1,
+          city,
+          createdAt,
+        });
+      }
+    }
+
+    return activities;
+  } catch (err) {
+    console.warn('Failed to fetch public order activity:', err);
+    return [];
+  }
+}
