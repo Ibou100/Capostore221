@@ -173,9 +173,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const refreshPublicActivity = useCallback(async () => {
     if (!isSupabaseConfigured()) return;
     const activities = await fetchPublicOrderActivity();
-    if (activities.length > 0) {
-      setPublicActivity(activities);
-    }
+    setPublicActivity(activities);
   }, []);
 
   // Reference to always have latest orders in async callbacks
@@ -274,17 +272,26 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const handleVisibility = () => {
       if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
         refreshOrders();
+        refreshPublicActivity();
       }
     };
 
     window.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('focus', handleVisibility);
 
+    // Periodic live refresh every 30s while tab is visible so new/treated orders appear automatically
+    const interval = setInterval(() => {
+      if (typeof document === 'undefined' || document.visibilityState === 'visible') {
+        refreshPublicActivity();
+      }
+    }, 30000);
+
     return () => {
       window.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('focus', handleVisibility);
+      clearInterval(interval);
     };
-  }, [refreshOrders]);
+  }, [refreshOrders, refreshPublicActivity]);
 
   // Real-time Supabase Subscription for orders & public activity
   useEffect(() => {
@@ -333,7 +340,9 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       image: item.image,
       quantity: item.quantity || 1,
       city: (newOrder.customerCity || 'Dakar').replace(/\s*\(Boutique\)/i, '').trim() || 'Sénégal',
+      status: newOrder.status,
       createdAt: newOrder.createdAt,
+      updatedAt: newOrder.createdAt,
     }));
     setPublicActivity((prev) => [...newActivities, ...prev]);
 
@@ -390,9 +399,9 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       // Supabase update
       if (isSupabaseConfigured()) {
-        updateSupabaseOrderStatus(orderId, status).catch((err) =>
-          console.warn('Supabase status update error:', err)
-        );
+        updateSupabaseOrderStatus(orderId, status)
+          .then(() => refreshPublicActivity())
+          .catch((err) => console.warn('Supabase status update error:', err));
       }
 
       saveCloudOrders(updated).catch((err) =>
@@ -414,9 +423,9 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       // Supabase delete
       if (isSupabaseConfigured()) {
-        deleteSupabaseOrder(orderId).catch((err) =>
-          console.warn('Supabase order delete error:', err)
-        );
+        deleteSupabaseOrder(orderId)
+          .then(() => refreshPublicActivity())
+          .catch((err) => console.warn('Supabase order delete error:', err));
       }
 
       saveCloudOrders(updated).catch((err) =>

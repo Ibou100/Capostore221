@@ -510,11 +510,13 @@ export interface PublicOrderActivity {
   image?: string;
   quantity: number;
   city: string;
+  status: OrderStatus;
   createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * Fetches anonymized recent order activity (city, product, time) without exposing customer PII
+ * Fetches anonymized recent order activity (city, product, status, time) without exposing customer PII
  */
 export async function fetchPublicOrderActivity(): Promise<PublicOrderActivity[]> {
   const client = getSupabaseClient();
@@ -523,9 +525,9 @@ export async function fetchPublicOrderActivity(): Promise<PublicOrderActivity[]>
   try {
     const { data, error } = await client
       .from('orders')
-      .select('created_at, customer_city, items')
+      .select('created_at, updated_at, customer_city, status, items')
       .order('created_at', { ascending: false })
-      .limit(80);
+      .limit(100);
 
     if (error || !Array.isArray(data)) {
       return [];
@@ -536,6 +538,9 @@ export async function fetchPublicOrderActivity(): Promise<PublicOrderActivity[]>
       const rawItems = Array.isArray(row.items) ? row.items : [];
       const city = String(row.customer_city || 'Dakar').replace(/\s*\(Boutique\)/i, '').trim() || 'Sénégal';
       const createdAt = row.created_at || new Date().toISOString();
+      const updatedAt = row.updated_at || createdAt;
+      const validStatuses: OrderStatus[] = ['transmise', 'confirmee', 'en_preparation', 'en_livraison', 'livree'];
+      const status: OrderStatus = validStatuses.includes(row.status) ? row.status : 'transmise';
 
       for (const item of rawItems) {
         if (!item) continue;
@@ -545,10 +550,19 @@ export async function fetchPublicOrderActivity(): Promise<PublicOrderActivity[]>
           image: item.image ? String(item.image) : undefined,
           quantity: typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1,
           city,
+          status,
           createdAt,
+          updatedAt,
         });
       }
     }
+
+    // Sort by most recently treated or placed order so newly processed orders appear first
+    activities.sort((a, b) => {
+      const timeA = Math.max(new Date(a.createdAt).getTime(), new Date(a.updatedAt).getTime());
+      const timeB = Math.max(new Date(b.createdAt).getTime(), new Date(b.updatedAt).getTime());
+      return timeB - timeA;
+    });
 
     return activities;
   } catch (err) {

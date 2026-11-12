@@ -1,7 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Flame, X, Sparkles } from 'lucide-react';
+import { ShoppingBag, X, Sparkles } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
+import type { OrderStatus } from '../../types';
+
+function getActivityStatusLabel(status: OrderStatus): { text: string; colorClass: string } {
+  switch (status) {
+    case 'livree':
+      return { text: '✅ Vendu & livré', colorClass: 'text-emerald-700' };
+    case 'en_livraison':
+      return { text: '🚚 En livraison', colorClass: 'text-orange-700' };
+    case 'en_preparation':
+      return { text: '📦 En préparation', colorClass: 'text-purple-700' };
+    case 'confirmee':
+      return { text: '✓ Confirmé', colorClass: 'text-blue-700' };
+    case 'transmise':
+    default:
+      return { text: '🛍️ Commandé', colorClass: 'text-emerald-700' };
+  }
+}
 
 function formatRelativeTime(isoDate: string): string {
   const diffMs = Date.now() - new Date(isoDate).getTime();
@@ -53,6 +70,8 @@ export const LiveActivityBar: React.FC = () => {
           {recentItems.map((act, idx) => {
             const matchedProduct = products.find((p) => p.id === act.productId);
             const thumb = act.image || matchedProduct?.images?.[0] || '/products/pantalon-prince-galles.jpg';
+            const statusInfo = getActivityStatusLabel(act.status);
+            const displayTime = formatRelativeTime(act.updatedAt || act.createdAt);
 
             return (
               <button
@@ -63,7 +82,7 @@ export const LiveActivityBar: React.FC = () => {
                     goToProduct(matchedProduct.id);
                   }
                 }}
-                className="flex items-center gap-2.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-[#B85D19] rounded-xl px-3 py-2 shrink-0 text-left transition-all shadow-2xs group cursor-pointer max-w-[260px] sm:max-w-[290px]"
+                className="flex items-center gap-2.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-[#B85D19] rounded-xl px-3 py-2 shrink-0 text-left transition-all shadow-2xs group cursor-pointer max-w-[270px] sm:max-w-[300px]"
               >
                 <img
                   src={thumb}
@@ -72,10 +91,9 @@ export const LiveActivityBar: React.FC = () => {
                   loading="lazy"
                 />
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-700">
-                    <Flame className="w-3 h-3 text-[#B85D19] shrink-0" />
-                    <span className="truncate">Commandé • {act.city}</span>
-                    <span className="text-zinc-400 font-normal shrink-0">• {formatRelativeTime(act.createdAt)}</span>
+                  <div className={`flex items-center gap-1.5 text-[10px] font-bold ${statusInfo.colorClass}`}>
+                    <span className="truncate">{statusInfo.text} • {act.city}</span>
+                    <span className="text-zinc-400 font-normal shrink-0">• {displayTime}</span>
                   </div>
                   <p className="text-xs font-semibold text-zinc-900 truncate group-hover:text-[#B85D19] transition-colors mt-0.5">
                     {act.quantity > 1 ? `${act.quantity}x ` : ''}{act.productName}
@@ -156,15 +174,15 @@ export const LivePurchaseToast: React.FC = () => {
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
+            <p className={`text-[10px] font-bold flex items-center gap-1 ${getActivityStatusLabel(current.status).colorClass}`}>
               <Sparkles className="w-3 h-3 text-[#B85D19] shrink-0" />
-              <span className="truncate">Achat à {current.city}</span>
+              <span className="truncate">{getActivityStatusLabel(current.status).text} • {current.city}</span>
             </p>
             <p className="text-xs font-bold text-zinc-900 truncate group-hover:text-[#B85D19] transition-colors">
               {current.productName}
             </p>
             <p className="text-[10px] text-zinc-500">
-              Commandé {formatRelativeTime(current.createdAt)}
+              Mis à jour {formatRelativeTime(current.updatedAt || current.createdAt)}
             </p>
           </div>
         </button>
