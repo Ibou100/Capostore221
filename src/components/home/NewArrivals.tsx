@@ -46,7 +46,7 @@ export const NewArrivals: React.FC = () => {
   const tabs: { id: TabType; label: string; count: number }[] = [
     { id: 'tous', label: 'Toutes les pièces', count: publishedProducts.length },
     ...(soldProducts.length > 0
-      ? [{ id: 'vendus' as TabType, label: '🔥 Articles vendus', count: soldProducts.length }]
+      ? [{ id: 'vendus' as TabType, label: 'Articles vendus', count: soldProducts.length }]
       : []),
     { id: 'pantalons', label: 'Pantalons & Bermudas', count: publishedProducts.filter(p => p.category === 'vetements' && p.subCategory === 'Pantalons').length },
     { id: 'hauts', label: 'Chemises & Polos', count: publishedProducts.filter(p => p.category === 'vetements' && p.subCategory === 'T-shirts & Hauts').length },

@@ -103,8 +103,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
           )}
           {soldCount > 0 && (
-            <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold bg-emerald-600 text-white rounded-sm shadow-xs flex items-center gap-1">
-              <span>🔥 {soldCount} vendu{soldCount > 1 ? 's' : ''}</span>
+            <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider bg-[#141210] text-white rounded-sm">
+              {soldCount} vendu{soldCount > 1 ? 's' : ''}
             </span>
           )}
         </div>

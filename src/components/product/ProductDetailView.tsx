@@ -188,8 +188,8 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                   {product.name}
                 </h1>
                 {soldCount > 0 && (
-                  <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
-                    <span>🔥 {soldCount} article{soldCount > 1 ? 's' : ''} déjà vendu{soldCount > 1 ? 's' : ''} en ligne</span>
+                  <div className="mt-2 inline-flex items-center px-2.5 py-1 rounded-sm bg-zinc-100 border border-zinc-200 text-zinc-800 text-xs font-semibold">
+                    <span>{soldCount} article{soldCount > 1 ? 's' : ''} vendu{soldCount > 1 ? 's' : ''}</span>
                   </div>
                 )}
               </div>

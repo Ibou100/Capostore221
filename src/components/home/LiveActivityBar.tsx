@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, X, Sparkles } from 'lucide-react';
+import { ShoppingBag, X } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
 import type { OrderStatus } from '../../types';
@@ -7,16 +7,16 @@ import type { OrderStatus } from '../../types';
 function getActivityStatusLabel(status: OrderStatus): { text: string; colorClass: string } {
   switch (status) {
     case 'livree':
-      return { text: '✅ Vendu & livré', colorClass: 'text-emerald-700' };
+      return { text: 'Vendu et livré', colorClass: 'text-emerald-700' };
     case 'en_livraison':
-      return { text: '🚚 En livraison', colorClass: 'text-orange-700' };
+      return { text: 'En livraison', colorClass: 'text-orange-700' };
     case 'en_preparation':
-      return { text: '📦 En préparation', colorClass: 'text-purple-700' };
+      return { text: 'En préparation', colorClass: 'text-zinc-700' };
     case 'confirmee':
-      return { text: '✓ Confirmé', colorClass: 'text-blue-700' };
+      return { text: 'Confirmé', colorClass: 'text-zinc-800' };
     case 'transmise':
     default:
-      return { text: '🛍️ Commandé', colorClass: 'text-emerald-700' };
+      return { text: 'Commandé', colorClass: 'text-emerald-700' };
   }
 }
 
@@ -53,10 +53,10 @@ export const LiveActivityBar: React.FC = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
             </span>
-            <h3 className="font-display font-bold text-xs sm:text-sm uppercase tracking-wider text-zinc-900 flex items-center gap-1.5">
+            <h3 className="font-display font-bold text-xs sm:text-sm uppercase tracking-wider text-zinc-900 flex items-center gap-2">
               <span>Commandes en direct</span>
-              <span className="text-[10px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-                🔥 {totalSold} article{totalSold > 1 ? 's' : ''} vendu{totalSold > 1 ? 's' : ''}
+              <span className="text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-sm bg-white text-zinc-800 border border-[#E7E2D9]">
+                {totalSold} article{totalSold > 1 ? 's' : ''} vendu{totalSold > 1 ? 's' : ''}
               </span>
             </h3>
           </div>
@@ -174,9 +174,8 @@ export const LivePurchaseToast: React.FC = () => {
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className={`text-[10px] font-bold flex items-center gap-1 ${getActivityStatusLabel(current.status).colorClass}`}>
-              <Sparkles className="w-3 h-3 text-[#B85D19] shrink-0" />
-              <span className="truncate">{getActivityStatusLabel(current.status).text} • {current.city}</span>
+            <p className={`text-[10px] font-semibold uppercase tracking-wide ${getActivityStatusLabel(current.status).colorClass}`}>
+              <span className="truncate block">{getActivityStatusLabel(current.status).text} • {current.city}</span>
             </p>
             <p className="text-xs font-bold text-zinc-900 truncate group-hover:text-[#B85D19] transition-colors">
               {current.productName}
