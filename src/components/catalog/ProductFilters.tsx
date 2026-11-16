@@ -7,9 +7,10 @@ import { formatFCFA } from '../../utils/format';
 const CATEGORIES: { id: CategoryId; label: string }[] = [
   { id: 'tous', label: 'Toutes les catégories' },
   { id: 'vetements', label: 'Vêtements' },
+  { id: 'chaussures', label: 'Chaussures' },
+  { id: 'parfums', label: 'Parfums' },
   { id: 'lunettes', label: 'Lunettes' },
   { id: 'accessoires', label: 'Sacs & Accessoires' },
-  { id: 'chaussures', label: 'Chaussures' },
 ];
 
 const GENDERS: { id: 'all' | ProductGender; label: string }[] = [

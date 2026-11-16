@@ -1,4 +1,4 @@
-export type CategoryId = 'tous' | 'vetements' | 'lunettes' | 'chaussures' | 'accessoires';
+export type CategoryId = 'tous' | 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires';
 
 export type ProductGender = 'homme' | 'unisexe';
 
@@ -33,7 +33,7 @@ export interface Order {
 
 export interface ProductCustomOverride {
   name?: string;
-  category?: 'vetements' | 'lunettes' | 'chaussures' | 'accessoires';
+  category?: 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires';
   subCategory?: string;
   price?: number;
   compareAtPrice?: number | null;
@@ -59,7 +59,7 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
-  category: 'vetements' | 'lunettes' | 'chaussures' | 'accessoires';
+  category: 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires';
   subCategory: string;
   gender: ProductGender;
   price: number; // in FCFA (XOF)

@@ -886,6 +886,20 @@ export const CATEGORIES_META = [
     tagline: 'Sacs bandoulière nylon sable & pochettes cuir matelassé XQR',
     image: '/products/pochette-cuir-dragonne-xqr.png',
     description: 'Maroquinerie fonctionnelle et pochettes en cuir pour vos essentiels urbains.'
+  },
+  {
+    id: 'chaussures',
+    name: 'Chaussures',
+    tagline: 'Baskets, mocassins et souliers',
+    image: '/products/pantalon-cargo-ecru.jpg',
+    description: 'Sélection de chaussures et souliers disponibles en boutique.'
+  },
+  {
+    id: 'parfums',
+    name: 'Parfums',
+    tagline: 'Eaux de parfum, muscs et senteurs',
+    image: '/products/pochette-cuir-dragonne-xqr.png',
+    description: 'Parfums et senteurs sélectionnés par CAPOSTORE221.'
   }
 ] as const;
 

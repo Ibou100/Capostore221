@@ -21,6 +21,7 @@ export const CollectionsGrid: React.FC = () => {
   const lunettes = published.filter((p) => p.category === 'lunettes');
   const accessoires = published.filter((p) => p.category === 'accessoires');
   const chaussures = published.filter((p) => p.category === 'chaussures');
+  const parfums = published.filter((p) => p.category === 'parfums');
 
   const allDepartments: DepartmentCard[] = [
     {
@@ -31,6 +32,24 @@ export const CollectionsGrid: React.FC = () => {
       count: `${vetements.length} article${vetements.length > 1 ? 's' : ''}`,
       category: 'vetements',
       image: vetements[0]?.images?.[0] || '/products/pantalon-cargo-ecru.jpg',
+    },
+    {
+      id: 'chaussures',
+      title: 'Chaussures & Souliers',
+      subtitle: 'Baskets, mocassins et souliers de ville',
+      badgeText: 'Chaussures',
+      count: `${chaussures.length} article${chaussures.length > 1 ? 's' : ''}`,
+      category: 'chaussures',
+      image: chaussures[0]?.images?.[0] || '/products/pantalon-cargo-ecru.jpg',
+    },
+    {
+      id: 'parfums',
+      title: 'Parfums & Senteurs',
+      subtitle: 'Eaux de parfum, muscs et senteurs',
+      badgeText: 'Parfums',
+      count: `${parfums.length} article${parfums.length > 1 ? 's' : ''}`,
+      category: 'parfums',
+      image: parfums[0]?.images?.[0] || '/products/pochette-cuir-dragonne-xqr.png',
     },
     {
       id: 'lunettes',
@@ -50,15 +69,6 @@ export const CollectionsGrid: React.FC = () => {
       category: 'accessoires',
       image: accessoires[0]?.images?.[0] || '/products/pochette-cuir-dragonne-xqr.png',
     },
-    {
-      id: 'chaussures',
-      title: 'Chaussures & Souliers',
-      subtitle: 'Baskets, mocassins et souliers de ville',
-      badgeText: 'Chaussures',
-      count: `${chaussures.length} article${chaussures.length > 1 ? 's' : ''}`,
-      category: 'chaussures',
-      image: chaussures[0]?.images?.[0] || '/products/pantalon-cargo-ecru.jpg',
-    },
   ];
 
   // Only show categories that actually have at least 1 published product
@@ -67,6 +77,7 @@ export const CollectionsGrid: React.FC = () => {
     if (dept.category === 'lunettes') return lunettes.length > 0;
     if (dept.category === 'accessoires') return accessoires.length > 0;
     if (dept.category === 'chaussures') return chaussures.length > 0;
+    if (dept.category === 'parfums') return parfums.length > 0;
     return false;
   });
 
@@ -77,6 +88,8 @@ export const CollectionsGrid: React.FC = () => {
       ? 'grid-cols-1 max-w-md mx-auto'
       : departments.length === 2
       ? 'grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto'
+      : departments.length >= 4
+      ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
       : 'grid-cols-1 sm:grid-cols-3';
 
   return (

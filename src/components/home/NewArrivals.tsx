@@ -4,7 +4,7 @@ import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
 import { ProductCard } from '../catalog/ProductCard';
 
-type TabType = 'tous' | 'vendus' | 'pantalons' | 'hauts' | 'lunettes' | 'accessoires' | 'chaussures';
+type TabType = 'tous' | 'vendus' | 'pantalons' | 'hauts' | 'chaussures' | 'parfums' | 'lunettes' | 'accessoires';
 
 function isPantProduct(name: string, subCategory: string): boolean {
   if (subCategory === 'Pantalons') return true;
@@ -39,6 +39,11 @@ export const NewArrivals: React.FC = () => {
     [publishedProducts]
   );
 
+  const parfumsCount = useMemo(
+    () => publishedProducts.filter((p) => p.category === 'parfums').length,
+    [publishedProducts]
+  );
+
   // Filter products by active tab
   const filteredProducts = useMemo(() => {
     switch (activeTab) {
@@ -54,6 +59,8 @@ export const NewArrivals: React.FC = () => {
         return publishedProducts.filter((p) => p.category === 'accessoires');
       case 'chaussures':
         return publishedProducts.filter((p) => p.category === 'chaussures');
+      case 'parfums':
+        return publishedProducts.filter((p) => p.category === 'parfums');
       case 'tous':
       default:
         return publishedProducts;
@@ -67,13 +74,12 @@ export const NewArrivals: React.FC = () => {
       : []),
     { id: 'pantalons', label: 'Pantalons & Jeans', count: publishedProducts.filter(p => p.category === 'vetements' && isPantProduct(p.name, p.subCategory)).length },
     { id: 'hauts', label: 'Chemises, Hauts & Vestes', count: publishedProducts.filter(p => p.category === 'vetements' && !isPantProduct(p.name, p.subCategory)).length },
+    { id: 'chaussures', label: 'Chaussures', count: shoesCount },
+    { id: 'parfums', label: 'Parfums', count: parfumsCount },
     ...(lunettesCount > 0
       ? [{ id: 'lunettes' as TabType, label: 'Lunettes', count: lunettesCount }]
       : []),
     { id: 'accessoires', label: 'Sacs & Accessoires', count: publishedProducts.filter(p => p.category === 'accessoires').length },
-    ...(shoesCount > 0
-      ? [{ id: 'chaussures' as TabType, label: 'Chaussures', count: shoesCount }]
-      : []),
   ];
 
   return (

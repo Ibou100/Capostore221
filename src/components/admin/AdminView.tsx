@@ -181,7 +181,7 @@ export const AdminView: React.FC = () => {
 
   // Edit form state for selected product
   const [editName, setEditName] = useState('');
-  const [editCategory, setEditCategory] = useState<'vetements' | 'lunettes' | 'chaussures' | 'accessoires'>('vetements');
+  const [editCategory, setEditCategory] = useState<'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires'>('vetements');
   const [editPrice, setEditPrice] = useState<number>(5000);
   const [editCompareAtPrice, setEditCompareAtPrice] = useState<number | ''>('');
   const [editSizes, setEditSizes] = useState<string[]>([]);
@@ -329,7 +329,7 @@ export const AdminView: React.FC = () => {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
 
-      const validCategory: 'vetements' | 'lunettes' | 'chaussures' | 'accessoires' = 
+      const validCategory: 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires' = 
         newCategory === 'tous' ? 'vetements' : newCategory;
 
       const productToCreate: Product = {
@@ -396,6 +396,10 @@ export const AdminView: React.FC = () => {
     } else if (/\b(lunette|lunettes|monture|montures|solaire|optique)\b/i.test(text)) {
       setNewCategory('lunettes');
       setNewSubCategory('Lunettes de Soleil');
+      setNewSizes([]);
+    } else if (/\b(parfum|parfums|eau de parfum|eau de toilette|oud|musc|senteur|senteurs|cologne|fragrance)\b/i.test(text)) {
+      setNewCategory('parfums');
+      setNewSubCategory('Parfums');
       setNewSizes([]);
     } else if (/\b(chaussure|chaussures|basket|baskets|sneaker|sneakers|mocassin|mocassins|sandale|sandales|soulier|souliers)\b/i.test(text)) {
       setNewCategory('chaussures');
@@ -1245,9 +1249,9 @@ export const AdminView: React.FC = () => {
                           if (cat === 'chaussures') {
                             setNewSizes(['41', '42', '43', '44']);
                             setNewSubCategory('Chaussures de Ville');
-                          } else if (cat === 'lunettes' || cat === 'accessoires') {
+                          } else if (cat === 'lunettes' || cat === 'accessoires' || cat === 'parfums') {
                             setNewSizes([]);
-                            setNewSubCategory(cat === 'lunettes' ? 'Lunettes de Soleil' : 'Accessoires');
+                            setNewSubCategory(cat === 'lunettes' ? 'Lunettes de Soleil' : cat === 'parfums' ? 'Parfums' : 'Accessoires');
                           } else {
                             setNewSizes(['M', 'L', 'XL']);
                             setNewSubCategory('Boubous & Costumes');
@@ -1257,6 +1261,7 @@ export const AdminView: React.FC = () => {
                       >
                         <option value="vetements">Vêtements (Boubous, Costumes, Chemises...)</option>
                         <option value="chaussures">Chaussures & Souliers</option>
+                        <option value="parfums">Parfums & Senteurs</option>
                         <option value="lunettes">Lunettes de soleil</option>
                         <option value="accessoires">Accessoires & Maroquinerie</option>
                       </select>
@@ -1412,7 +1417,9 @@ export const AdminView: React.FC = () => {
                 <option value="all">Toutes les catégories</option>
                 <option value="vetements">Vêtements</option>
                 <option value="chaussures">Chaussures</option>
-                <option value="lunettes">Lunettes</option>
+                <option value="chaussures">Chaussures</option>
+                  <option value="parfums">Parfums</option>
+                  <option value="lunettes">Lunettes</option>
                 <option value="accessoires">Accessoires</option>
               </select>
             </div>
@@ -1471,13 +1478,14 @@ export const AdminView: React.FC = () => {
                             </label>
                             <select
                               value={editCategory}
-                              onChange={(e) => setEditCategory(e.target.value as 'vetements' | 'lunettes' | 'chaussures' | 'accessoires')}
+                              onChange={(e) => setEditCategory(e.target.value as 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires')}
                               className="w-full text-xs font-semibold px-3.5 py-2.5 bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                             >
                               <option value="vetements">Vêtements (Pantalons, Chemises, Vestes...)</option>
                               <option value="accessoires">Sacs & Accessoires (Sacs, Pochettes, Portefeuilles...)</option>
                               <option value="lunettes">Lunettes & Montures</option>
                               <option value="chaussures">Chaussures & Souliers</option>
+                              <option value="parfums">Parfums & Senteurs</option>
                             </select>
                           </div>
 
