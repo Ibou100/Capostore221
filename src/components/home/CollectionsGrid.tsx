@@ -17,39 +17,67 @@ export const CollectionsGrid: React.FC = () => {
   const { goToCatalog, products } = useStore();
 
   const published = products.filter((p) => p.published);
-  const vetementsCount = published.filter((p) => p.category === 'vetements').length;
-  const lunettesCount = published.filter((p) => p.category === 'lunettes').length;
-  const accessoiresCount = published.filter((p) => p.category === 'accessoires').length;
+  const vetements = published.filter((p) => p.category === 'vetements');
+  const lunettes = published.filter((p) => p.category === 'lunettes');
+  const accessoires = published.filter((p) => p.category === 'accessoires');
+  const chaussures = published.filter((p) => p.category === 'chaussures');
 
-  const departments: DepartmentCard[] = [
+  const allDepartments: DepartmentCard[] = [
     {
       id: 'vetements',
       title: 'Vêtements & Tailleur',
-      subtitle: 'Pantalons Prince de Galles, cargos écru, chemises légères & polos',
+      subtitle: 'Pantalons, jeans, chemises, t-shirts & vestes disponibles en stock',
       badgeText: 'Collection Prêt-à-porter',
-      count: `${vetementsCount} article${vetementsCount > 1 ? 's' : ''}`,
+      count: `${vetements.length} article${vetements.length > 1 ? 's' : ''}`,
       category: 'vetements',
-      image: '/products/pantalon-cargo-ecru.jpg',
+      image: vetements[0]?.images?.[0] || '/products/pantalon-cargo-ecru.jpg',
     },
     {
       id: 'lunettes',
       title: 'Lunettes & Montures',
-      subtitle: 'Montures géométriques en acétate italien biseauté & armatures ciselées',
+      subtitle: 'Montures géométriques en acétate & solaires disponibles',
       badgeText: 'Édition exclusive',
-      count: `${lunettesCount} article${lunettesCount > 1 ? 's' : ''}`,
+      count: `${lunettes.length} article${lunettes.length > 1 ? 's' : ''}`,
       category: 'lunettes',
-      image: '/products/monture-lunettes-acetate-bordeaux.jpg',
+      image: lunettes[0]?.images?.[0] || '/products/monture-lunettes-acetate-bordeaux.jpg',
     },
     {
       id: 'accessoires',
-      title: 'Maroquinerie & Pochettes',
-      subtitle: 'Pochettes cuir matelassé XQR & sacoches bandoulière nylon sable',
+      title: 'Sacs & Maroquinerie',
+      subtitle: 'Sacs à bandoulière, pochettes cuir & portefeuilles',
       badgeText: 'Maroquinerie',
-      count: `${accessoiresCount} article${accessoiresCount > 1 ? 's' : ''}`,
+      count: `${accessoires.length} article${accessoires.length > 1 ? 's' : ''}`,
       category: 'accessoires',
-      image: '/products/pochette-cuir-dragonne-xqr.png',
+      image: accessoires[0]?.images?.[0] || '/products/pochette-cuir-dragonne-xqr.png',
+    },
+    {
+      id: 'chaussures',
+      title: 'Chaussures & Souliers',
+      subtitle: 'Baskets, mocassins et souliers de ville',
+      badgeText: 'Chaussures',
+      count: `${chaussures.length} article${chaussures.length > 1 ? 's' : ''}`,
+      category: 'chaussures',
+      image: chaussures[0]?.images?.[0] || '/products/pantalon-cargo-ecru.jpg',
     },
   ];
+
+  // Only show categories that actually have at least 1 published product
+  const departments = allDepartments.filter((dept) => {
+    if (dept.category === 'vetements') return vetements.length > 0;
+    if (dept.category === 'lunettes') return lunettes.length > 0;
+    if (dept.category === 'accessoires') return accessoires.length > 0;
+    if (dept.category === 'chaussures') return chaussures.length > 0;
+    return false;
+  });
+
+  if (departments.length === 0) return null;
+
+  const gridColsClass =
+    departments.length === 1
+      ? 'grid-cols-1 max-w-md mx-auto'
+      : departments.length === 2
+      ? 'grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto'
+      : 'grid-cols-1 sm:grid-cols-3';
 
   return (
     <section className="py-8 sm:py-12 lg:py-16 bg-[#FAF8F5] border-b border-[#E7E2D9]">
@@ -70,8 +98,8 @@ export const CollectionsGrid: React.FC = () => {
           </p>
         </div>
 
-        {/* 3 Clean Minimalist Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-6">
+        {/* Clean Minimalist Cards */}
+        <div className={`grid ${gridColsClass} gap-3.5 sm:gap-6`}>
           {departments.map((dept) => (
             <div
               key={dept.id}

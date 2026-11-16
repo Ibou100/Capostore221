@@ -29,6 +29,11 @@ export const NewArrivals: React.FC = () => {
     [publishedProducts, soldCounts]
   );
 
+  const lunettesCount = useMemo(
+    () => publishedProducts.filter((p) => p.category === 'lunettes').length,
+    [publishedProducts]
+  );
+
   const shoesCount = useMemo(
     () => publishedProducts.filter((p) => p.category === 'chaussures').length,
     [publishedProducts]
@@ -62,7 +67,9 @@ export const NewArrivals: React.FC = () => {
       : []),
     { id: 'pantalons', label: 'Pantalons & Jeans', count: publishedProducts.filter(p => p.category === 'vetements' && isPantProduct(p.name, p.subCategory)).length },
     { id: 'hauts', label: 'Chemises, Hauts & Vestes', count: publishedProducts.filter(p => p.category === 'vetements' && !isPantProduct(p.name, p.subCategory)).length },
-    { id: 'lunettes', label: 'Lunettes', count: publishedProducts.filter(p => p.category === 'lunettes').length },
+    ...(lunettesCount > 0
+      ? [{ id: 'lunettes' as TabType, label: 'Lunettes', count: lunettesCount }]
+      : []),
     { id: 'accessoires', label: 'Sacs & Accessoires', count: publishedProducts.filter(p => p.category === 'accessoires').length },
     ...(shoesCount > 0
       ? [{ id: 'chaussures' as TabType, label: 'Chaussures', count: shoesCount }]

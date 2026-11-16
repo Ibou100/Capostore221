@@ -58,21 +58,43 @@ export const Hero: React.FC = () => {
     },
   ];
 
-  // Always reflect live prices/names from the store catalog
-  const featuredPieces: FeaturedHeroItem[] = baseFeaturedPieces.map((item) => {
-    const live = products.find((p) => p.id === item.id);
-    if (!live) return item;
-    return {
-      ...item,
-      name: live.name,
-      price: live.price,
-      image: live.images?.[0] || item.image,
-      category: live.subCategory || item.category,
-    };
-  });
+  // Always reflect live prices/names from the store catalog, and exclude deleted/hidden items
+  const liveFeaturedPieces: FeaturedHeroItem[] = baseFeaturedPieces
+    .filter((item) => products.some((p) => p.id === item.id && p.published))
+    .map((item) => {
+      const live = products.find((p) => p.id === item.id)!;
+      return {
+        ...item,
+        name: live.name,
+        price: live.price,
+        image: live.images?.[0] || item.image,
+        category: live.subCategory || item.category,
+      };
+    });
+
+  const featuredPieces: FeaturedHeroItem[] =
+    liveFeaturedPieces.length > 0
+      ? liveFeaturedPieces
+      : products
+          .filter((p) => p.published)
+          .slice(0, 4)
+          .map((p) => ({
+            id: p.id,
+            name: p.name,
+            category: p.subCategory || p.category,
+            price: p.price,
+            image: p.images?.[0] || '/products/pantalon-prince-galles.jpg',
+            material: p.materials || p.description,
+            badge: p.isNew ? 'Nouveauté' : 'En stock',
+          }));
 
   const [activePieceIndex, setActivePieceIndex] = useState(0);
-  const currentPiece = featuredPieces[activePieceIndex];
+  const safeIndex = featuredPieces.length > 0 ? activePieceIndex % featuredPieces.length : 0;
+  const currentPiece = featuredPieces[safeIndex] || baseFeaturedPieces[0];
+
+  const hasVetements = products.some((p) => p.published && p.category === 'vetements');
+  const hasLunettes = products.some((p) => p.published && p.category === 'lunettes');
+  const hasAccessoires = products.some((p) => p.published && p.category === 'accessoires');
 
   const handleHeroQuickOrder = () => {
     const matched = products.find((p) => p.id === currentPiece.id);
@@ -132,29 +154,35 @@ export const Hero: React.FC = () => {
               </p>
             </div>
 
-            {/* Category Quick Highlights (without fixed prices) */}
+            {/* Category Quick Highlights (only for categories with published products) */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-0.5">
-              <button
-                type="button"
-                onClick={() => goToCatalog({ category: 'vetements' })}
-                className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-zinc-900 rounded-sm text-[11px] sm:text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
-              >
-                Pantalons & Chemises
-              </button>
-              <button
-                type="button"
-                onClick={() => goToCatalog({ category: 'lunettes' })}
-                className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-zinc-900 rounded-sm text-[11px] sm:text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
-              >
-                Lunettes & Montures
-              </button>
-              <button
-                type="button"
-                onClick={() => goToCatalog({ category: 'accessoires' })}
-                className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-zinc-900 rounded-sm text-[11px] sm:text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
-              >
-                Maroquinerie & Sacs
-              </button>
+              {hasVetements && (
+                <button
+                  type="button"
+                  onClick={() => goToCatalog({ category: 'vetements' })}
+                  className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-zinc-900 rounded-sm text-[11px] sm:text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
+                >
+                  Pantalons & Chemises
+                </button>
+              )}
+              {hasLunettes && (
+                <button
+                  type="button"
+                  onClick={() => goToCatalog({ category: 'lunettes' })}
+                  className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-zinc-900 rounded-sm text-[11px] sm:text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
+                >
+                  Lunettes & Montures
+                </button>
+              )}
+              {hasAccessoires && (
+                <button
+                  type="button"
+                  onClick={() => goToCatalog({ category: 'accessoires' })}
+                  className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-zinc-900 rounded-sm text-[11px] sm:text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
+                >
+                  Sacs & Accessoires
+                </button>
+              )}
             </div>
 
             {/* Primary Action Buttons */}
