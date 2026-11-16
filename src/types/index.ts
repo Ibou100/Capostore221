@@ -33,6 +33,8 @@ export interface Order {
 
 export interface ProductCustomOverride {
   name?: string;
+  category?: 'vetements' | 'lunettes' | 'chaussures' | 'accessoires';
+  subCategory?: string;
   price?: number;
   compareAtPrice?: number | null;
   availableSizes?: string[];

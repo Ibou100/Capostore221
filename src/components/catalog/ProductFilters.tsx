@@ -8,7 +8,8 @@ const CATEGORIES: { id: CategoryId; label: string }[] = [
   { id: 'tous', label: 'Toutes les catégories' },
   { id: 'vetements', label: 'Vêtements' },
   { id: 'lunettes', label: 'Lunettes' },
-  { id: 'accessoires', label: 'Accessoires' },
+  { id: 'accessoires', label: 'Sacs & Accessoires' },
+  { id: 'chaussures', label: 'Chaussures' },
 ];
 
 const GENDERS: { id: 'all' | ProductGender; label: string }[] = [
@@ -36,7 +37,7 @@ export const ProductFilters: React.FC = () => {
     (filters.category !== 'tous' ? 1 : 0) +
     (filters.gender !== 'all' ? 1 : 0) +
     (filters.inStockOnly ? 1 : 0) +
-    (filters.maxPrice < 10000 ? 1 : 0) +
+    (filters.maxPrice < 100000 ? 1 : 0) +
     filters.sizes.length +
     filters.colors.length +
     (filters.searchQuery ? 1 : 0);
@@ -116,7 +117,7 @@ export const ProductFilters: React.FC = () => {
         <input
           type="range"
           min={2000}
-          max={10000}
+          max={100000}
           step={1000}
           value={filters.maxPrice}
           onChange={(e) =>
@@ -126,7 +127,7 @@ export const ProductFilters: React.FC = () => {
         />
         <div className="flex justify-between text-[11px] text-zinc-500 mt-1">
           <span>2 000 FCFA</span>
-          <span>10 000 FCFA</span>
+          <span>100 000 FCFA</span>
         </div>
       </div>
 
@@ -291,11 +292,11 @@ export const ProductFilters: React.FC = () => {
             </span>
           )}
 
-          {filters.maxPrice < 10000 && (
+          {filters.maxPrice < 100000 && (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-100 text-zinc-800 text-xs rounded-full">
               Max : {formatFCFA(filters.maxPrice)}
               <button
-                onClick={() => setFilters((prev) => ({ ...prev, maxPrice: 10000 }))}
+                onClick={() => setFilters((prev) => ({ ...prev, maxPrice: 100000 }))}
                 className="hover:text-black"
               >
                 <X className="w-3 h-3" />

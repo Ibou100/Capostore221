@@ -161,6 +161,7 @@ export const AdminView: React.FC = () => {
 
   // Edit form state for selected product
   const [editName, setEditName] = useState('');
+  const [editCategory, setEditCategory] = useState<'vetements' | 'lunettes' | 'chaussures' | 'accessoires'>('vetements');
   const [editPrice, setEditPrice] = useState<number>(5000);
   const [editCompareAtPrice, setEditCompareAtPrice] = useState<number | ''>('');
   const [editSizes, setEditSizes] = useState<string[]>([]);
@@ -173,6 +174,7 @@ export const AdminView: React.FC = () => {
   const [newPrice, setNewPrice] = useState<number | ''>(15000);
   const [newCompareAtPrice, setNewCompareAtPrice] = useState<number | ''>('');
   const [newCategory, setNewCategory] = useState<CategoryId>('vetements');
+  const [categoryManuallyChosen, setCategoryManuallyChosen] = useState(false);
   const [newSubCategory, setNewSubCategory] = useState('Boubous & Costumes');
   const [newSizes, setNewSizes] = useState<string[]>([]);
   const [newDescription, setNewDescription] = useState('');
@@ -347,6 +349,7 @@ export const AdminView: React.FC = () => {
       setNewPrice(15000);
       setNewCompareAtPrice('');
       setNewCategory('vetements');
+      setCategoryManuallyChosen(false);
       setNewSubCategory('Boubous & Costumes');
       setNewSizes([]);
       setNewDescription('');
@@ -364,9 +367,26 @@ export const AdminView: React.FC = () => {
     }
   };
 
+  const autoDetectCategory = (text: string) => {
+    if (categoryManuallyChosen) return;
+    if (/\b(sac|sacs|sacoche|sacoches|pochette|pochettes|portefeuille|portefeuilles|bag|clutch|cluth|maroquinerie|accessoire|accessoires|ceinture|ceintures|casquette|casquettes|chapeau|montre)\b/i.test(text)) {
+      setNewCategory('accessoires');
+      setNewSubCategory('Sacs & Accessoires');
+      setNewSizes([]);
+    } else if (/\b(lunette|lunettes|monture|montures|solaire|optique)\b/i.test(text)) {
+      setNewCategory('lunettes');
+      setNewSubCategory('Lunettes de Soleil');
+      setNewSizes([]);
+    } else if (/\b(chaussure|chaussures|basket|baskets|sneaker|sneakers|mocassin|mocassins|sandale|sandales|soulier|souliers)\b/i.test(text)) {
+      setNewCategory('chaussures');
+      setNewSubCategory('Chaussures de Ville');
+    }
+  };
+
   const handleStartEdit = (product: Product) => {
     setEditingProductId(product.id);
     setEditName(product.name);
+    setEditCategory(product.category);
     setEditPrice(product.price);
     setEditCompareAtPrice(product.compareAtPrice && product.compareAtPrice > 0 ? product.compareAtPrice : '');
     setEditSizes(product.availableSizes ? [...product.availableSizes] : []);
@@ -397,6 +417,7 @@ export const AdminView: React.FC = () => {
 
     updateProductOverride(productId, {
       name: editName.trim(),
+      category: editCategory,
       price: editPrice,
       compareAtPrice: comparePrice,
       availableSizes: editSizes,
@@ -1154,7 +1175,7 @@ export const AdminView: React.FC = () => {
                         type="text"
                         required
                         value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
+                        onChange={(e) => { const val = e.target.value; setNewName(val); autoDetectCategory(val); }}
                         placeholder="Ex: Costume 2 Pièces Royal Bleu"
                         className="w-full text-xs font-semibold px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                       />
@@ -1207,6 +1228,7 @@ export const AdminView: React.FC = () => {
                         value={newCategory}
                         onChange={(e) => {
                           const cat = e.target.value as CategoryId;
+                          setCategoryManuallyChosen(true);
                           setNewCategory(cat);
                           if (cat === 'chaussures') {
                             setNewSizes(['41', '42', '43', '44']);
@@ -1235,7 +1257,7 @@ export const AdminView: React.FC = () => {
                       <input
                         type="text"
                         value={newSubCategory}
-                        onChange={(e) => setNewSubCategory(e.target.value)}
+                        onChange={(e) => { const val = e.target.value; setNewSubCategory(val); autoDetectCategory(val); }}
                         placeholder="Ex: Boubous, Costumes, Chemises..."
                         className="w-full text-xs font-semibold px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                       />
@@ -1429,6 +1451,22 @@ export const AdminView: React.FC = () => {
                               className="w-full text-sm font-semibold px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                               placeholder="Ex: Chemise Lilas Slim Fit, Pantalon Noir..."
                             />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-800 mb-1">
+                              Catégorie de l'article *
+                            </label>
+                            <select
+                              value={editCategory}
+                              onChange={(e) => setEditCategory(e.target.value as 'vetements' | 'lunettes' | 'chaussures' | 'accessoires')}
+                              className="w-full text-xs font-semibold px-3.5 py-2.5 bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
+                            >
+                              <option value="vetements">Vêtements (Pantalons, Chemises, Vestes...)</option>
+                              <option value="accessoires">Sacs & Accessoires (Sacs, Pochettes, Portefeuilles...)</option>
+                              <option value="lunettes">Lunettes & Montures</option>
+                              <option value="chaussures">Chaussures & Souliers</option>
+                            </select>
                           </div>
 
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

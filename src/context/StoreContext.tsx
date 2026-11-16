@@ -223,6 +223,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             .forEach((p) => {
               overrides[p.id] = {
                 name: p.name,
+                category: p.category,
+                subCategory: p.subCategory,
                 price: p.price,
                 compareAtPrice: p.compareAtPrice,
                 stock: p.stock,
@@ -394,6 +396,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return {
         ...baseProduct,
         name: override.name !== undefined && override.name.trim() !== '' ? override.name.trim() : baseProduct.name,
+        category: override.category !== undefined ? override.category : baseProduct.category,
+        subCategory: override.subCategory !== undefined && override.subCategory.trim() !== '' ? override.subCategory.trim() : baseProduct.subCategory,
         price: override.price !== undefined && override.price > 0 ? override.price : baseProduct.price,
         compareAtPrice: override.compareAtPrice !== undefined 
           ? (override.compareAtPrice && override.compareAtPrice > 0 ? override.compareAtPrice : undefined) 

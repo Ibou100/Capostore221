@@ -4,7 +4,12 @@ import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
 import { ProductCard } from '../catalog/ProductCard';
 
-type TabType = 'tous' | 'vendus' | 'pantalons' | 'hauts' | 'lunettes' | 'accessoires';
+type TabType = 'tous' | 'vendus' | 'pantalons' | 'hauts' | 'lunettes' | 'accessoires' | 'chaussures';
+
+function isPantProduct(name: string, subCategory: string): boolean {
+  if (subCategory === 'Pantalons') return true;
+  return /\b(pantalon|pantalons|jean|jeans|denim|cargo|bermuda|short|jogging)\b/i.test(`${name} ${subCategory}`);
+}
 
 export const NewArrivals: React.FC = () => {
   const { products, goToCatalog } = useStore();
@@ -24,19 +29,26 @@ export const NewArrivals: React.FC = () => {
     [publishedProducts, soldCounts]
   );
 
+  const shoesCount = useMemo(
+    () => publishedProducts.filter((p) => p.category === 'chaussures').length,
+    [publishedProducts]
+  );
+
   // Filter products by active tab
   const filteredProducts = useMemo(() => {
     switch (activeTab) {
       case 'vendus':
         return soldProducts;
       case 'pantalons':
-        return publishedProducts.filter((p) => p.category === 'vetements' && p.subCategory === 'Pantalons');
+        return publishedProducts.filter((p) => p.category === 'vetements' && isPantProduct(p.name, p.subCategory));
       case 'hauts':
-        return publishedProducts.filter((p) => p.category === 'vetements' && p.subCategory === 'T-shirts & Hauts');
+        return publishedProducts.filter((p) => p.category === 'vetements' && !isPantProduct(p.name, p.subCategory));
       case 'lunettes':
         return publishedProducts.filter((p) => p.category === 'lunettes');
       case 'accessoires':
         return publishedProducts.filter((p) => p.category === 'accessoires');
+      case 'chaussures':
+        return publishedProducts.filter((p) => p.category === 'chaussures');
       case 'tous':
       default:
         return publishedProducts;
@@ -48,10 +60,13 @@ export const NewArrivals: React.FC = () => {
     ...(soldProducts.length > 0
       ? [{ id: 'vendus' as TabType, label: 'Articles vendus', count: soldProducts.length }]
       : []),
-    { id: 'pantalons', label: 'Pantalons & Bermudas', count: publishedProducts.filter(p => p.category === 'vetements' && p.subCategory === 'Pantalons').length },
-    { id: 'hauts', label: 'Chemises & Polos', count: publishedProducts.filter(p => p.category === 'vetements' && p.subCategory === 'T-shirts & Hauts').length },
+    { id: 'pantalons', label: 'Pantalons & Jeans', count: publishedProducts.filter(p => p.category === 'vetements' && isPantProduct(p.name, p.subCategory)).length },
+    { id: 'hauts', label: 'Chemises, Hauts & Vestes', count: publishedProducts.filter(p => p.category === 'vetements' && !isPantProduct(p.name, p.subCategory)).length },
     { id: 'lunettes', label: 'Lunettes', count: publishedProducts.filter(p => p.category === 'lunettes').length },
-    { id: 'accessoires', label: 'Maroquinerie & Sacs', count: publishedProducts.filter(p => p.category === 'accessoires').length },
+    { id: 'accessoires', label: 'Sacs & Accessoires', count: publishedProducts.filter(p => p.category === 'accessoires').length },
+    ...(shoesCount > 0
+      ? [{ id: 'chaussures' as TabType, label: 'Chaussures', count: shoesCount }]
+      : []),
   ];
 
   return (
