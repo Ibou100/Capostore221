@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ShoppingBag, Heart, Menu, X, Phone, MessageCircle, Mail } from 'lucide-react';
+import { Search, ShoppingBag, Heart, Menu, X, ArrowUpRight, Phone, MessageCircle, Mail } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useStore } from '../../context/StoreContext';
@@ -13,13 +13,16 @@ import {
   STORE_PHONE_CALL_DISPLAY,
   STORE_EMAIL
 } from '../../utils/format';
+import type { CategoryId } from '../../types';
 
 export const Navbar: React.FC = () => {
   const { totalCount, openCart } = useCart();
   const { wishlistCount } = useWishlist();
-  const { goToHome, goToWishlist, openSearch } = useStore();
+  const { goToHome, goToCatalog, goToWishlist, openSearch, currentView } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const isAdminView = currentView.type === 'admin';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +31,27 @@ export const Navbar: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const navLinks: { label: string; category?: CategoryId; filterType?: 'all' }[] = [
+    { label: 'Accueil' },
+    { label: 'Catalogue', filterType: 'all' },
+    { label: 'Vêtements', category: 'vetements' },
+    { label: 'Chaussures', category: 'chaussures' },
+    { label: 'Parfums', category: 'parfums' },
+    { label: 'Lunettes', category: 'lunettes' },
+    { label: 'Accessoires', category: 'accessoires' },
+  ];
+
+  const handleNavClick = (link: typeof navLinks[0]) => {
+    setIsMobileMenuOpen(false);
+    if (!link.category && !link.filterType) {
+      goToHome();
+    } else if (link.filterType === 'all') {
+      goToCatalog({ category: 'tous' });
+    } else if (link.category) {
+      goToCatalog({ category: link.category });
+    }
+  };
 
   return (
     <header
@@ -79,6 +103,36 @@ export const Navbar: React.FC = () => {
               </div>
             </button>
           </div>
+
+          {/* Desktop Navigation Links (hidden in Admin view) */}
+          {!isAdminView && (
+            <nav className="hidden lg:flex items-center space-x-6">
+              {navLinks.map((link) => {
+                const isActive =
+                  (!link.category && !link.filterType && currentView.type === 'home') ||
+                  (currentView.type === 'catalog' &&
+                    ((link.filterType === 'all' && (currentView as any).initialCategory === 'tous') ||
+                     (link.category && (currentView as any).initialCategory === link.category)));
+
+                return (
+                  <button
+                    key={link.label}
+                    onClick={() => handleNavClick(link)}
+                    className={`text-xs font-semibold tracking-wider uppercase transition-colors relative py-1 ${
+                      isActive
+                        ? 'text-[#141210]'
+                        : 'text-zinc-500 hover:text-[#141210]'
+                    }`}
+                  >
+                    {link.label}
+                    {isActive && (
+                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#141210] rounded-full" />
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          )}
 
           {/* Right Action Cluster */}
           <div className="flex items-center space-x-1 sm:space-x-3">
@@ -155,6 +209,22 @@ export const Navbar: React.FC = () => {
                   <X className="w-5 h-5" />
                 </button>
               </div>
+
+              {/* Navigation list (hidden in Admin view) */}
+              {!isAdminView && (
+                <nav className="mt-6 space-y-1">
+                  {navLinks.map((link) => (
+                    <button
+                      key={link.label}
+                      onClick={() => handleNavClick(link)}
+                      className="w-full flex items-center justify-between py-3 px-3 text-left font-display font-medium text-sm text-zinc-900 hover:bg-zinc-50 rounded-lg transition-colors group"
+                    >
+                      <span>{link.label}</span>
+                      <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-900 transition-colors" />
+                    </button>
+                  ))}
+                </nav>
+              )}
 
               {/* Quick links */}
               <div className="mt-6 pt-6 border-t border-zinc-100 space-y-2">
