@@ -168,7 +168,7 @@ export function getSiteOrigin(): string {
   if (typeof window !== 'undefined' && window.location.origin && !window.location.origin.includes('localhost')) {
     return window.location.origin;
   }
-  return 'https://capostore221.vercel.app';
+  return 'https://capostore221.com';
 }
 
 /**

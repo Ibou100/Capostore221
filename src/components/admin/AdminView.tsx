@@ -2111,7 +2111,7 @@ export const AdminView: React.FC = () => {
                         <div className="flex items-center gap-3">
                           <a
                             href={`https://wa.me/${String(order.customerPhone || '').replace(/\D/g, '')}?text=${encodeURIComponent(
-                              `Bonjour ${order.customerName || 'Client'}, CAPOSTORE221 vous informe que votre commande ${order.id} est actuellement: ${statusConfig.label}. Suivez votre colis sur: https://capostore221.vercel.app/suivi?track=${order.id}`
+                              `Bonjour ${order.customerName || 'Client'}, CAPOSTORE221 vous informe que votre commande ${order.id} est actuellement : ${statusConfig.label}. Merci pour votre confiance sur https://capostore221.com !`
                             )}`}
                             target="_blank"
                             rel="noopener noreferrer"
