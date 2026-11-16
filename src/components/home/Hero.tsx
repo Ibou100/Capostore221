@@ -121,36 +121,23 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full bg-[#FAF8F5] border-b border-[#E7E2D9] overflow-hidden py-6 sm:py-10 lg:py-16">
+    <section className="relative w-full bg-[#FAF8F5] border-b border-[#E7E2D9] overflow-hidden py-5 sm:py-8 lg:py-10">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        
-        {/* Top subtle category indicator */}
-        <div className="flex items-center justify-between pb-3 sm:pb-6 mb-4 sm:mb-8 border-b border-[#E7E2D9] text-xs">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B85D19]" />
-            <span className="font-semibold uppercase tracking-widest text-zinc-900 text-[10px] sm:text-[11px]">
-              Collection 2026 • CAPOSTORE221
-            </span>
-          </div>
-          <p className="hidden sm:block text-zinc-500 font-medium text-[11px] uppercase tracking-wider">
-            Vente en ligne • Tu commandes, on te livre
-          </p>
-        </div>
 
-        {/* Main Grid: Left Manifesto & CTAs | Right Curated Piece Stage */}
+        {/* Main Grid: Left Headline & CTAs | Right Featured Piece */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 lg:gap-12 items-center">
           
-          {/* Left Column: Editorial Headline & Actions */}
-          <div className="lg:col-span-6 text-left space-y-4 sm:space-y-6">
-            <div className="space-y-2 sm:space-y-3">
+          {/* Left Column: Clean Headline & Actions */}
+          <div className="lg:col-span-6 text-left space-y-4 sm:space-y-5">
+            <div className="space-y-2">
               <span className="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#B85D19]">
-                Mode Urbaine & Tailleur
+                CAPOSTORE221 • Boutique en ligne
               </span>
-              <h1 className="font-display font-black text-2xl sm:text-4xl lg:text-6xl text-[#141210] tracking-tight leading-[1.1]">
-                L'allure contemporaine, livrée chez vous.
+              <h1 className="font-display font-black text-2xl sm:text-4xl lg:text-5xl text-[#141210] tracking-tight leading-[1.1]">
+                Vêtements, sacs et accessoires.
               </h1>
-              <p className="text-xs sm:text-base text-zinc-600 leading-relaxed font-normal max-w-lg">
-                Des coupes impeccables, des toiles denses et des finitions soignées. Vous commandez en ligne, nous validons et assurons la livraison rapide directement à votre porte.
+              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed max-w-md">
+                Tu commandes, on te livre. Paiement par Wave, Orange Money, Yas ou espèces.
               </p>
             </div>
 

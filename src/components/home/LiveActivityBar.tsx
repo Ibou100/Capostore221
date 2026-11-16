@@ -54,15 +54,12 @@ export const LiveActivityBar: React.FC = () => {
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
             </span>
             <h3 className="font-display font-bold text-xs sm:text-sm uppercase tracking-wider text-zinc-900 flex items-center gap-2">
-              <span>Commandes en direct</span>
+              <span>Commandes récentes</span>
               <span className="text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-sm bg-white text-zinc-800 border border-[#E7E2D9]">
                 {totalSold} article{totalSold > 1 ? 's' : ''} vendu{totalSold > 1 ? 's' : ''}
               </span>
             </h3>
           </div>
-          <p className="text-[11px] text-zinc-500">
-            Achats validés en ligne par nos clients • Livraison & retrait en boutique
-          </p>
         </div>
 
         {/* Horizontal scrollable strip of recent real purchases */}

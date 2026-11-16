@@ -4,7 +4,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   // --- NOUVELLE SÉLECTION CLIENT CAPOSTORE221 (PHOTOS RÉELLES) ---
   {
     id: 'capo-client-001',
-    name: 'Pantalon Tailleur Prince de Galles « Signature »',
+    name: 'Pantalon tailleur Prince de Galles',
     slug: 'pantalon-tailleur-prince-de-galles-signature',
     category: 'vetements',
     subCategory: 'Pantalons',
@@ -42,7 +42,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-002',
-    name: 'Bermuda Cargo Poches Zippées Écru « Nomad »',
+    name: 'Bermuda cargo écru',
     slug: 'bermuda-cargo-poches-zippees-ecru-nomad',
     category: 'vetements',
     subCategory: 'Pantalons',
@@ -79,7 +79,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-003',
-    name: 'Pantalon Cargo Large Carpenter Écru « Heritage »',
+    name: 'Pantalon cargo large écru',
     slug: 'pantalon-cargo-large-carpenter-ecru-heritage',
     category: 'vetements',
     subCategory: 'Pantalons',
@@ -117,7 +117,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-004',
-    name: 'Jean Brut Carpenter Délavé « Édition 221 »',
+    name: 'Jean brut délavé',
     slug: 'jean-brut-carpenter-delave-edition-221',
     category: 'vetements',
     subCategory: 'Pantalons',
@@ -154,7 +154,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-005',
-    name: 'Chemise Tartan Madras Col Boutonné « Classic »',
+    name: 'Chemise à carreaux col boutonné',
     slug: 'chemise-tartan-madras-col-boutonne-classic',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -192,7 +192,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-006',
-    name: 'Chemise Popeline Rayée Rose & Craie « Riviera »',
+    name: 'Chemise rayée rose et blanche',
     slug: 'chemise-popeline-rayee-rose-craie-riviera',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -229,7 +229,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-007',
-    name: 'Jean Droit Regular Stone Washed « Authentic Vintage »',
+    name: 'Jean droit bleu délavé',
     slug: 'jean-droit-regular-stone-washed-authentic-vintage',
     category: 'vetements',
     subCategory: 'Pantalons',
@@ -266,7 +266,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-008',
-    name: 'Jean Droit Bleached Denim « Pure Sky »',
+    name: 'Jean droit bleu clair',
     slug: 'jean-droit-bleached-denim-pure-sky',
     category: 'vetements',
     subCategory: 'Pantalons',
@@ -303,7 +303,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-009',
-    name: 'Polo Manches Longues Piqué Flammé « Corniche Grenat »',
+    name: 'Polo manches longues bordeaux',
     slug: 'polo-manches-longues-pique-flamme-corniche-grenat',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -341,7 +341,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-010',
-    name: 'Jean Droit Brut Indigo Pur « Deep Indigo »',
+    name: 'Jean droit bleu foncé',
     slug: 'jean-droit-brut-indigo-pur-deep-indigo',
     category: 'vetements',
     subCategory: 'Pantalons',
@@ -378,7 +378,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-011',
-    name: 'Chemisette Popeline Micro-Vichy Rouge & Craie « Resort Club »',
+    name: 'Chemisette à carreaux rouge et blanche',
     slug: 'chemisette-popeline-micro-vichy-rouge-craie-resort-club',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -415,7 +415,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-012',
-    name: 'Sacoche Bandoulière Nylon & Cuir Sable « Urban Crossbody »',
+    name: 'Sacoche bandoulière beige',
     slug: 'sacoche-bandouliere-nylon-cuir-sable-urban-crossbody',
     category: 'accessoires',
     subCategory: 'Sacs & Maroquinerie',
@@ -450,7 +450,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-013',
-    name: 'Bermuda Chino Technique Graphite « Executive Sport »',
+    name: 'Bermuda chino gris foncé',
     slug: 'bermuda-chino-technique-graphite-executive-sport',
     category: 'vetements',
     subCategory: 'Pantalons',
@@ -487,7 +487,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-014',
-    name: 'Chemise Oxford Rayures Brique & Craie « Médina Chic »',
+    name: 'Chemise rayée brique et blanche',
     slug: 'chemise-oxford-rayures-brique-craie-medina-chic',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -524,7 +524,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-015',
-    name: 'T-Shirt Henley Col Tunisien Coton Chiné « Somone »',
+    name: 'T-shirt col tunisien gris chiné',
     slug: 't-shirt-henley-col-tunisien-coton-chine-somone',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -561,7 +561,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-016',
-    name: 'Chemise Oxford Slim Fit Bleu Azur « Oxford Prestige »',
+    name: 'Chemise Oxford bleu azur',
     slug: 'chemise-oxford-slim-fit-bleu-azur-oxford-prestige',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -598,7 +598,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-017',
-    name: 'Chemise Tartan Automne Taupe & Bleu Slate « Saint-Louis »',
+    name: 'Chemise à carreaux taupe et bleu',
     slug: 'chemise-tartan-automne-taupe-bleu-slate-saint-louis',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -636,7 +636,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-018',
-    name: 'Monture Optique Acétate Sculpté Prune & Écaille « Optique Prestige »',
+    name: 'Lunettes monture prune et écaille',
     slug: 'monture-optique-acetate-sculpte-prune-ecaille-optique-prestige',
     category: 'lunettes',
     subCategory: 'Lunettes',
@@ -671,7 +671,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-019',
-    name: 'Polo Rugby Rétro Club Vert Forêt & Crème « California Oars »',
+    name: 'Polo manches longues vert forêt',
     slug: 'polo-rugby-retro-club-vert-foret-creme-california-oars',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -709,7 +709,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-020',
-    name: 'Chemise Popeline Coton Ciel Épurée « Business Élégance »',
+    name: 'Chemise bleu ciel',
     slug: 'chemise-popeline-coton-ciel-epuree-business-elegance',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',
@@ -747,7 +747,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-021',
-    name: 'Pochette à Main Cuir Matelassé & Dragonne « XQR Executive »',
+    name: 'Pochette à main cuir noir XQR',
     slug: 'pochette-a-main-cuir-matelasse-dragonne-xqr-executive',
     category: 'accessoires',
     subCategory: 'Sacs & Maroquinerie',
@@ -783,7 +783,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-022',
-    name: 'Pantalon Tailleur Noir Coupe Droite « Sartorial Black »',
+    name: 'Pantalon tailleur noir coupe droite',
     slug: 'pantalon-tailleur-noir-coupe-droite-sartorial-black',
     category: 'vetements',
     subCategory: 'Pantalons',
@@ -821,7 +821,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'capo-client-023',
-    name: 'Chemise Oxford Slim Fit Lilas Parme « Heritage Club »',
+    name: 'Chemise Oxford lilas parme',
     slug: 'chemise-oxford-slim-fit-lilas-parme-heritage-club',
     category: 'vetements',
     subCategory: 'T-shirts & Hauts',

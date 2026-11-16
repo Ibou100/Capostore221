@@ -80,22 +80,17 @@ export const CollectionsGrid: React.FC = () => {
       : 'grid-cols-1 sm:grid-cols-3';
 
   return (
-    <section className="py-8 sm:py-12 lg:py-16 bg-[#FAF8F5] border-b border-[#E7E2D9]">
+    <section className="py-6 sm:py-10 bg-[#FAF8F5] border-b border-[#E7E2D9]">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-5 sm:mb-8 pb-3 sm:pb-4 border-b border-[#EAE5DC] gap-2 sm:gap-4 text-left">
-          <div>
-            <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#B85D19] mb-0.5">
-              Départements
-            </p>
-            <h2 className="font-display font-extrabold text-xl sm:text-3xl text-zinc-900 tracking-tight">
-              Explorer par Catégorie
-            </h2>
-          </div>
-          <p className="text-xs sm:text-sm text-zinc-500 max-w-md">
-            Chaque pièce est disponible en stock réel. Commandez en ligne et recevez votre colis à domicile.
-          </p>
+        <div className="flex items-end justify-between mb-4 sm:mb-6 pb-2.5 border-b border-[#EAE5DC] gap-2 text-left">
+          <h2 className="font-display font-extrabold text-lg sm:text-2xl text-zinc-900 tracking-tight">
+            Catégories
+          </h2>
+          <span className="text-xs text-zinc-500">
+            {published.length} articles au total
+          </span>
         </div>
 
         {/* Clean Minimalist Cards */}
@@ -128,16 +123,13 @@ export const CollectionsGrid: React.FC = () => {
               </div>
 
               {/* Text Info */}
-              <div className="p-3.5 sm:p-5 bg-white text-left">
-                <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-zinc-400 uppercase tracking-wider mb-0.5 sm:mb-1">
-                  <span>{dept.count}</span>
-                </div>
-                <h3 className="font-display font-bold text-sm sm:text-base text-zinc-900 group-hover:text-[#B85D19] transition-colors mb-0.5 sm:mb-1">
+              <div className="p-3 sm:p-4 bg-white text-left flex items-center justify-between gap-2">
+                <h3 className="font-display font-bold text-sm sm:text-base text-zinc-900 group-hover:text-[#B85D19] transition-colors">
                   {dept.title}
                 </h3>
-                <p className="text-xs text-zinc-500 leading-relaxed line-clamp-1 sm:line-clamp-2">
-                  {dept.subtitle}
-                </p>
+                <span className="text-[11px] font-semibold text-zinc-500 shrink-0">
+                  {dept.count}
+                </span>
               </div>
             </div>
           ))}

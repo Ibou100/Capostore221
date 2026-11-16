@@ -81,16 +81,13 @@ export const NewArrivals: React.FC = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-5 sm:mb-8 pb-3 sm:pb-4 border-b border-[#EFECE5] gap-3 text-left">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-5 sm:mb-6 pb-3 border-b border-[#EFECE5] gap-2 text-left">
           <div>
-            <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#B85D19] mb-0.5">
-              Vestiaire Complet
-            </p>
-            <h2 className="font-display font-extrabold text-xl sm:text-3xl lg:text-4xl text-zinc-900 tracking-tight">
-              Catalogue Disponible
+            <h2 className="font-display font-extrabold text-xl sm:text-3xl text-zinc-900 tracking-tight">
+              Catalogue
             </h2>
-            <p className="text-xs sm:text-sm text-zinc-500 mt-0.5 max-w-xl">
-              {publishedProducts.length} article{publishedProducts.length > 1 ? 's' : ''} disponible{publishedProducts.length > 1 ? 's' : ''} en stock réel. Cliquez sur un article pour voir les détails et commander.
+            <p className="text-xs sm:text-sm text-zinc-500 mt-0.5">
+              {publishedProducts.length} article{publishedProducts.length > 1 ? 's' : ''} disponible{publishedProducts.length > 1 ? 's' : ''}
             </p>
           </div>
 

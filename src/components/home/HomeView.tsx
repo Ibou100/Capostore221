@@ -1,10 +1,8 @@
 import React from 'react';
 import { Hero } from './Hero';
-import { TerangaServices } from './TerangaServices';
 import { CollectionsGrid } from './CollectionsGrid';
 import { LiveActivityBar } from './LiveActivityBar';
 import { NewArrivals } from './NewArrivals';
-import { EditorialManifesto } from './EditorialManifesto';
 import { NewsletterSection } from './NewsletterSection';
 
 export const HomeView: React.FC = () => {
@@ -13,22 +11,16 @@ export const HomeView: React.FC = () => {
       {/* 1. Hero Showcase */}
       <Hero />
 
-      {/* 2. Reassurances & Operating Model */}
-      <TerangaServices />
-
-      {/* 3. 3 Core Departments */}
+      {/* 2. Categories */}
       <CollectionsGrid />
 
-      {/* 3b. Live Orders Activity Bar */}
-      <LiveActivityBar />
-
-      {/* 4. Complete Catalog */}
+      {/* 3. Catalog */}
       <NewArrivals />
 
-      {/* 5. Editorial Manifesto */}
-      <EditorialManifesto />
+      {/* 4. Recent Orders */}
+      <LiveActivityBar />
 
-      {/* 6. Newsletter & Contact */}
+      {/* 5. Contact */}
       <NewsletterSection />
     </div>
   );
