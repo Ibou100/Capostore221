@@ -96,13 +96,13 @@ export const PAYMENT_METHODS_DATA: {
 export function getPaymentMethodLabel(method: PaymentMethod): string {
   switch (method) {
     case 'wave':
-      return 'Wave (🌊)';
+      return 'Wave';
     case 'orange_money':
-      return 'Orange Money (🟠)';
+      return 'Orange Money';
     case 'free_money':
-      return 'Yas / Mixx (💛)';
+      return 'Yas / Mixx';
     case 'especes':
-      return 'Espèces à la livraison (💵)';
+      return 'Espèces à la livraison';
     default:
       return method;
   }

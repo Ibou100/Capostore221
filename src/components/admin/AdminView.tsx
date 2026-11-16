@@ -1004,7 +1004,7 @@ export const AdminView: React.FC = () => {
                             {order.customerName} • <span className="font-mono text-zinc-600">{order.customerPhone}</span>
                           </p>
                           <p className="text-[11px] text-zinc-500 truncate">
-                            {order.customerCity} • {order.items?.length || 0} article(s) • {getPaymentMethodLabel(order.paymentMethod)}
+                            {order.customerCity} • {(order.items?.length || 0)} {(order.items?.length || 0) > 1 ? 'articles' : 'article'} • {getPaymentMethodLabel(order.paymentMethod)}
                           </p>
                         </div>
                       </div>
