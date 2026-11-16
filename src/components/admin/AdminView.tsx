@@ -6,7 +6,7 @@ import {
   LogOut, Plus, Upload, RefreshCw, 
   Check, X, Sparkles, 
   CheckCircle2,
-  TrendingUp, Users, DollarSign, ShoppingBag, CreditCard, Award, Activity, ArrowUpRight, BarChart3
+  TrendingUp, Users, DollarSign, ShoppingBag, CreditCard, ArrowUpRight, BarChart3
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
@@ -72,52 +72,72 @@ export const AdminView: React.FC = () => {
     return 'dashboard';
   });
 
+  const [dashboardPeriod, setDashboardPeriod] = useState<'all' | 'today' | '7d' | '30d'>('all');
+
+  const dashboardOrders = useMemo(() => {
+    const list = orders || [];
+    if (dashboardPeriod === 'all') return list;
+    const now = Date.now();
+    const msMap = {
+      today: 24 * 60 * 60 * 1000,
+      '7d': 7 * 24 * 60 * 60 * 1000,
+      '30d': 30 * 24 * 60 * 60 * 1000,
+    };
+    const cutoff = now - msMap[dashboardPeriod];
+    return list.filter((o) => new Date(o.createdAt).getTime() >= cutoff);
+  }, [orders, dashboardPeriod]);
+
   // Business Analytics & KPIs for the Store Owner Dashboard
   const totalRevenue = useMemo(() => {
-    return (orders || []).reduce((sum, o) => sum + (Number(o?.total) || 0), 0);
-  }, [orders]);
+    return dashboardOrders.reduce((sum, o) => sum + (Number(o?.total) || 0), 0);
+  }, [dashboardOrders]);
 
   const deliveredRevenue = useMemo(() => {
-    return (orders || [])
+    return dashboardOrders
       .filter((o) => o?.status === 'livree')
       .reduce((sum, o) => sum + (Number(o?.total) || 0), 0);
-  }, [orders]);
+  }, [dashboardOrders]);
 
-  const totalOrdersCount = (orders || []).length;
-  const deliveredOrdersCount = (orders || []).filter((o) => o?.status === 'livree').length;
-  const pendingOrdersCount = (orders || []).filter((o) => o?.status !== 'livree').length;
+  const totalOrdersCount = dashboardOrders.length;
+  const deliveredOrdersCount = dashboardOrders.filter((o) => o?.status === 'livree').length;
+  const pendingOrdersCount = dashboardOrders.filter((o) => o?.status !== 'livree').length;
 
   const uniqueCustomersCount = useMemo(() => {
     const clients = new Set(
-      (orders || []).map((o) => (o?.customerPhone || o?.customerName || '').trim().toLowerCase())
+      dashboardOrders.map((o) => (o?.customerPhone || o?.customerName || '').trim().toLowerCase())
     );
     clients.delete('');
     return clients.size;
-  }, [orders]);
+  }, [dashboardOrders]);
 
-  const averageBasket = totalOrdersCount > 0 ? Math.round(totalRevenue / totalOrdersCount) : 0;
-  const deliverySuccessRate = totalOrdersCount > 0 ? Math.round((deliveredOrdersCount / totalOrdersCount) * 100) : 100;
-
-  // Breakdown by payment methods
+  // Breakdown by payment methods (count + revenue)
   const paymentStats = useMemo(() => {
-    const wave = (orders || []).filter((o) => o?.paymentMethod === 'wave').length;
-    const om = (orders || []).filter((o) => o?.paymentMethod === 'orange_money').length;
-    const cash = (orders || []).filter((o) => o?.paymentMethod === 'especes').length;
-    const free = (orders || []).filter((o) => o?.paymentMethod === 'free_money').length;
-    return { wave, om, cash, free };
-  }, [orders]);
+    const calc = (method: string) => {
+      const matching = dashboardOrders.filter((o) => o?.paymentMethod === method);
+      return {
+        count: matching.length,
+        revenue: matching.reduce((s, o) => s + (Number(o?.total) || 0), 0),
+      };
+    };
+    return {
+      wave: calc('wave'),
+      om: calc('orange_money'),
+      cash: calc('especes'),
+      free: calc('free_money'),
+    };
+  }, [dashboardOrders]);
 
   // Breakdown by city
   const cityStats = useMemo(() => {
-    const dakar = (orders || []).filter((o) => (o?.customerCity || '').toLowerCase().includes('dakar')).length;
+    const dakar = dashboardOrders.filter((o) => (o?.customerCity || '').toLowerCase().includes('dakar')).length;
     const regions = totalOrdersCount - dakar;
     return { dakar, regions };
-  }, [orders, totalOrdersCount]);
+  }, [dashboardOrders, totalOrdersCount]);
 
   // Top selling items
   const topSellingItems = useMemo(() => {
     const map = new Map<string, { name: string; count: number; revenue: number; image?: string }>();
-    (orders || []).forEach((o) => {
+    dashboardOrders.forEach((o) => {
       (o?.items || []).forEach((item) => {
         const key = item.productId || item.name;
         const existing = map.get(key) || { name: item.name, count: 0, revenue: 0, image: item.image };
@@ -128,7 +148,7 @@ export const AdminView: React.FC = () => {
       });
     });
     return Array.from(map.values()).sort((a, b) => b.count - a.count).slice(0, 5);
-  }, [orders]);
+  }, [dashboardOrders]);
 
   // Change Password Form State
   const [currentPwd, setCurrentPwd] = useState('');
@@ -670,36 +690,38 @@ export const AdminView: React.FC = () => {
         <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-zinc-800">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'dashboard'
                 ? 'bg-[#B85D19] text-white shadow-md'
                 : 'bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
             }`}
           >
-            <BarChart3 className="w-4 h-4" />
-            <span>📊 Tableau de Bord & Ventes</span>
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>Tableau de bord</span>
           </button>
 
           <button
             onClick={() => setActiveTab('products')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'products'
                 ? 'bg-[#B85D19] text-white shadow-md'
                 : 'bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
             }`}
           >
-            <span>🏷️ Tenues & Articles ({products.length})</span>
+            <ShoppingBag className="w-3.5 h-3.5" />
+            <span>Articles ({products.length})</span>
           </button>
 
           <button
             onClick={() => setActiveTab('orders')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'orders'
                 ? 'bg-[#B85D19] text-white shadow-md'
                 : 'bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
             }`}
           >
-            <span>📦 Commandes & Suivi Colis</span>
+            <Package className="w-3.5 h-3.5" />
+            <span>Commandes</span>
             {orders.length > 0 && (
               <span className="px-1.5 py-0.5 rounded-full bg-white text-black text-[10px] font-bold">
                 {orders.length}
@@ -710,236 +732,217 @@ export const AdminView: React.FC = () => {
       </div>
 
       {/* ============================================================
-          TAB 0: EXECUTIVE ANALYTICS & SALES DASHBOARD (DASHBOARD)
+          TAB 0: CLEAN INTERACTIVE DASHBOARD
          ============================================================ */}
       {activeTab === 'dashboard' && (
-        <div className="space-y-8 animate-fadeIn">
-          {/* Welcome & Revenue Overview Banner */}
-          <div className="bg-gradient-to-r from-zinc-900 via-[#1a1714] to-zinc-900 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5">
-                    <Activity className="w-3 h-3" />
-                    <span>Performance Commerciale en Direct</span>
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">Boutique en Ligne Active</span>
-                </div>
-                <h2 className="font-display font-black text-2xl sm:text-3xl text-white tracking-tight">
-                  Vue d'Ensemble des Ventes & Clients
-                </h2>
-                <p className="text-xs sm:text-sm text-zinc-300 mt-1 max-w-xl">
-                  Suivi en temps réel des encaissements, du volume de commandes et de la fidélité de vos clients à Dakar et dans les régions.
-                </p>
-              </div>
+        <div className="space-y-6 animate-fadeIn">
+          {/* Interactive Period Filter & Quick Actions Bar */}
+          <div className="bg-white rounded-2xl p-4 border border-zinc-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {[
+                { id: 'all', label: 'Tout' },
+                { id: 'today', label: "Aujourd'hui" },
+                { id: '7d', label: '7 jours' },
+                { id: '30d', label: '30 jours' },
+              ].map((period) => (
+                <button
+                  key={period.id}
+                  type="button"
+                  onClick={() => setDashboardPeriod(period.id as 'all' | 'today' | '7d' | '30d')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    dashboardPeriod === period.id
+                      ? 'bg-[#141210] text-white shadow-xs'
+                      : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                  }`}
+                >
+                  {period.label}
+                </button>
+              ))}
+            </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  onClick={() => setActiveTab('orders')}
-                  className="px-5 py-3 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center gap-2"
-                >
-                  <Package className="w-4 h-4" />
-                  <span>Gérer les Commandes ({orders.length})</span>
-                </button>
-                <button
-                  onClick={() => setIsAddModalOpen(true)}
-                  className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-white/10 flex items-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Ajouter une tenue</span>
-                </button>
-              </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  refreshOrders();
+                  showToast('Données actualisées.', 'info');
+                }}
+                className="px-3 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                <span>Actualiser</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(true)}
+                className="px-4 py-2 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Nouvel article</span>
+              </button>
             </div>
           </div>
 
-          {/* 4 Top KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {/* 1. Chiffre d'Affaires */}
-            <div className="bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                  Chiffre d'Affaires Global
+          {/* 4 Interactive KPI Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+            <button
+              type="button"
+              onClick={() => setActiveTab('orders')}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-200 hover:border-zinc-900 shadow-xs text-left transition-all cursor-pointer group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                  Chiffre d'affaires
                 </span>
-                <div className="w-9 h-9 rounded-xl bg-amber-50 text-[#B85D19] flex items-center justify-center font-bold">
-                  <DollarSign className="w-5 h-5" />
-                </div>
+                <DollarSign className="w-4 h-4 text-[#B85D19]" />
               </div>
-              <div className="font-display font-black text-2xl sm:text-3xl text-zinc-950 tracking-tight">
+              <div className="font-display font-black text-xl sm:text-2xl text-zinc-950">
                 {formatFCFA(totalRevenue)}
               </div>
-              <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-100">
-                <span>Encaissé (livré) :</span>
-                <strong className="text-emerald-700 font-bold">{formatFCFA(deliveredRevenue)}</strong>
+              <div className="mt-2 pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
+                <span>Livré : <strong className="text-emerald-700">{formatFCFA(deliveredRevenue)}</strong></span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-900" />
               </div>
-            </div>
+            </button>
 
-            {/* 2. Clients Uniques */}
-            <div className="bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                  Clients Uniques
+            <button
+              type="button"
+              onClick={() => setActiveTab('orders')}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-200 hover:border-zinc-900 shadow-xs text-left transition-all cursor-pointer group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                  Commandes
                 </span>
-                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-                  <Users className="w-5 h-5" />
-                </div>
+                <Package className="w-4 h-4 text-zinc-700" />
               </div>
-              <div className="font-display font-black text-2xl sm:text-3xl text-zinc-950 tracking-tight">
-                {uniqueCustomersCount} {uniqueCustomersCount > 1 ? 'Clients' : 'Client'}
-              </div>
-              <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-100">
-                <span>Répartition :</span>
-                <span className="font-semibold text-zinc-800">{cityStats.dakar} Dakar • {cityStats.regions} Régions</span>
-              </div>
-            </div>
-
-            {/* 3. Total Commandes */}
-            <div className="bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                  Commandes Réalisées
-                </span>
-                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-                  <ShoppingBag className="w-5 h-5" />
-                </div>
-              </div>
-              <div className="font-display font-black text-2xl sm:text-3xl text-zinc-950 tracking-tight">
+              <div className="font-display font-black text-xl sm:text-2xl text-zinc-950">
                 {totalOrdersCount}
               </div>
-              <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-100">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span>{deliveredOrdersCount} livrée(s)</span>
+              <div className="mt-2 pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px]">
+                <span className="text-emerald-700 font-semibold">{deliveredOrdersCount} livrée{deliveredOrdersCount > 1 ? 's' : ''}</span>
+                <span className="text-amber-700 font-semibold">{pendingOrdersCount} en cours</span>
+              </div>
+            </button>
+
+            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-200 shadow-xs text-left">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                  Clients
                 </span>
-                <span className="flex items-center gap-1.5 text-amber-700 font-semibold">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  <span>{pendingOrdersCount} en cours</span>
-                </span>
+                <Users className="w-4 h-4 text-zinc-700" />
+              </div>
+              <div className="font-display font-black text-xl sm:text-2xl text-zinc-950">
+                {uniqueCustomersCount}
+              </div>
+              <div className="mt-2 pt-2 border-t border-zinc-100 text-[11px] text-zinc-500">
+                {cityStats.dakar} Dakar • {cityStats.regions} Régions
               </div>
             </div>
 
-            {/* 4. Panier Moyen */}
-            <div className="bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                  Panier Moyen / Commande
+            <button
+              type="button"
+              onClick={() => setActiveTab('products')}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-200 hover:border-zinc-900 shadow-xs text-left transition-all cursor-pointer group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                  Articles en ligne
                 </span>
-                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-                  <TrendingUp className="w-5 h-5" />
-                </div>
+                <ShoppingBag className="w-4 h-4 text-zinc-700" />
               </div>
-              <div className="font-display font-black text-2xl sm:text-3xl text-zinc-950 tracking-tight">
-                {formatFCFA(averageBasket)}
+              <div className="font-display font-black text-xl sm:text-2xl text-zinc-950">
+                {products.filter((p) => p.published).length}
               </div>
-              <div className="mt-2 flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-100">
-                <span>Taux de livraison :</span>
-                <strong className="text-zinc-900 font-bold">{deliverySuccessRate}% réussi</strong>
+              <div className="mt-2 pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
+                <span>Gérer le catalogue</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-900" />
               </div>
-            </div>
+            </button>
           </div>
 
-          {/* Middle Section: Analytics Panels */}
+          {/* Middle Section: Payment Breakdown & Top Selling Items */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Panel A: Modes de Paiement Utilisés */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-zinc-200 shadow-sm space-y-5">
+            {/* Payment Methods with Real Logos */}
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-                <div className="flex items-center gap-2">
+                <h3 className="font-display font-bold text-sm text-zinc-900 flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-[#B85D19]" />
-                  <h3 className="font-display font-bold text-sm text-zinc-900">
-                    Modes de Paiement Clients (Sénégal)
-                  </h3>
-                </div>
-                <span className="text-[10px] uppercase font-bold text-zinc-400">
-                  {totalOrdersCount} transaction(s)
+                  <span>Paiements reçus</span>
+                </h3>
+                <span className="text-xs text-zinc-500 font-medium">
+                  {totalOrdersCount} commande{totalOrdersCount > 1 ? 's' : ''}
                 </span>
               </div>
 
-              <div className="space-y-4">
-                {/* Wave */}
-                <div>
-                  <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                    <span className="text-zinc-700">Wave Sénégal (🌊)</span>
-                    <span className="font-mono text-zinc-900">{paymentStats.wave} commande(s) ({totalOrdersCount > 0 ? Math.round((paymentStats.wave / totalOrdersCount) * 100) : 0}%)</span>
-                  </div>
-                  <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-blue-500 rounded-full"
-                      style={{ width: `${totalOrdersCount > 0 ? (paymentStats.wave / totalOrdersCount) * 100 : 0}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Orange Money */}
-                <div>
-                  <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                    <span className="text-zinc-700">Orange Money (🍊)</span>
-                    <span className="font-mono text-zinc-900">{paymentStats.om} commande(s) ({totalOrdersCount > 0 ? Math.round((paymentStats.om / totalOrdersCount) * 100) : 0}%)</span>
-                  </div>
-                  <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-orange-500 rounded-full"
-                      style={{ width: `${totalOrdersCount > 0 ? (paymentStats.om / totalOrdersCount) * 100 : 0}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Espèces */}
-                <div>
-                  <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                    <span className="text-zinc-700">Paiement à la Livraison (💵 Espèces)</span>
-                    <span className="font-mono text-zinc-900">{paymentStats.cash} commande(s) ({totalOrdersCount > 0 ? Math.round((paymentStats.cash / totalOrdersCount) * 100) : 0}%)</span>
-                  </div>
-                  <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-emerald-500 rounded-full"
-                      style={{ width: `${totalOrdersCount > 0 ? (paymentStats.cash / totalOrdersCount) * 100 : 0}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Free Money */}
-                <div>
-                  <div className="flex items-center justify-between text-xs font-semibold mb-1">
-                    <span className="text-zinc-700">Free Money (🔴)</span>
-                    <span className="font-mono text-zinc-900">{paymentStats.free} commande(s) ({totalOrdersCount > 0 ? Math.round((paymentStats.free / totalOrdersCount) * 100) : 0}%)</span>
-                  </div>
-                  <div className="w-full h-2.5 bg-zinc-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-red-500 rounded-full"
-                      style={{ width: `${totalOrdersCount > 0 ? (paymentStats.free / totalOrdersCount) * 100 : 0}%` }}
-                    />
-                  </div>
-                </div>
+              <div className="space-y-3.5">
+                {[
+                  { label: 'Wave', logo: '/payments/wave.png', stat: paymentStats.wave, barColor: 'bg-sky-500' },
+                  { label: 'Orange Money', logo: '/payments/orange-money.png', stat: paymentStats.om, barColor: 'bg-orange-500' },
+                  { label: 'Yas / Mixx', logo: '/payments/yas.png', stat: paymentStats.free, barColor: 'bg-amber-400' },
+                  { label: 'Espèces', logo: '', stat: paymentStats.cash, barColor: 'bg-emerald-600' },
+                ].map((pm) => {
+                  const pct = totalOrdersCount > 0 ? Math.round((pm.stat.count / totalOrdersCount) * 100) : 0;
+                  return (
+                    <div key={pm.label} className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2 font-semibold text-zinc-800">
+                          {pm.logo ? (
+                            <img src={pm.logo} alt={pm.label} className="w-5 h-5 rounded object-contain border border-zinc-200 bg-white p-0.5" />
+                          ) : (
+                            <span className="w-5 h-5 rounded bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[10px] font-bold text-emerald-700">F</span>
+                          )}
+                          <span>{pm.label}</span>
+                        </div>
+                        <div className="flex items-center gap-2 font-mono text-xs">
+                          <span className="text-zinc-500">{pm.stat.count} ({pct}%)</span>
+                          <span className="font-bold text-zinc-900">{formatFCFA(pm.stat.revenue)}</span>
+                        </div>
+                      </div>
+                      <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden">
+                        <div className={`h-full ${pm.barColor} rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Panel B: Top Articles les plus Demandés */}
-            <div className="bg-white rounded-2xl p-6 sm:p-7 border border-zinc-200 shadow-sm space-y-4">
+            {/* Interactive Top Articles */}
+            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-amber-500" />
-                  <h3 className="font-display font-bold text-sm text-zinc-900">
-                    Articles les plus Demandés
-                  </h3>
-                </div>
+                <h3 className="font-display font-bold text-sm text-zinc-900 flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-[#B85D19]" />
+                  <span>Articles les plus vendus</span>
+                </h3>
                 <button
+                  type="button"
                   onClick={() => setActiveTab('products')}
-                  className="text-[11px] font-bold text-[#B85D19] hover:underline"
+                  className="text-xs font-semibold text-[#B85D19] hover:underline cursor-pointer"
                 >
-                  Gérer les prix →
+                  Voir le catalogue →
                 </button>
               </div>
 
               {topSellingItems.length === 0 ? (
                 <div className="py-8 text-center text-zinc-400 text-xs">
-                  Aucune vente enregistrée pour le moment.
+                  Aucune vente sur cette période.
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {topSellingItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-zinc-50 hover:bg-zinc-100 transition-colors">
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setProductSearch(item.name);
+                        setActiveTab('products');
+                      }}
+                      className="w-full flex items-center justify-between gap-3 p-2.5 rounded-xl bg-zinc-50 hover:bg-zinc-100 transition-colors text-left cursor-pointer group"
+                    >
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="font-display font-black text-xs text-zinc-400 w-4">
-                          #{idx + 1}
+                        <span className="font-mono font-bold text-xs text-zinc-400 w-4 shrink-0">
+                          {idx + 1}.
                         </span>
                         {item.image && (
                           <img
@@ -949,83 +952,92 @@ export const AdminView: React.FC = () => {
                           />
                         )}
                         <div className="truncate">
-                          <p className="font-bold text-xs text-zinc-900 truncate">{item.name}</p>
-                          <p className="text-[10px] text-zinc-500">{item.count} exemplaire(s) vendu(s)</p>
+                          <p className="font-semibold text-xs text-zinc-900 truncate group-hover:text-[#B85D19] transition-colors">{item.name}</p>
+                          <p className="text-[11px] text-zinc-500">{item.count} vendu{item.count > 1 ? 's' : ''}</p>
                         </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        <span className="font-mono font-bold text-xs text-[#B85D19]">
-                          {formatFCFA(item.revenue)}
-                        </span>
-                      </div>
-                    </div>
+                      <span className="font-mono font-bold text-xs text-zinc-900 shrink-0">
+                        {formatFCFA(item.revenue)}
+                      </span>
+                    </button>
                   ))}
                 </div>
               )}
             </div>
           </div>
 
-          {/* Bottom Row: Recent Live Orders Table */}
-          <div className="bg-white rounded-2xl p-6 sm:p-7 border border-zinc-200 shadow-sm space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100">
-              <div>
-                <h3 className="font-display font-bold text-sm text-zinc-900">
-                  Dernières Commandes Clients Reçues
-                </h3>
-                <p className="text-xs text-zinc-500">
-                  Flux synchronisé en direct et à jour.
-                </p>
-              </div>
+          {/* Interactive Recent Orders with Direct Status Update */}
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200 shadow-xs space-y-4">
+            <div className="flex items-center justify-between gap-3 pb-3 border-b border-zinc-100">
+              <h3 className="font-display font-bold text-sm text-zinc-900">
+                Dernières commandes ({dashboardOrders.length})
+              </h3>
               <button
+                type="button"
                 onClick={() => setActiveTab('orders')}
-                className="text-xs font-bold text-[#B85D19] hover:underline flex items-center gap-1 self-start sm:self-auto"
+                className="text-xs font-semibold text-[#B85D19] hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <span>Voir et traiter toutes les commandes ({orders.length})</span>
+                <span>Tout voir</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            {orders.length === 0 ? (
+            {dashboardOrders.length === 0 ? (
               <div className="py-8 text-center text-zinc-400 text-xs">
-                Aucune commande enregistrée.
+                Aucune commande sur cette période.
               </div>
             ) : (
               <div className="divide-y divide-zinc-100">
-                {orders.slice(0, 5).map((order) => {
+                {dashboardOrders.slice(0, 6).map((order) => {
                   const statusConfig = ORDER_STATUS_CONFIG[order.status] || {
                     label: order.status,
-                    badgeClass: 'bg-zinc-100 text-zinc-800',
+                    badgeClass: 'bg-zinc-100 text-zinc-800 border-zinc-200',
                   };
                   return (
                     <div key={order.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono font-black text-xs text-zinc-900 bg-zinc-100 px-2.5 py-1 rounded-md">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="font-mono font-bold text-xs text-zinc-900 bg-zinc-100 px-2.5 py-1 rounded-md shrink-0">
                           {order.id}
                         </span>
-                        <div>
-                          <p className="font-bold text-xs text-zinc-900">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-xs text-zinc-900 truncate">
                             {order.customerName} • <span className="font-mono text-zinc-600">{order.customerPhone}</span>
                           </p>
-                          <p className="text-[11px] text-zinc-500">
+                          <p className="text-[11px] text-zinc-500 truncate">
                             {order.customerCity} • {order.items?.length || 0} article(s) • {getPaymentMethodLabel(order.paymentMethod)}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 justify-between sm:justify-end">
-                        <span className="font-mono font-bold text-xs text-zinc-900">
+                      <div className="flex items-center gap-2 justify-between sm:justify-end shrink-0">
+                        <span className="font-mono font-bold text-xs text-zinc-900 mr-1">
                           {formatFCFA(order.total)}
                         </span>
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${statusConfig.badgeClass}`}>
-                          {statusConfig.label}
-                        </span>
-                        <button
-                          onClick={() => setActiveTab('orders')}
-                          className="p-1.5 hover:bg-zinc-100 text-zinc-500 hover:text-black rounded-lg transition-colors"
-                          title="Gérer cette commande"
+                        <select
+                          value={order.status}
+                          onChange={(e) => {
+                            const newStatus = e.target.value as OrderStatus;
+                            updateOrderStatus(order.id, newStatus);
+                            addAuditLog(`Statut commande ${order.id} mis à jour`, `Nouveau statut : ${newStatus}`);
+                            showToast(`Commande ${order.id} mise à jour.`, 'success');
+                          }}
+                          className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border ${statusConfig.badgeClass} focus:outline-none cursor-pointer`}
                         >
-                          <ArrowUpRight className="w-4 h-4" />
-                        </button>
+                          <option value="transmise">Reçue</option>
+                          <option value="confirmee">Confirmée</option>
+                          <option value="en_preparation">En préparation</option>
+                          <option value="en_livraison">En livraison</option>
+                          <option value="livree">Livrée</option>
+                        </select>
+                        <a
+                          href={`https://wa.me/${String(order.customerPhone || '').replace(/\D/g, '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                          title="Contacter sur WhatsApp"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                        </a>
                       </div>
                     </div>
                   );
