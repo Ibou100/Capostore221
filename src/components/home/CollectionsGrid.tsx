@@ -7,22 +7,27 @@ interface DepartmentCard {
   id: string;
   title: string;
   subtitle: string;
-  priceTag: string;
+  badgeText: string;
   count: string;
   category: CategoryId;
   image: string;
 }
 
 export const CollectionsGrid: React.FC = () => {
-  const { goToCatalog } = useStore();
+  const { goToCatalog, products } = useStore();
+
+  const published = products.filter((p) => p.published);
+  const vetementsCount = published.filter((p) => p.category === 'vetements').length;
+  const lunettesCount = published.filter((p) => p.category === 'lunettes').length;
+  const accessoiresCount = published.filter((p) => p.category === 'accessoires').length;
 
   const departments: DepartmentCard[] = [
     {
       id: 'vetements',
       title: 'Vêtements & Tailleur',
       subtitle: 'Pantalons Prince de Galles, cargos écru, chemises légères & polos',
-      priceTag: '5 000 FCFA',
-      count: '20 pièces',
+      badgeText: 'Collection Prêt-à-porter',
+      count: `${vetementsCount} article${vetementsCount > 1 ? 's' : ''}`,
       category: 'vetements',
       image: '/products/pantalon-cargo-ecru.jpg',
     },
@@ -30,8 +35,8 @@ export const CollectionsGrid: React.FC = () => {
       id: 'lunettes',
       title: 'Lunettes & Montures',
       subtitle: 'Montures géométriques en acétate italien biseauté & armatures ciselées',
-      priceTag: '3 000 FCFA',
-      count: 'Édition exclusive',
+      badgeText: 'Édition exclusive',
+      count: `${lunettesCount} article${lunettesCount > 1 ? 's' : ''}`,
       category: 'lunettes',
       image: '/products/monture-lunettes-acetate-bordeaux.jpg',
     },
@@ -39,8 +44,8 @@ export const CollectionsGrid: React.FC = () => {
       id: 'accessoires',
       title: 'Maroquinerie & Pochettes',
       subtitle: 'Pochettes cuir matelassé XQR & sacoches bandoulière nylon sable',
-      priceTag: '3 000 FCFA',
-      count: '2 pièces',
+      badgeText: 'Maroquinerie',
+      count: `${accessoiresCount} article${accessoiresCount > 1 ? 's' : ''}`,
       category: 'accessoires',
       image: '/products/pochette-cuir-dragonne-xqr.png',
     },
@@ -83,9 +88,9 @@ export const CollectionsGrid: React.FC = () => {
                   decoding="async"
                 />
                 
-                {/* Price tag */}
+                {/* Department badge */}
                 <span className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 text-[10px] sm:text-[11px] font-bold tracking-wider px-2 sm:px-2.5 py-0.5 sm:py-1 bg-[#141210] text-white rounded-sm">
-                  {dept.priceTag}
+                  {dept.badgeText}
                 </span>
 
                 {/* Arrow indicator */}

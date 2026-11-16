@@ -19,7 +19,7 @@ export const Hero: React.FC = () => {
   const { openQuickOrder } = useOrders();
   const publishedCount = products.filter((p) => p.published).length;
 
-  const featuredPieces: FeaturedHeroItem[] = [
+  const baseFeaturedPieces: FeaturedHeroItem[] = [
     {
       id: 'capo-client-001',
       name: 'Pantalon Tailleur Prince de Galles',
@@ -57,6 +57,19 @@ export const Hero: React.FC = () => {
       badge: 'Accessoire',
     },
   ];
+
+  // Always reflect live prices/names from the store catalog
+  const featuredPieces: FeaturedHeroItem[] = baseFeaturedPieces.map((item) => {
+    const live = products.find((p) => p.id === item.id);
+    if (!live) return item;
+    return {
+      ...item,
+      name: live.name,
+      price: live.price,
+      image: live.images?.[0] || item.image,
+      category: live.subCategory || item.category,
+    };
+  });
 
   const [activePieceIndex, setActivePieceIndex] = useState(0);
   const currentPiece = featuredPieces[activePieceIndex];
@@ -119,16 +132,29 @@ export const Hero: React.FC = () => {
               </p>
             </div>
 
-            {/* Price Pill Highlights */}
+            {/* Category Quick Highlights (without fixed prices) */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-0.5">
-              <div className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white border border-[#E7E2D9] rounded-sm text-[11px] sm:text-xs text-zinc-800">
-                <span className="font-bold text-[#141210]">5 000 FCFA</span>
-                <span className="text-zinc-500 ml-1">Pantalons & Chemises</span>
-              </div>
-              <div className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white border border-[#E7E2D9] rounded-sm text-[11px] sm:text-xs text-zinc-800">
-                <span className="font-bold text-[#141210]">3 000 FCFA</span>
-                <span className="text-zinc-500 ml-1">Lunettes & Sacs</span>
-              </div>
+              <button
+                type="button"
+                onClick={() => goToCatalog({ category: 'vetements' })}
+                className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-zinc-900 rounded-sm text-[11px] sm:text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
+              >
+                Pantalons & Chemises
+              </button>
+              <button
+                type="button"
+                onClick={() => goToCatalog({ category: 'lunettes' })}
+                className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-zinc-900 rounded-sm text-[11px] sm:text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
+              >
+                Lunettes & Montures
+              </button>
+              <button
+                type="button"
+                onClick={() => goToCatalog({ category: 'accessoires' })}
+                className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-white hover:bg-zinc-50 border border-[#E7E2D9] hover:border-zinc-900 rounded-sm text-[11px] sm:text-xs font-semibold text-zinc-800 transition-colors cursor-pointer"
+              >
+                Maroquinerie & Sacs
+              </button>
             </div>
 
             {/* Primary Action Buttons */}

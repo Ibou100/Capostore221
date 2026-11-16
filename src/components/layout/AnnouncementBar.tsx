@@ -27,9 +27,7 @@ export const AnnouncementBar: React.FC = () => {
             {publishedCount} articles dispos
           </span>
           <p className="truncate text-zinc-300 text-[10px] sm:text-xs">
-            <span className="text-white font-medium">Vêtements 5 000 F</span>
-            <span className="mx-1 text-zinc-600">•</span>
-            <span className="text-white font-medium">Lunettes & Sacs 3 000 F</span>
+            <span className="text-white font-medium">Prêt-à-porter, Lunettes & Maroquinerie</span>
             <span className="hidden md:inline text-zinc-400"> — Tu commandes, on te livre</span>
           </p>
         </div>
