@@ -142,7 +142,7 @@ export const Hero: React.FC = () => {
                 <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div className="min-w-0">
-                <p className="font-display font-bold text-xs sm:text-sm truncate">Boutique Mode</p>
+                <p className="font-display font-bold text-xs sm:text-sm truncate">Boutique Habillement</p>
                 <p className={`text-[10px] sm:text-xs truncate ${activeStore === 'mode' ? 'text-zinc-300' : 'text-zinc-500'}`}>
                   Vêtements, Chaussures, Parfums ({modeCount})
                 </p>
@@ -188,7 +188,7 @@ export const Hero: React.FC = () => {
               <span className="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#B85D19]">
                 {activeStore === 'electronique'
                   ? 'CAPOSTORE221 • Boutique Électronique'
-                  : 'CAPOSTORE221 • Boutique Mode'}
+                  : 'CAPOSTORE221 • Boutique Habillement'}
               </span>
               <h1 className="font-display font-black text-2xl sm:text-4xl lg:text-5xl text-[#141210] tracking-tight leading-[1.1]">
                 {activeStore === 'electronique'

@@ -750,7 +750,7 @@ export const AdminView: React.FC = () => {
           <div className="flex flex-wrap items-center gap-1.5 bg-white/5 p-1 rounded-xl border border-white/10">
             {[
               { id: 'all', label: 'Toutes les boutiques' },
-              { id: 'mode', label: 'Boutique Mode' },
+              { id: 'mode', label: 'Boutique Habillement' },
               { id: 'electronique', label: 'Boutique Électronique' },
             ].map((st) => (
               <button
@@ -1349,7 +1349,7 @@ export const AdminView: React.FC = () => {
                       >
                         <ShoppingBag className={`w-4 h-4 ${newStoreType === 'mode' ? 'text-[#B85D19]' : 'text-zinc-500'}`} />
                         <div>
-                          <p className="font-bold text-xs text-zinc-900">Boutique Mode</p>
+                          <p className="font-bold text-xs text-zinc-900">Boutique Habillement</p>
                           <p className="text-[10px] text-zinc-500">Vêtements, Chaussures, Parfums</p>
                         </div>
                       </button>

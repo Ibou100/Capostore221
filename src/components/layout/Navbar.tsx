@@ -233,7 +233,7 @@ export const Navbar: React.FC = () => {
                       activeStore === 'mode' ? 'bg-[#141210] text-white shadow-xs' : 'text-zinc-600'
                     }`}
                   >
-                    Boutique Mode
+                    Boutique Habillement
                   </button>
                   <button
                     type="button"

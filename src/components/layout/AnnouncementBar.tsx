@@ -30,7 +30,7 @@ export const AnnouncementBar: React.FC = () => {
             <span className="text-white font-medium">
               {activeStore === 'electronique'
                 ? 'Smartphones, Ordinateurs & Électronique'
-                : 'Prêt-à-porter, Chaussures, Parfums & Accessoires'}
+                : 'Habillement, Chaussures, Parfums & Accessoires'}
             </span>
             <span className="hidden md:inline text-zinc-400"> — Tu commandes, on te livre</span>
           </p>
