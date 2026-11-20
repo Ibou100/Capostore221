@@ -26,6 +26,7 @@ interface CreateOrderInput {
   total: number;
   shippingFee?: number;
   notes?: string;
+  storeType?: 'mode' | 'electronique' | 'mixte';
 }
 
 interface OrderContextType {
@@ -328,6 +329,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       shippingFee: input.shippingFee ?? 0,
       status: 'transmise',
       notes: input.notes,
+      storeType: input.storeType || 'mode',
     };
 
     // Immediately record in this client's confidential device order history

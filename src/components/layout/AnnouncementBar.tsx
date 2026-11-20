@@ -10,8 +10,8 @@ import {
 
 export const AnnouncementBar: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
-  const { products } = useStore();
-  const publishedCount = products.filter((p) => p.published).length;
+  const { storeProducts, activeStore } = useStore();
+  const publishedCount = storeProducts.filter((p) => p.published).length;
 
   if (!isVisible) return null;
 
@@ -24,10 +24,14 @@ export const AnnouncementBar: React.FC = () => {
         {/* Core Offer Message */}
         <div className="flex-1 text-center sm:text-left flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 overflow-hidden truncate">
           <span className="font-semibold text-white tracking-wider uppercase text-[9px] sm:text-[11px] bg-[#221F1C] px-1.5 sm:px-2 py-0.5 rounded border border-[#38332E] shrink-0">
-            {publishedCount} articles dispos
+            {publishedCount} article{publishedCount > 1 ? 's' : ''} dispo{publishedCount > 1 ? 's' : ''}
           </span>
           <p className="truncate text-zinc-300 text-[10px] sm:text-xs">
-            <span className="text-white font-medium">Prêt-à-porter, Lunettes & Maroquinerie</span>
+            <span className="text-white font-medium">
+              {activeStore === 'electronique'
+                ? 'Smartphones, Ordinateurs & Électronique'
+                : 'Prêt-à-porter, Chaussures, Parfums & Accessoires'}
+            </span>
             <span className="hidden md:inline text-zinc-400"> — Tu commandes, on te livre</span>
           </p>
         </div>

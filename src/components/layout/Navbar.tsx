@@ -18,7 +18,7 @@ import type { CategoryId } from '../../types';
 export const Navbar: React.FC = () => {
   const { totalCount, openCart } = useCart();
   const { wishlistCount } = useWishlist();
-  const { goToHome, goToCatalog, goToWishlist, openSearch, currentView } = useStore();
+  const { goToHome, goToCatalog, goToWishlist, openSearch, currentView, activeStore, switchStore } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -32,15 +32,25 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks: { label: string; category?: CategoryId; filterType?: 'all' }[] = [
-    { label: 'Accueil' },
-    { label: 'Catalogue', filterType: 'all' },
-    { label: 'Vêtements', category: 'vetements' },
-    { label: 'Chaussures', category: 'chaussures' },
-    { label: 'Parfums', category: 'parfums' },
-    { label: 'Lunettes', category: 'lunettes' },
-    { label: 'Accessoires', category: 'accessoires' },
-  ];
+  const navLinks: { label: string; category?: CategoryId; filterType?: 'all' }[] =
+    activeStore === 'electronique'
+      ? [
+          { label: 'Accueil' },
+          { label: 'Catalogue', filterType: 'all' },
+          { label: 'Smartphones', category: 'smartphones' },
+          { label: 'Ordinateurs', category: 'ordinateurs' },
+          { label: 'Audio', category: 'audio_tech' },
+          { label: 'Accessoires Tech', category: 'accessoires_tech' },
+        ]
+      : [
+          { label: 'Accueil' },
+          { label: 'Catalogue', filterType: 'all' },
+          { label: 'Vêtements', category: 'vetements' },
+          { label: 'Chaussures', category: 'chaussures' },
+          { label: 'Parfums', category: 'parfums' },
+          { label: 'Lunettes', category: 'lunettes' },
+          { label: 'Accessoires', category: 'accessoires' },
+        ];
 
   const handleNavClick = (link: typeof navLinks[0]) => {
     setIsMobileMenuOpen(false);
@@ -209,6 +219,36 @@ export const Navbar: React.FC = () => {
                   <X className="w-5 h-5" />
                 </button>
               </div>
+
+              {/* Boutique Switcher in Mobile Drawer */}
+              {!isAdminView && (
+                <div className="mt-5 grid grid-cols-2 gap-2 p-1 bg-zinc-100 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      switchStore('mode');
+                    }}
+                    className={`py-2 px-2 rounded-lg text-xs font-bold transition-all ${
+                      activeStore === 'mode' ? 'bg-[#141210] text-white shadow-xs' : 'text-zinc-600'
+                    }`}
+                  >
+                    Boutique Mode
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      switchStore('electronique');
+                    }}
+                    className={`py-2 px-2 rounded-lg text-xs font-bold transition-all ${
+                      activeStore === 'electronique' ? 'bg-[#141210] text-white shadow-xs' : 'text-zinc-600'
+                    }`}
+                  >
+                    Électronique
+                  </button>
+                </div>
+              )}
 
               {/* Navigation list (hidden in Admin view) */}
               {!isAdminView && (

@@ -14,16 +14,22 @@ interface DepartmentCard {
 }
 
 export const CollectionsGrid: React.FC = () => {
-  const { goToCatalog, products } = useStore();
+  const { goToCatalog, storeProducts, activeStore } = useStore();
 
-  const published = products.filter((p) => p.published);
+  const published = storeProducts.filter((p) => p.published);
   const vetements = published.filter((p) => p.category === 'vetements');
   const lunettes = published.filter((p) => p.category === 'lunettes');
   const accessoires = published.filter((p) => p.category === 'accessoires');
   const chaussures = published.filter((p) => p.category === 'chaussures');
   const parfums = published.filter((p) => p.category === 'parfums');
 
-  const allDepartments: DepartmentCard[] = [
+  const smartphones = published.filter((p) => p.category === 'smartphones');
+  const ordinateurs = published.filter((p) => p.category === 'ordinateurs');
+  const tablettesMontres = published.filter((p) => p.category === 'tablettes_montres');
+  const audioTech = published.filter((p) => p.category === 'audio_tech');
+  const accessoiresTech = published.filter((p) => p.category === 'accessoires_tech');
+
+  const modeDepartments: DepartmentCard[] = [
     {
       id: 'vetements',
       title: 'Vêtements & Tailleur',
@@ -71,14 +77,59 @@ export const CollectionsGrid: React.FC = () => {
     },
   ];
 
+  const techDepartments: DepartmentCard[] = [
+    {
+      id: 'smartphones',
+      title: 'Smartphones & iPhones',
+      subtitle: 'iPhones et smartphones',
+      badgeText: 'Smartphones',
+      count: `${smartphones.length} article${smartphones.length > 1 ? 's' : ''}`,
+      category: 'smartphones',
+      image: smartphones[0]?.images?.[0] || '',
+    },
+    {
+      id: 'ordinateurs',
+      title: 'Ordinateurs & PC',
+      subtitle: 'MacBook, PC portables et ordinateurs',
+      badgeText: 'Ordinateurs',
+      count: `${ordinateurs.length} article${ordinateurs.length > 1 ? 's' : ''}`,
+      category: 'ordinateurs',
+      image: ordinateurs[0]?.images?.[0] || '',
+    },
+    {
+      id: 'tablettes_montres',
+      title: 'Tablettes & Montres',
+      subtitle: 'iPad, tablettes et montres connectées',
+      badgeText: 'Tablettes & Montres',
+      count: `${tablettesMontres.length} article${tablettesMontres.length > 1 ? 's' : ''}`,
+      category: 'tablettes_montres',
+      image: tablettesMontres[0]?.images?.[0] || '',
+    },
+    {
+      id: 'audio_tech',
+      title: 'Audio & Écouteurs',
+      subtitle: 'AirPods, casques et enceintes',
+      badgeText: 'Audio',
+      count: `${audioTech.length} article${audioTech.length > 1 ? 's' : ''}`,
+      category: 'audio_tech',
+      image: audioTech[0]?.images?.[0] || '',
+    },
+    {
+      id: 'accessoires_tech',
+      title: 'Accessoires Tech',
+      subtitle: 'Chargeurs, câbles, coques et équipements',
+      badgeText: 'Accessoires Tech',
+      count: `${accessoiresTech.length} article${accessoiresTech.length > 1 ? 's' : ''}`,
+      category: 'accessoires_tech',
+      image: accessoiresTech[0]?.images?.[0] || '',
+    },
+  ];
+
+  const allDepartments = activeStore === 'electronique' ? techDepartments : modeDepartments;
+
   // Only show categories that actually have at least 1 published product
   const departments = allDepartments.filter((dept) => {
-    if (dept.category === 'vetements') return vetements.length > 0;
-    if (dept.category === 'lunettes') return lunettes.length > 0;
-    if (dept.category === 'accessoires') return accessoires.length > 0;
-    if (dept.category === 'chaussures') return chaussures.length > 0;
-    if (dept.category === 'parfums') return parfums.length > 0;
-    return false;
+    return published.some((p) => p.category === dept.category);
   });
 
   if (departments.length === 0) return null;

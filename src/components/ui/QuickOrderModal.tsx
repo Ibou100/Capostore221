@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, ArrowRight, MessageCircle, ExternalLink, Truck, Store } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
+import { getProductStoreType } from '../../data/products';
 import type { PaymentMethod } from '../../types';
 import { 
   formatFCFA, 
@@ -99,6 +100,7 @@ export const QuickOrderModal: React.FC = () => {
       total: product.price,
       shippingFee: 0,
       notes: deliveryMode,
+      storeType: getProductStoreType(product),
     });
 
     // 2. Generate WhatsApp link with tracking ID, phone, payment mode & direct photo link

@@ -1,4 +1,15 @@
-export type CategoryId = 'tous' | 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires';
+export type StoreType = 'mode' | 'electronique';
+
+export type ModeCategoryId = 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires';
+export type ElectronicsCategoryId =
+  | 'smartphones'
+  | 'ordinateurs'
+  | 'tablettes_montres'
+  | 'audio_tech'
+  | 'accessoires_tech';
+
+export type ProductCategory = ModeCategoryId | ElectronicsCategoryId;
+export type CategoryId = 'tous' | ProductCategory;
 
 export type ProductGender = 'homme' | 'unisexe';
 
@@ -29,11 +40,13 @@ export interface Order {
   shippingFee: number;
   status: OrderStatus;
   notes?: string;
+  storeType?: StoreType | 'mixte';
 }
 
 export interface ProductCustomOverride {
   name?: string;
-  category?: 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires';
+  storeType?: StoreType;
+  category?: ProductCategory;
   subCategory?: string;
   price?: number;
   compareAtPrice?: number | null;
@@ -59,7 +72,8 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
-  category: 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires';
+  storeType?: StoreType;
+  category: ProductCategory;
   subCategory: string;
   gender: ProductGender;
   price: number; // in FCFA (XOF)

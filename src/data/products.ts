@@ -1,4 +1,20 @@
-import type { Product } from '../types';
+import type { Product, StoreType } from '../types';
+
+export const ELECTRONICS_CATEGORY_IDS = [
+  'smartphones',
+  'ordinateurs',
+  'tablettes_montres',
+  'audio_tech',
+  'accessoires_tech',
+] as const;
+
+export function getProductStoreType(product: Pick<Product, 'storeType' | 'category'>): StoreType {
+  if (product.storeType === 'electronique') return 'electronique';
+  if ((ELECTRONICS_CATEGORY_IDS as readonly string[]).includes(product.category)) {
+    return 'electronique';
+  }
+  return 'mode';
+}
 
 export const INITIAL_PRODUCTS: Product[] = [
   // --- NOUVELLE SÉLECTION CLIENT CAPOSTORE221 (PHOTOS RÉELLES) ---
@@ -900,6 +916,36 @@ export const CATEGORIES_META = [
     tagline: 'Eaux de parfum, muscs et senteurs',
     image: '/products/pochette-cuir-dragonne-xqr.png',
     description: 'Parfums et senteurs sélectionnés par CAPOSTORE221.'
+  },
+  {
+    id: 'smartphones',
+    name: 'Smartphones & iPhones',
+    tagline: 'iPhones, téléphones et smartphones',
+    description: 'Smartphones et iPhones disponibles en boutique électronique.'
+  },
+  {
+    id: 'ordinateurs',
+    name: 'Ordinateurs & PC',
+    tagline: 'MacBook, PC portables et ordinateurs',
+    description: 'Ordinateurs portables et de bureau pour le travail et les études.'
+  },
+  {
+    id: 'tablettes_montres',
+    name: 'Tablettes & Montres Connectées',
+    tagline: 'iPad, tablettes et Apple Watch / Smartwatches',
+    description: 'Tablettes et montres connectées disponibles.'
+  },
+  {
+    id: 'audio_tech',
+    name: 'Audio & Écouteurs',
+    tagline: 'AirPods, casques et enceintes',
+    description: 'Écouteurs sans fil, casques audio et enceintes.'
+  },
+  {
+    id: 'accessoires_tech',
+    name: 'Accessoires & Outils Électroniques',
+    tagline: 'Chargeurs, câbles, coques et équipements tech',
+    description: 'Accessoires et outils électroniques disponibles.'
   }
 ] as const;
 

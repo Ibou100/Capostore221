@@ -10,7 +10,8 @@
  */
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Order, OrderStatus, Product } from '../types';
+import type { Order, OrderStatus, Product, StoreType } from '../types';
+import { ELECTRONICS_CATEGORY_IDS } from '../data/products';
 
 const SUPABASE_CONFIG_KEY = 'capostore_supabase_config_v1';
 
@@ -183,28 +184,36 @@ export async function fetchSupabaseProducts(): Promise<Product[] | null> {
 
     if (!Array.isArray(data)) return [];
 
-    return data.map((row: any): Product => ({
-      id: String(row.id),
-      name: String(row.name || ''),
-      slug: String(row.slug || row.id),
-      category: row.category || 'vetements',
-      subCategory: String(row.sub_category || row.subCategory || 'Nouvelle Collection'),
-      gender: row.gender || 'homme',
-      price: Number(row.price) || 0,
-      compareAtPrice: row.compare_at_price ? Number(row.compare_at_price) : undefined,
-      images: Array.isArray(row.images) ? row.images : (row.image ? [row.image] : []),
-      description: String(row.description || ''),
-      details: Array.isArray(row.details) ? row.details : [],
-      materials: row.materials ? String(row.materials) : undefined,
-      variants: Array.isArray(row.variants) ? row.variants : [],
-      availableSizes: Array.isArray(row.available_sizes) ? row.available_sizes : undefined,
-      stock: typeof row.stock === 'number' ? row.stock : 10,
-      isNew: Boolean(row.is_new),
-      isFeatured: Boolean(row.is_featured),
-      isPopular: Boolean(row.is_popular),
-      published: row.published !== false,
-      createdAt: row.created_at || new Date().toISOString(),
-    }));
+    return data.map((row: any): Product => {
+      const cat = row.category || 'vetements';
+      const inferredStore: StoreType =
+        row.store_type === 'electronique' || (ELECTRONICS_CATEGORY_IDS as readonly string[]).includes(cat)
+          ? 'electronique'
+          : 'mode';
+      return {
+        id: String(row.id),
+        name: String(row.name || ''),
+        slug: String(row.slug || row.id),
+        storeType: inferredStore,
+        category: cat,
+        subCategory: String(row.sub_category || row.subCategory || 'Nouvelle Collection'),
+        gender: row.gender || 'homme',
+        price: Number(row.price) || 0,
+        compareAtPrice: row.compare_at_price ? Number(row.compare_at_price) : undefined,
+        images: Array.isArray(row.images) ? row.images : (row.image ? [row.image] : []),
+        description: String(row.description || ''),
+        details: Array.isArray(row.details) ? row.details : [],
+        materials: row.materials ? String(row.materials) : undefined,
+        variants: Array.isArray(row.variants) ? row.variants : [],
+        availableSizes: Array.isArray(row.available_sizes) ? row.available_sizes : undefined,
+        stock: typeof row.stock === 'number' ? row.stock : 10,
+        isNew: Boolean(row.is_new),
+        isFeatured: Boolean(row.is_featured),
+        isPopular: Boolean(row.is_popular),
+        published: row.published !== false,
+        createdAt: row.created_at || new Date().toISOString(),
+      };
+    });
   } catch (err) {
     console.warn('Failed to fetch products from Supabase:', err);
     return null;
@@ -215,8 +224,13 @@ export async function upsertSupabaseProduct(product: Product): Promise<boolean> 
   const client = getSupabaseClient();
   if (!client) return false;
 
+  const storeType: StoreType =
+    product.storeType === 'electronique' || (ELECTRONICS_CATEGORY_IDS as readonly string[]).includes(product.category)
+      ? 'electronique'
+      : 'mode';
+
   try {
-    const row = {
+    const baseRow = {
       id: product.id,
       name: product.name,
       slug: product.slug,
@@ -241,9 +255,16 @@ export async function upsertSupabaseProduct(product: Product): Promise<boolean> 
 
     const { error } = await client
       .from('products')
-      .upsert(row, { onConflict: 'id' });
+      .upsert({ ...baseRow, store_type: storeType }, { onConflict: 'id' });
 
     if (error) {
+      // Fallback if store_type column has not been migrated in Supabase yet
+      if (error.message?.includes('store_type') || error.code === 'PGRST204') {
+        const { error: retryErr } = await client
+          .from('products')
+          .upsert(baseRow, { onConflict: 'id' });
+        if (!retryErr) return true;
+      }
       console.error('Supabase product upsert error:', error);
       return false;
     }
@@ -345,6 +366,7 @@ export async function fetchSupabaseOrders(): Promise<Order[] | null> {
       shippingFee: Number(row.shipping_fee) || 0,
       status: (row.status as OrderStatus) || 'transmise',
       notes: row.notes ? String(row.notes) : undefined,
+      storeType: row.store_type || undefined,
     }));
   } catch (err) {
     console.warn('Failed to fetch orders from Supabase:', err);
@@ -387,6 +409,7 @@ export async function fetchSupabaseOrdersByIds(ids: string[]): Promise<Order[]> 
       shippingFee: Number(row.shipping_fee) || 0,
       status: (row.status as OrderStatus) || 'transmise',
       notes: row.notes ? String(row.notes) : undefined,
+      storeType: row.store_type || undefined,
     }));
   } catch (err) {
     console.warn('Failed to fetch orders by IDs from Supabase:', err);
@@ -440,7 +463,7 @@ export async function insertSupabaseOrder(order: Order): Promise<boolean> {
   if (!client) return false;
 
   try {
-    const row = {
+    const baseRow = {
       id: order.id,
       created_at: order.createdAt,
       customer_name: order.customerName,
@@ -457,9 +480,15 @@ export async function insertSupabaseOrder(order: Order): Promise<boolean> {
 
     const { error } = await client
       .from('orders')
-      .upsert(row, { onConflict: 'id' });
+      .upsert({ ...baseRow, store_type: order.storeType || 'mode' }, { onConflict: 'id' });
 
     if (error) {
+      if (error.message?.includes('store_type') || error.code === 'PGRST204') {
+        const { error: retryErr } = await client
+          .from('orders')
+          .upsert(baseRow, { onConflict: 'id' });
+        if (!retryErr) return true;
+      }
       console.error('Supabase order insert error:', error);
       return false;
     }

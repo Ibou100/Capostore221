@@ -4,7 +4,20 @@ import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
 import { ProductCard } from '../catalog/ProductCard';
 
-type TabType = 'tous' | 'vendus' | 'pantalons' | 'hauts' | 'chaussures' | 'parfums' | 'lunettes' | 'accessoires';
+type TabType =
+  | 'tous'
+  | 'vendus'
+  | 'pantalons'
+  | 'hauts'
+  | 'chaussures'
+  | 'parfums'
+  | 'lunettes'
+  | 'accessoires'
+  | 'smartphones'
+  | 'ordinateurs'
+  | 'tablettes_montres'
+  | 'audio_tech'
+  | 'accessoires_tech';
 
 function isPantProduct(name: string, subCategory: string): boolean {
   if (subCategory === 'Pantalons') return true;
@@ -12,14 +25,19 @@ function isPantProduct(name: string, subCategory: string): boolean {
 }
 
 export const NewArrivals: React.FC = () => {
-  const { products, goToCatalog } = useStore();
+  const { storeProducts, activeStore, goToCatalog } = useStore();
   const { soldCounts } = useOrders();
   const [activeTab, setActiveTab] = useState<TabType>('tous');
 
   const publishedProducts = useMemo(
-    () => products.filter((p) => p.published),
-    [products]
+    () => storeProducts.filter((p) => p.published),
+    [storeProducts]
   );
+
+  // Reset to 'tous' when switching between Mode & Electronique
+  React.useEffect(() => {
+    setActiveTab('tous');
+  }, [activeStore]);
 
   const soldProducts = useMemo(
     () =>
@@ -61,26 +79,49 @@ export const NewArrivals: React.FC = () => {
         return publishedProducts.filter((p) => p.category === 'chaussures');
       case 'parfums':
         return publishedProducts.filter((p) => p.category === 'parfums');
+      case 'smartphones':
+        return publishedProducts.filter((p) => p.category === 'smartphones');
+      case 'ordinateurs':
+        return publishedProducts.filter((p) => p.category === 'ordinateurs');
+      case 'tablettes_montres':
+        return publishedProducts.filter((p) => p.category === 'tablettes_montres');
+      case 'audio_tech':
+        return publishedProducts.filter((p) => p.category === 'audio_tech');
+      case 'accessoires_tech':
+        return publishedProducts.filter((p) => p.category === 'accessoires_tech');
       case 'tous':
       default:
         return publishedProducts;
     }
   }, [publishedProducts, soldProducts, activeTab]);
 
-  const tabs: { id: TabType; label: string; count: number }[] = [
-    { id: 'tous', label: 'Toutes les pièces', count: publishedProducts.length },
-    ...(soldProducts.length > 0
-      ? [{ id: 'vendus' as TabType, label: 'Articles vendus', count: soldProducts.length }]
-      : []),
-    { id: 'pantalons', label: 'Pantalons & Jeans', count: publishedProducts.filter(p => p.category === 'vetements' && isPantProduct(p.name, p.subCategory)).length },
-    { id: 'hauts', label: 'Chemises, Hauts & Vestes', count: publishedProducts.filter(p => p.category === 'vetements' && !isPantProduct(p.name, p.subCategory)).length },
-    { id: 'chaussures', label: 'Chaussures', count: shoesCount },
-    { id: 'parfums', label: 'Parfums', count: parfumsCount },
-    ...(lunettesCount > 0
-      ? [{ id: 'lunettes' as TabType, label: 'Lunettes', count: lunettesCount }]
-      : []),
-    { id: 'accessoires', label: 'Sacs & Accessoires', count: publishedProducts.filter(p => p.category === 'accessoires').length },
-  ];
+  const tabs: { id: TabType; label: string; count: number }[] =
+    activeStore === 'electronique'
+      ? [
+          { id: 'tous', label: 'Tout', count: publishedProducts.length },
+          ...(soldProducts.length > 0
+            ? [{ id: 'vendus' as TabType, label: 'Articles vendus', count: soldProducts.length }]
+            : []),
+          { id: 'smartphones', label: 'Smartphones & iPhones', count: publishedProducts.filter((p) => p.category === 'smartphones').length },
+          { id: 'ordinateurs', label: 'Ordinateurs & PC', count: publishedProducts.filter((p) => p.category === 'ordinateurs').length },
+          { id: 'tablettes_montres', label: 'Tablettes & Montres', count: publishedProducts.filter((p) => p.category === 'tablettes_montres').length },
+          { id: 'audio_tech', label: 'Audio', count: publishedProducts.filter((p) => p.category === 'audio_tech').length },
+          { id: 'accessoires_tech', label: 'Accessoires Tech', count: publishedProducts.filter((p) => p.category === 'accessoires_tech').length },
+        ]
+      : [
+          { id: 'tous', label: 'Toutes les pièces', count: publishedProducts.length },
+          ...(soldProducts.length > 0
+            ? [{ id: 'vendus' as TabType, label: 'Articles vendus', count: soldProducts.length }]
+            : []),
+          { id: 'pantalons', label: 'Pantalons & Jeans', count: publishedProducts.filter(p => p.category === 'vetements' && isPantProduct(p.name, p.subCategory)).length },
+          { id: 'hauts', label: 'Chemises, Hauts & Vestes', count: publishedProducts.filter(p => p.category === 'vetements' && !isPantProduct(p.name, p.subCategory)).length },
+          { id: 'chaussures', label: 'Chaussures', count: shoesCount },
+          { id: 'parfums', label: 'Parfums', count: parfumsCount },
+          ...(lunettesCount > 0
+            ? [{ id: 'lunettes' as TabType, label: 'Lunettes', count: lunettesCount }]
+            : []),
+          { id: 'accessoires', label: 'Sacs & Accessoires', count: publishedProducts.filter(p => p.category === 'accessoires').length },
+        ];
 
   return (
     <section className="py-8 sm:py-14 lg:py-20 bg-white border-b border-[#E7E2D9]">

@@ -4,13 +4,22 @@ import { useStore } from '../../context/StoreContext';
 import type { CategoryId, ProductGender } from '../../types';
 import { formatFCFA } from '../../utils/format';
 
-const CATEGORIES: { id: CategoryId; label: string }[] = [
+const MODE_CATEGORIES: { id: CategoryId; label: string }[] = [
   { id: 'tous', label: 'Toutes les catégories' },
   { id: 'vetements', label: 'Vêtements' },
   { id: 'chaussures', label: 'Chaussures' },
   { id: 'parfums', label: 'Parfums' },
   { id: 'lunettes', label: 'Lunettes' },
   { id: 'accessoires', label: 'Sacs & Accessoires' },
+];
+
+const TECH_CATEGORIES: { id: CategoryId; label: string }[] = [
+  { id: 'tous', label: 'Toutes les catégories' },
+  { id: 'smartphones', label: 'Smartphones & iPhones' },
+  { id: 'ordinateurs', label: 'Ordinateurs & PC' },
+  { id: 'tablettes_montres', label: 'Tablettes & Montres' },
+  { id: 'audio_tech', label: 'Audio & Écouteurs' },
+  { id: 'accessoires_tech', label: 'Accessoires Tech' },
 ];
 
 const GENDERS: { id: 'all' | ProductGender; label: string }[] = [
@@ -31,7 +40,8 @@ const COLOR_SWATCHES = [
 ];
 
 export const ProductFilters: React.FC = () => {
-  const { filters, setFilters, resetFilters, filteredProducts } = useStore();
+  const { filters, setFilters, resetFilters, filteredProducts, activeStore } = useStore();
+  const CATEGORIES = activeStore === 'electronique' ? TECH_CATEGORIES : MODE_CATEGORIES;
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   const activeFiltersCount =

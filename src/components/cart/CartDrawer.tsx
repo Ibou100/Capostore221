@@ -6,6 +6,7 @@ import {
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
+import { getProductStoreType } from '../../data/products';
 import type { PaymentMethod } from '../../types';
 import { 
   formatFCFA, 
@@ -95,6 +96,11 @@ export const CartDrawer: React.FC = () => {
       total,
       shippingFee,
       notes: deliveryMode,
+      storeType: (() => {
+        const types = new Set(items.map((i) => getProductStoreType(i.product)));
+        if (types.size > 1) return 'mixte' as const;
+        return types.has('electronique') ? ('electronique' as const) : ('mode' as const);
+      })(),
     });
 
     // 2. Générer le lien WhatsApp complet incluant N° de suivi, téléphone, paiement et photos

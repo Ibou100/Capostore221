@@ -6,7 +6,7 @@ import {
   LogOut, Plus, Upload, RefreshCw, 
   Check, X, Sparkles, 
   CheckCircle2,
-  TrendingUp, Users, DollarSign, ShoppingBag, CreditCard, ArrowUpRight, BarChart3
+  TrendingUp, Users, DollarSign, ShoppingBag, CreditCard, ArrowUpRight, BarChart3, Smartphone
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useOrders } from '../../context/OrderContext';
@@ -25,10 +25,12 @@ import {
   type SecurityAuditLog 
 } from '../../utils/security';
 import { compressImageFile } from '../../utils/cloudSync';
-import type { OrderStatus, Product, CategoryId } from '../../types';
+import type { OrderStatus, Product, CategoryId, ProductCategory, StoreType } from '../../types';
+import { getProductStoreType } from '../../data/products';
 
 const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
 const SHOE_SIZES = ['39', '40', '41', '42', '43', '44', '45'];
+const TECH_VARIANTS = ['64 Go', '128 Go', '256 Go', '512 Go', '1 To', 'Neuf scellé', 'Venant'];
 
 export const AdminView: React.FC = () => {
   const { 
@@ -72,10 +74,21 @@ export const AdminView: React.FC = () => {
     return 'dashboard';
   });
 
+  const [adminStoreFilter, setAdminStoreFilter] = useState<'all' | StoreType>('all');
   const [dashboardPeriod, setDashboardPeriod] = useState<'all' | 'today' | '7d' | '30d'>('all');
 
-  const dashboardOrders = useMemo(() => {
+  const storeScopedOrders = useMemo(() => {
     const list = orders || [];
+    if (adminStoreFilter === 'all') return list;
+    return list.filter((o) => {
+      if (o?.storeType === adminStoreFilter || o?.storeType === 'mixte') return true;
+      if (!o?.storeType && adminStoreFilter === 'mode') return true;
+      return false;
+    });
+  }, [orders, adminStoreFilter]);
+
+  const dashboardOrders = useMemo(() => {
+    const list = storeScopedOrders;
     if (dashboardPeriod === 'all') return list;
     const now = Date.now();
     const msMap = {
@@ -85,7 +98,7 @@ export const AdminView: React.FC = () => {
     };
     const cutoff = now - msMap[dashboardPeriod];
     return list.filter((o) => new Date(o.createdAt).getTime() >= cutoff);
-  }, [orders, dashboardPeriod]);
+  }, [storeScopedOrders, dashboardPeriod]);
 
   // Business Analytics & KPIs for the Store Owner Dashboard
   const totalRevenue = useMemo(() => {
@@ -181,7 +194,8 @@ export const AdminView: React.FC = () => {
 
   // Edit form state for selected product
   const [editName, setEditName] = useState('');
-  const [editCategory, setEditCategory] = useState<'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires'>('vetements');
+  const [editStoreType, setEditStoreType] = useState<StoreType>('mode');
+  const [editCategory, setEditCategory] = useState<ProductCategory>('vetements');
   const [editPrice, setEditPrice] = useState<number>(5000);
   const [editCompareAtPrice, setEditCompareAtPrice] = useState<number | ''>('');
   const [editSizes, setEditSizes] = useState<string[]>([]);
@@ -193,6 +207,7 @@ export const AdminView: React.FC = () => {
   const [newName, setNewName] = useState('');
   const [newPrice, setNewPrice] = useState<number | ''>(15000);
   const [newCompareAtPrice, setNewCompareAtPrice] = useState<number | ''>('');
+  const [newStoreType, setNewStoreType] = useState<StoreType>('mode');
   const [newCategory, setNewCategory] = useState<CategoryId>('vetements');
   const [categoryManuallyChosen, setCategoryManuallyChosen] = useState(false);
   const [newSubCategory, setNewSubCategory] = useState('Boubous & Costumes');
@@ -329,13 +344,14 @@ export const AdminView: React.FC = () => {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
 
-      const validCategory: 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires' = 
-        newCategory === 'tous' ? 'vetements' : newCategory;
+      const validCategory: ProductCategory =
+        newCategory === 'tous' ? (newStoreType === 'electronique' ? 'smartphones' : 'vetements') : newCategory;
 
       const productToCreate: Product = {
         id: productId,
         name: cleanName,
         slug: `${slug}-${Math.floor(Math.random() * 900 + 100)}`,
+        storeType: newStoreType,
         category: validCategory,
         subCategory: newSubCategory.trim() || 'Nouvelle Collection',
         gender: 'homme',
@@ -389,6 +405,42 @@ export const AdminView: React.FC = () => {
 
   const autoDetectCategory = (text: string) => {
     if (categoryManuallyChosen) return;
+    if (/\b(iphone|samsung|galaxy|smartphone|téléphone|telephone|pixel|redmi|xiaomi|tecno|infinix)\b/i.test(text)) {
+      setNewStoreType('electronique');
+      setNewCategory('smartphones');
+      setNewSubCategory('Smartphones & iPhones');
+      setNewSizes([]);
+      return;
+    }
+    if (/\b(macbook|ordinateur|pc|laptop|dell|hp|lenovo|asus|imac)\b/i.test(text)) {
+      setNewStoreType('electronique');
+      setNewCategory('ordinateurs');
+      setNewSubCategory('Ordinateurs & PC');
+      setNewSizes([]);
+      return;
+    }
+    if (/\b(ipad|tablette|apple watch|smartwatch|montre connectée)\b/i.test(text)) {
+      setNewStoreType('electronique');
+      setNewCategory('tablettes_montres');
+      setNewSubCategory('Tablettes & Montres');
+      setNewSizes([]);
+      return;
+    }
+    if (/\b(airpods|écouteur|ecouteur|casque|enceinte|jbl)\b/i.test(text)) {
+      setNewStoreType('electronique');
+      setNewCategory('audio_tech');
+      setNewSubCategory('Audio & Écouteurs');
+      setNewSizes([]);
+      return;
+    }
+    if (/\b(chargeur|câble|cable|powerbank|coque|clavier|souris|adaptateur)\b/i.test(text)) {
+      setNewStoreType('electronique');
+      setNewCategory('accessoires_tech');
+      setNewSubCategory('Accessoires Tech');
+      setNewSizes([]);
+      return;
+    }
+    if (categoryManuallyChosen) return;
     if (/\b(sac|sacs|sacoche|sacoches|pochette|pochettes|portefeuille|portefeuilles|bag|clutch|cluth|maroquinerie|accessoire|accessoires|ceinture|ceintures|casquette|casquettes|chapeau|montre)\b/i.test(text)) {
       setNewCategory('accessoires');
       setNewSubCategory('Sacs & Accessoires');
@@ -410,6 +462,7 @@ export const AdminView: React.FC = () => {
   const handleStartEdit = (product: Product) => {
     setEditingProductId(product.id);
     setEditName(product.name);
+    setEditStoreType(getProductStoreType(product));
     setEditCategory(product.category);
     setEditPrice(product.price);
     setEditCompareAtPrice(product.compareAtPrice && product.compareAtPrice > 0 ? product.compareAtPrice : '');
@@ -441,6 +494,7 @@ export const AdminView: React.FC = () => {
 
     updateProductOverride(productId, {
       name: editName.trim(),
+      storeType: editStoreType,
       category: editCategory,
       price: editPrice,
       compareAtPrice: comparePrice,
@@ -523,12 +577,13 @@ export const AdminView: React.FC = () => {
     const name = String(p.name || '').toLowerCase();
     const sub = String(p.subCategory || '').toLowerCase();
     const matchesSearch = q === '' || name.includes(q) || sub.includes(q);
+    const matchesStore = adminStoreFilter === 'all' || getProductStoreType(p) === adminStoreFilter;
     const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter;
-    return matchesSearch && matchesCategory;
+    return matchesStore && matchesSearch && matchesCategory;
   });
 
   // Filtered orders list (Defensively null-safe)
-  const filteredOrders = (orders || []).filter((o) => {
+  const filteredOrders = storeScopedOrders.filter((o) => {
     if (!o || !o.id) return false;
     const q = (orderSearch || '').toLowerCase().trim();
     const id = String(o.id || '').toLowerCase();
@@ -687,6 +742,43 @@ export const AdminView: React.FC = () => {
               <LogOut className="w-4 h-4" />
               <span>Déconnexion</span>
             </button>
+          </div>
+        </div>
+
+        {/* Boutique Switcher in Admin */}
+        <div className="mt-5 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-1.5 bg-white/5 p-1 rounded-xl border border-white/10">
+            {[
+              { id: 'all', label: 'Toutes les boutiques' },
+              { id: 'mode', label: 'Boutique Mode' },
+              { id: 'electronique', label: 'Boutique Électronique' },
+            ].map((st) => (
+              <button
+                key={st.id}
+                type="button"
+                onClick={() => {
+                  const next = st.id as 'all' | StoreType;
+                  setAdminStoreFilter(next);
+                  setCategoryFilter('all');
+                  if (next === 'electronique') {
+                    setNewStoreType('electronique');
+                    setNewCategory('smartphones');
+                    setNewSubCategory('Smartphones & iPhones');
+                  } else if (next === 'mode') {
+                    setNewStoreType('mode');
+                    setNewCategory('vetements');
+                    setNewSubCategory('Boubous & Costumes');
+                  }
+                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  adminStoreFilter === st.id
+                    ? 'bg-white text-black shadow-xs'
+                    : 'text-zinc-300 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                {st.label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -1234,6 +1326,58 @@ export const AdminView: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* BOUTIQUE SELECTION (Mode vs Électronique) */}
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1.5">
+                      Boutique de destination *
+                    </label>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCategoryManuallyChosen(true);
+                          setNewStoreType('mode');
+                          setNewCategory('vetements');
+                          setNewSubCategory('Boubous & Costumes');
+                          setNewSizes([]);
+                        }}
+                        className={`p-2.5 rounded-xl border text-left transition-all flex items-center gap-2 cursor-pointer ${
+                          newStoreType === 'mode'
+                            ? 'border-[#B85D19] bg-amber-50/70 ring-1 ring-[#B85D19]'
+                            : 'border-zinc-200 bg-white hover:bg-zinc-50'
+                        }`}
+                      >
+                        <ShoppingBag className={`w-4 h-4 ${newStoreType === 'mode' ? 'text-[#B85D19]' : 'text-zinc-500'}`} />
+                        <div>
+                          <p className="font-bold text-xs text-zinc-900">Boutique Mode</p>
+                          <p className="text-[10px] text-zinc-500">Vêtements, Chaussures, Parfums</p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCategoryManuallyChosen(true);
+                          setNewStoreType('electronique');
+                          setNewCategory('smartphones');
+                          setNewSubCategory('Smartphones & iPhones');
+                          setNewSizes([]);
+                        }}
+                        className={`p-2.5 rounded-xl border text-left transition-all flex items-center gap-2 cursor-pointer ${
+                          newStoreType === 'electronique'
+                            ? 'border-[#B85D19] bg-amber-50/70 ring-1 ring-[#B85D19]'
+                            : 'border-zinc-200 bg-white hover:bg-zinc-50'
+                        }`}
+                      >
+                        <Smartphone className={`w-4 h-4 ${newStoreType === 'electronique' ? 'text-[#B85D19]' : 'text-zinc-500'}`} />
+                        <div>
+                          <p className="font-bold text-xs text-zinc-900">Boutique Électronique</p>
+                          <p className="text-[10px] text-zinc-500">iPhones, PC, Outils Tech</p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
                   {/* CATEGORIE ET SOUS-CATEGORIE */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -1246,7 +1390,18 @@ export const AdminView: React.FC = () => {
                           const cat = e.target.value as CategoryId;
                           setCategoryManuallyChosen(true);
                           setNewCategory(cat);
-                          if (cat === 'chaussures') {
+                          if (['smartphones', 'ordinateurs', 'tablettes_montres', 'audio_tech', 'accessoires_tech'].includes(cat)) {
+                            setNewStoreType('electronique');
+                            setNewSizes([]);
+                            const labels: Record<string, string> = {
+                              smartphones: 'Smartphones & iPhones',
+                              ordinateurs: 'Ordinateurs & PC',
+                              tablettes_montres: 'Tablettes & Montres',
+                              audio_tech: 'Audio & Écouteurs',
+                              accessoires_tech: 'Accessoires Tech',
+                            };
+                            setNewSubCategory(labels[cat] || 'Électronique');
+                          } else if (cat === 'chaussures') {
                             setNewSizes(['41', '42', '43', '44']);
                             setNewSubCategory('Chaussures de Ville');
                           } else if (cat === 'lunettes' || cat === 'accessoires' || cat === 'parfums') {
@@ -1262,6 +1417,11 @@ export const AdminView: React.FC = () => {
                         <option value="vetements">Vêtements (Boubous, Costumes, Chemises...)</option>
                         <option value="chaussures">Chaussures & Souliers</option>
                         <option value="parfums">Parfums & Senteurs</option>
+                        <option value="smartphones">Smartphones & iPhones</option>
+                        <option value="ordinateurs">Ordinateurs & PC</option>
+                        <option value="tablettes_montres">Tablettes & Montres Connectées</option>
+                        <option value="audio_tech">Audio & Écouteurs</option>
+                        <option value="accessoires_tech">Accessoires & Outils Électroniques</option>
                         <option value="lunettes">Lunettes de soleil</option>
                         <option value="accessoires">Accessoires & Maroquinerie</option>
                       </select>
@@ -1293,7 +1453,7 @@ export const AdminView: React.FC = () => {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      {(newCategory === 'chaussures' ? SHOE_SIZES : CLOTHING_SIZES).map((sz) => {
+                      {(newStoreType === 'electronique' ? TECH_VARIANTS : newCategory === 'chaussures' ? SHOE_SIZES : CLOTHING_SIZES).map((sz) => {
                         const isChecked = newSizes.includes(sz);
                         return (
                           <button
@@ -1421,6 +1581,11 @@ export const AdminView: React.FC = () => {
                   <option value="parfums">Parfums</option>
                   <option value="lunettes">Lunettes</option>
                 <option value="accessoires">Accessoires</option>
+                  <option value="smartphones">Smartphones & iPhones</option>
+                  <option value="ordinateurs">Ordinateurs & PC</option>
+                  <option value="tablettes_montres">Tablettes & Montres</option>
+                  <option value="audio_tech">Audio & Écouteurs</option>
+                  <option value="accessoires_tech">Accessoires Tech</option>
               </select>
             </div>
 
@@ -1478,7 +1643,11 @@ export const AdminView: React.FC = () => {
                             </label>
                             <select
                               value={editCategory}
-                              onChange={(e) => setEditCategory(e.target.value as 'vetements' | 'lunettes' | 'chaussures' | 'parfums' | 'accessoires')}
+                              onChange={(e) => {
+                                const cat = e.target.value as ProductCategory;
+                                setEditCategory(cat);
+                                setEditStoreType(['smartphones', 'ordinateurs', 'tablettes_montres', 'audio_tech', 'accessoires_tech'].includes(cat) ? 'electronique' : 'mode');
+                              }}
                               className="w-full text-xs font-semibold px-3.5 py-2.5 bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                             >
                               <option value="vetements">Vêtements (Pantalons, Chemises, Vestes...)</option>
@@ -1486,6 +1655,11 @@ export const AdminView: React.FC = () => {
                               <option value="lunettes">Lunettes & Montures</option>
                               <option value="chaussures">Chaussures & Souliers</option>
                               <option value="parfums">Parfums & Senteurs</option>
+                              <option value="smartphones">Smartphones & iPhones</option>
+                              <option value="ordinateurs">Ordinateurs & PC</option>
+                              <option value="tablettes_montres">Tablettes & Montres Connectées</option>
+                              <option value="audio_tech">Audio & Écouteurs</option>
+                              <option value="accessoires_tech">Accessoires & Outils Électroniques</option>
                             </select>
                           </div>
 
@@ -1568,7 +1742,7 @@ export const AdminView: React.FC = () => {
                         </div>
 
                         <div className="flex flex-wrap gap-2">
-                          {(product.category === 'chaussures' ? SHOE_SIZES : CLOTHING_SIZES).map((size) => {
+                          {(editStoreType === 'electronique' ? TECH_VARIANTS : editCategory === 'chaussures' ? SHOE_SIZES : CLOTHING_SIZES).map((size) => {
                             const isChecked = editSizes.includes(size);
                             return (
                               <button

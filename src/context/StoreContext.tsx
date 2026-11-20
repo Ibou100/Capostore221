@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import type { Product, CategoryId, ProductGender, FilterState, ViewState, ProductCustomOverride } from '../types';
-import { INITIAL_PRODUCTS } from '../data/products';
+import type { Product, CategoryId, ProductGender, FilterState, ViewState, ProductCustomOverride, StoreType } from '../types';
+import { INITIAL_PRODUCTS, getProductStoreType } from '../data/products';
 import { fetchCloudProducts, saveCloudProducts } from '../utils/cloudSync';
 import {
   isSupabaseConfigured,
@@ -12,6 +12,10 @@ import {
 
 interface StoreContextType {
   products: Product[];
+  activeStore: StoreType;
+  setActiveStore: (store: StoreType) => void;
+  switchStore: (store: StoreType) => void;
+  storeProducts: Product[];
   currentView: ViewState;
   setCurrentView: React.Dispatch<React.SetStateAction<ViewState>>;
   filters: FilterState;
@@ -134,6 +138,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     productOverridesRef.current = productOverrides;
   }, [productOverrides]);
 
+  const [activeStore, setActiveStore] = useState<StoreType>(() => {
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '');
+      const params = new URLSearchParams(window.location.search);
+      if (pathname === '/electronique' || params.get('boutique') === 'electronique') {
+        return 'electronique';
+      }
+    }
+    return 'mode';
+  });
+
   const [currentView, setCurrentView] = useState<ViewState>(() => {
     if (typeof window !== 'undefined') {
       const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '');
@@ -223,6 +238,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             .forEach((p) => {
               overrides[p.id] = {
                 name: p.name,
+                storeType: p.storeType,
                 category: p.category,
                 subCategory: p.subCategory,
                 price: p.price,
@@ -396,6 +412,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return {
         ...baseProduct,
         name: override.name !== undefined && override.name.trim() !== '' ? override.name.trim() : baseProduct.name,
+        storeType: override.storeType !== undefined ? override.storeType : baseProduct.storeType,
         category: override.category !== undefined ? override.category : baseProduct.category,
         subCategory: override.subCategory !== undefined && override.subCategory.trim() !== '' ? override.subCategory.trim() : baseProduct.subCategory,
         price: override.price !== undefined && override.price > 0 ? override.price : baseProduct.price,
@@ -578,9 +595,28 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const openQuickView = (product: Product) => setQuickViewProduct(product);
   const closeQuickView = () => setQuickViewProduct(null);
 
-  // Filtered & Sorted products computation
+  const switchStore = (store: StoreType) => {
+    setActiveStore(store);
+    setFilters(DEFAULT_FILTERS);
+    setCurrentView({ type: 'home' });
+    if (typeof window !== 'undefined') {
+      const targetPath = store === 'electronique' ? '/electronique' : '/';
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState(null, '', targetPath);
+      }
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Products scoped to the currently active storefront ('mode' or 'electronique')
+  const storeProducts = useMemo(
+    () => products.filter((p) => getProductStoreType(p) === activeStore),
+    [products, activeStore]
+  );
+
+  // Filtered & Sorted products computation (scoped to activeStore)
   const filteredProducts = useMemo(() => {
-    let result = products.filter((p) => p.published);
+    let result = storeProducts.filter((p) => p.published);
 
     // Filter by Category
     if (filters.category && filters.category !== 'tous') {
@@ -652,12 +688,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     return result;
-  }, [products, filters]);
+  }, [storeProducts, filters]);
 
   return (
     <StoreContext.Provider
       value={{
         products,
+        activeStore,
+        setActiveStore,
+        switchStore,
+        storeProducts,
         currentView,
         setCurrentView,
         filters,
