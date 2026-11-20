@@ -174,7 +174,7 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                   alt={product.name}
                   priority
                   wrapperClassName="w-full h-full"
-                  className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300"
+                  className="w-full h-full object-contain mix-blend-multiply brightness-[1.03] contrast-[1.05] transition-transform duration-300"
                 />
               ) : (
                 <div className="text-sm text-[#5F5F5A]">Image non disponible</div>

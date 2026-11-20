@@ -90,7 +90,7 @@ export const Hero: React.FC = () => {
                   alt={heroProduct.name}
                   priority
                   wrapperClassName="w-full h-full"
-                  className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.03]"
+                  className="w-full h-full object-contain mix-blend-multiply brightness-[1.03] contrast-[1.05] transition-transform duration-300 group-hover:scale-[1.03]"
                 />
               </div>
               <div className="flex items-center justify-between px-1">
