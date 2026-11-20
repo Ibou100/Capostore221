@@ -1,128 +1,168 @@
-# CAPOSTORE221 — Boutique en Ligne de Mode Contemporaine
+# CAPOSTORE221 — Boutique en Ligne Officielle
 
 > **« Tu commandes, on te livre. »**  
-> Boutique e-commerce officielle de prêt-à-porter contemporain, solaires et accessoires en Francs CFA (XOF).
+> Site e-commerce officiel de mode, chaussures, parfums et accessoires au Sénégal (prix en Francs CFA / XOF).  
+> **Site en ligne :** https://capostore221.com  
+> **Espace Gérant (privé) :** https://capostore221.com/admin
 
 ---
 
-## 📌 Présentation du Projet
+## Présentation du Projet
 
-**CAPOSTORE221** est une plateforme e-commerce moderne conçue pour une expérience d'achat directe, fluide et élégante :
-- **Modèle de distribution :** Vente en ligne exclusive avec expédition soignée à domicile.
-- **Grille tarifaire claire & unique :**
-  - **5 000 FCFA** pour tous les vêtements (pantalons tailleur, chinos, cargos, jeans, chemises, polos).
-  - **3 000 FCFA** pour les lunettes et la maroquinerie (sacs, pochettes).
-- **Règlement :** Paiement en espèces à la livraison ou virement Wave / Orange Money.
-- **Canaux de commande :** Commande en ligne sur le site ou commande directe en 1 clic via WhatsApp.
+**CAPOSTORE221** est une plateforme e-commerce complète connectée en temps réel à une base de données **Supabase (PostgreSQL)** et hébergée sur **Vercel**. Elle permet aux clients de commander facilement en ligne ou via WhatsApp, et au propriétaire de gérer l'ensemble de son catalogue, de ses prix, de ses stocks et de ses commandes depuis une console d'administration dédiée.
 
 ---
 
-## 📞 Coordonnées Officielles de la Boutique
+## Fonctionnalités Principales
 
-- **WhatsApp Commandes :** `+221 76 832 11 57` (`wa.me/221768321157`)
-- **Ligne Téléphonique Directe :** `+221 77 256 39 90`
-- **Email Officiel :** `capostore221@gmail.com`
-- **Instagram Officiel :** [@capostore221](https://www.instagram.com/capostore221?rpxt=OTBydGo5MW81NGtx&utm_source=qr)
-- **TikTok Officiel :** [@capostore.221](https://www.tiktok.com/@capostore.221)
-- **Facebook Officiel :** [Page CAPOSTORE](https://www.facebook.com/share/1Edu4vsdUn/?mibextid=wwXIfr)
+### 1. Boutique Client (`https://capostore221.com`)
+- **Catégories complètes & dynamiques :**
+  - **Vêtements** (pantalons, jeans, cargos, chemises, t-shirts, vestes, polos)
+  - **Chaussures** (baskets, mocassins, souliers)
+  - **Parfums** (eaux de parfum, muscs, senteurs)
+  - **Lunettes** (montures optiques & solaires)
+  - **Sacs & Accessoires** (sacs à bandoulière, pochettes cuir, portefeuilles)
+  - Les catégories sans articles en stock sont automatiquement masquées sur l'accueil, et les compteurs d'articles sont calculés en direct.
+- **Catalogue, Recherche & Filtres :**
+  - Filtrage par catégorie, genre, fourchette de prix (jusqu'à `100 000 FCFA`), tailles, couleurs, disponibilité en stock et tri.
+  - Barre de recherche instantanée et liste de favoris.
+- **Commande Rapide & Panier :**
+  - **Choix du mode de réception :** le client précise s'il souhaite **être livré à domicile** (ville + adresse précise) ou **venir récupérer sur place**.
+  - **Validation stricte du téléphone sénégalais :** format contrôlé à exactement **9 chiffres** (`77`, `78`, `76`, `70`, `75`, `33`).
+  - **Moyens de paiement avec logos officiels :** **Wave**, **Orange Money**, **Yas / Mixx** et **Espèces** (`/payments/wave.png`, `/payments/orange-money.png`, `/payments/yas.png`).
+  - **Transmission directe WhatsApp :** génération automatique du récapitulatif complet (référence `CAPO-XXXX`, articles, mode de réception, paiement, lien photo) vers le WhatsApp de la boutique.
+- **Activité & Articles Vendus en Direct :**
+  - Affichage dynamique et anonymisé des commandes récentes (ville, article, statut en temps réel, sans exposer les noms complets ni les numéros de téléphone des clients).
+  - Badges de ventes sur les fiches produits et onglet **Articles vendus**.
 
----
-
-## 🛡️ Audit de Sécurité & Bonnes Pratiques
-
-Le code source a été audité et optimisé pour respecter les standards modernes :
-
-| Critère de sécurité | État | Détails |
-| :--- | :---: | :--- |
-| **Secrets & Clés API** | ✅ Conforme | Aucun mot de passe, token ou clé API privé n'est présent dans le code. |
-| **Protection Git** | ✅ Conforme | Fichier `.gitignore` strict excluant `.env`, `node_modules`, `.vercel` et caches locaux. |
-| **Reverse Tabnabbing** | ✅ Conforme | 100% des liens externes (`target="_blank"`) disposent de l'attribut `rel="noopener noreferrer"`. |
-| **Headers HTTP de Sécurité** | ✅ Conforme | Fichier `vercel.json` configuré avec `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection`, etc. |
-| **Routage SPA (Single Page App)** | ✅ Conforme | Réécriture automatique des URLs vers `/index.html` sur Vercel (zéro erreur 404 au rechargement). |
-| **Validation des Données** | ✅ Conforme | Contrôle strict des champs de commande (nom, téléphone, ville, adresse précise). |
-
----
-
-## 📲 Transmission des Commandes sur WhatsApp
-
-Le site est équipé d'un système de transmission directe vers le WhatsApp du vendeur :
-1. **Commande d'un article individuel :**  
-   Depuis la fiche produit ou le catalogue, un clic sur l'icône WhatsApp ouvre un message pré-rempli avec le nom exact de l'article, son prix (5 000 ou 3 000 FCFA) et la taille choisie.
-2. **Validation du panier complet :**  
-   Le client peut cliquer sur **« Commander via WhatsApp »** pour envoyer la liste de tous ses articles au vendeur.
-3. **Formulaire de livraison en ligne :**  
-   Quand le client renseigne son **Nom**, **Téléphone**, **Ville** et **Adresse exacte de livraison**, le système génère un récapitulatif complet et ouvre directement WhatsApp sur le numéro du propriétaire (`+221 76 832 11 57`), avec un bouton de confirmation immédiate. Le vendeur reçoit donc directement la commande avec toutes les coordonnées de livraison.
-
----
-
-## 🛠️ Stack Technique
-
-- **Framework :** [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- **Outil de build & bundler :** [Vite 8](https://vitejs.dev/)
-- **Moteur CSS :** [Tailwind CSS 3](https://tailwindcss.com/)
-- **Bibliothèque d'icônes :** [Lucide React](https://lucide.dev/)
-- **Linter & Qualité :** Oxlint + TypeScript strict mode
+### 2. Espace Gérant / Admin (`https://capostore221.com/admin`)
+- **Accès sécurisé par mot de passe** (modifiable depuis la console).
+- **Tableau de bord interactif :**
+  - Filtrage par période : **Tout**, **Aujourd'hui**, **7 jours**, **30 jours**.
+  - Indicateurs cliquables : Chiffre d'affaires (total et encaissé livré), Commandes, Clients (Dakar vs Régions), Articles en ligne.
+  - Répartition des paiements (Wave, Orange Money, Yas / Mixx, Espèces) avec montants et pourcentages.
+  - Classement des articles les plus vendus et traitement rapide des dernières commandes.
+- **Gestion du Catalogue (`Articles`) :**
+  - Ajout de nouveaux articles avec upload et compression automatique d'image.
+  - Détection automatique de la catégorie selon le nom saisi (ex. *sac, parfum, chaussure, lunette*).
+  - Modification en ligne : nom, catégorie, prix de vente, ancien prix barré (calcul automatique du badge promo `%`), disponibilité (*En vente / Masqué*), et gestion exclusive des tailles/pointures disponibles.
+  - Suppression définitive synchronisée avec Supabase.
+- **Gestion des Commandes (`Commandes`) :**
+  - Suivi exclusif côté Admin (les suivis publics ont été retirés par sécurité).
+  - Filtres par statut (*Reçue → Confirmée → En préparation → En livraison → Livrée*) et recherche par référence `CAPO-XXXX`, nom ou téléphone.
+  - Badge distinct **Livraison à domicile** / **Récupération sur place**, et boutons directs **Appeler** / **WhatsApp**.
 
 ---
 
-## 💻 Démarrage Local
+## Coordonnées Officielles
+
+- **Site Web :** https://capostore221.com
+- **WhatsApp Commandes :** `+221 76 832 11 57`
+- **Appel Direct :** `+221 77 256 39 90`
+- **Email :** `capostore221@gmail.com`
+- **Instagram :** `@capostore221`
+- **TikTok :** `@capostore.221`
+- **Facebook :** Page Officielle CAPOSTORE221
+
+---
+
+## Architecture du Projet
+
+```text
+CAPO221/
+├── public/
+│   ├── payments/              # Logos officiels (wave.png, orange-money.png, yas.png)
+│   └── products/              # Images des articles d'origine
+├── src/
+│   ├── components/
+│   │   ├── admin/
+│   │   │   └── AdminView.tsx          # Console Admin (Dashboard, Articles, Commandes)
+│   │   ├── cart/
+│   │   │   └── CartDrawer.tsx         # Panier latéral & validation de commande
+│   │   ├── catalog/
+│   │   │   ├── CatalogView.tsx        # Vue catalogue filtrable
+│   │   │   ├── ProductCard.tsx        # Carte produit avec promo, stock & ventes
+│   │   │   ├── ProductFilters.tsx     # Panneau de filtres (catégorie, prix, tailles)
+│   │   │   └── WishlistView.tsx       # Page favoris
+│   │   ├── home/
+│   │   │   ├── Hero.tsx               # Bannière d'accueil dynamique
+│   │   │   ├── CollectionsGrid.tsx    # Cartes de catégories dynamiques
+│   │   │   ├── NewArrivals.tsx        # Grille catalogue + onglets par catégorie
+│   │   │   ├── LiveActivityBar.tsx    # Flux temps réel des commandes anonymisées
+│   │   │   ├── NewsletterSection.tsx  # Contact & réseaux sociaux
+│   │   │   └── HomeView.tsx           # Assemblage de la page d'accueil
+│   │   ├── layout/
+│   │   │   ├── AnnouncementBar.tsx    # Barre supérieure (nombre d'articles en direct)
+│   │   │   ├── Navbar.tsx             # Navigation principale (masquée sur /admin)
+│   │   │   ├── MobileBottomNav.tsx    # Barre de navigation mobile
+│   │   │   └── Footer.tsx             # Pied de page + accès rapide admin
+│   │   ├── product/
+│   │   │   └── ProductDetailView.tsx  # Fiche produit détaillée
+│   │   └── ui/
+│   │       ├── QuickOrderModal.tsx    # Commande directe en 1 clic
+│   │       ├── QuickViewModal.tsx     # Aperçu rapide produit
+│   │       ├── SearchModal.tsx        # Recherche instantanée
+│   │       └── ToastNotification.tsx  # Notifications interface
+│   ├── context/
+│   │   ├── StoreContext.tsx           # État catalogue, filtres, navigation & sync Supabase
+│   │   ├── OrderContext.tsx           # Commandes, Realtime Supabase & activité publique
+│   │   ├── CartContext.tsx            # Gestion du panier
+│   │   └── WishlistContext.tsx        # Gestion des favoris
+│   ├── data/
+│   │   └── products.ts                # Catalogue initial & métadonnées des catégories
+│   ├── lib/
+│   │   └── supabase.ts                # Client Supabase & requêtes CRUD produits/commandes
+│   ├── types/
+│   │   └── index.ts                   # Types TypeScript (Product, Order, CategoryId...)
+│   ├── utils/
+│   │   ├── format.ts                  # Formatage FCFA, validation tél Sénégal, liens WhatsApp
+│   │   ├── cloudSync.ts               # Compression d'images & fallback sync
+│   │   └── security.ts                # Authentification Admin & journal d'audit
+│   ├── App.tsx                        # Point d'entrée des vues & ErrorBoundary
+│   └── main.tsx
+├── index.html
+├── package.json
+├── tailwind.config.js
+├── tsconfig.json
+├── vercel.json                        # Réécriture SPA & en-têtes de sécurité HTTP
+└── vite.config.ts
+```
+
+---
+
+## Stack Technique
+
+- **Frontend :** React 19 + TypeScript 6
+- **Bundler :** Vite 8
+- **Styles :** Tailwind CSS 3 + Lucide React (icônes)
+- **Base de données & Temps réel :** Supabase (`@supabase/supabase-js`)
+- **Qualité de code :** Oxlint + `tsc -b`
+- **Hébergement & Domaine :** Vercel + `capostore221.com`
+
+---
+
+## Installation & Commandes Locales
 
 ```bash
-# 1. Cloner ou ouvrir le dossier du projet
-cd CAPO221
-
-# 2. Installer les dépendances
+# 1. Installer les dépendances
 npm install
 
-# 3. Lancer le serveur de développement local
+# 2. Lancer le serveur de développement local
 npm run dev
 
-# 4. Vérifier la qualité du code
+# 3. Vérifier le code avec Oxlint
 npm run lint
 
-# 5. Tester la compilation de production
+# 4. Vérifier TypeScript et compiler pour la production
 npm run build
-```
 
-Le site est alors consultable en local sur **`http://localhost:5173/`**.
+# 5. Prévisualiser le build de production
+npm run preview
+```
 
 ---
 
-## 🚀 Guide de Déploiement : GitHub & Vercel
+## Déploiement
 
-### Étape 1 : Pousser le code sur GitHub
-
-1. Créez un nouveau dépôt vide sur votre compte GitHub (ex: `capostore221`).
-2. Dans le terminal de votre projet, exécutez les commandes suivantes :
-
-```bash
-git remote add origin https://github.com/VOTRE_PSEUDO/capostore221.git
-git branch -M main
-git push -u origin main
-```
-
-### Étape 2 : Déployer sur Vercel (100% Gratuit)
-
-1. Rendez-vous sur [Vercel](https://vercel.com) et connectez-vous avec votre compte GitHub.
-2. Cliquez sur **« Add New Project »** puis sélectionnez votre dépôt `capostore221`.
-3. Vercel détecte automatiquement la configuration Vite :
-   - **Framework Preset :** Vite
-   - **Build Command :** `npm run build`
-   - **Output Directory :** `dist`
-4. Cliquez sur **« Deploy »**. Votre site sera en ligne en moins de 60 secondes avec une adresse sécurisée HTTPS (`https://capostore221.vercel.app`).
-
-### Étape 3 : Relier votre Nom de Domaine Personnalisé
-
-1. Sur votre tableau de bord Vercel, allez dans **Settings > Domains**.
-2. Entrez votre domaine acheté (ex: `capostore221.com`).
-3. Vercel vous donnera les enregistrements DNS à renseigner chez votre registrar (Hostinger, Namecheap ou OVH) :
-   - Enregistrement **A** : `76.76.21.21`
-   - Enregistrement **CNAME** : `cname.vercel-dns.com`
-4. En 10 à 30 minutes, votre boutique sera active dans le monde entier sur **`https://capostore221.com`** avec cadenas vert SSL automatique.
-
----
-
-## 📄 Licence & Droits
-
-© 2026 CAPOSTORE221. Tous droits réservés.
-Boutique officielle de mode contemporaine en ligne.
+Tout `git push` sur la branche `main` déclenche automatiquement le build (`tsc -b && vite build`) et la mise en production sur **Vercel** (`https://capostore221.com`).  
+Le fichier `vercel.json` gère la redirection SPA vers `/index.html` (pour les routes `/admin`, `/catalogue`, etc.) ainsi que les en-têtes de sécurité HTTP (`X-Frame-Options`, `X-Content-Type-Options`, etc.).
