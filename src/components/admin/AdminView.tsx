@@ -364,10 +364,10 @@ export const AdminView: React.FC = () => {
         price: Number(newPrice),
         compareAtPrice: newCompareAtPrice && Number(newCompareAtPrice) > Number(newPrice) ? Number(newCompareAtPrice) : undefined,
         images: [newImageData],
-        description: newDescription.trim() || `${cleanName} – Confection artisanale haut de gamme par CAPOSTORE221. Finitions d'exception.`,
+        description: newDescription.trim() || (newStoreType === 'electronique' ? `${cleanName} – Produit électronique vérifié par CAPOSTORE221.` : `${cleanName} – Confection soignée CAPOSTORE221.`),
         details: [
           'Pièce authentique CAPOSTORE221',
-          'Tissu premium au tombé irréprochable',
+          newStoreType === 'electronique' ? 'Appareil vérifié et testé avant remise' : 'Tissu et finitions soignées',
           'Livraison rapide sécurisée à Dakar et dans toutes les régions du Sénégal'
         ],
         availableSizes: newSizes.length > 0 ? newSizes : undefined,
@@ -1193,7 +1193,7 @@ export const AdminView: React.FC = () => {
                     </div>
                     <div>
                       <h3 className="font-display font-extrabold text-lg text-zinc-900">
-                        Ajouter une Nouvelle Tenue au Catalogue
+                        {newStoreType === 'electronique' ? 'Ajouter un Produit Électronique' : 'Ajouter une Nouvelle Tenue au Catalogue'}
                       </h3>
                       <p className="text-xs text-zinc-500">
                         La photo et l'article seront synchronisés instantanément sur le site et mobile.
@@ -1286,14 +1286,14 @@ export const AdminView: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                        Nom de la tenue / article *
+                        {newStoreType === 'electronique' ? 'Nom du produit électronique *' : 'Nom de la tenue / article *'}
                       </label>
                       <input
                         type="text"
                         required
                         value={newName}
                         onChange={(e) => { const val = e.target.value; setNewName(val); autoDetectCategory(val); }}
-                        placeholder="Ex: Costume 2 Pièces Royal Bleu"
+                        placeholder={newStoreType === 'electronique' ? 'Ex: iPhone 14 Pro Max 256 Go' : 'Ex: Costume 2 Pièces Royal Bleu'}
                         className="w-full text-xs font-semibold px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                       />
                     </div>
@@ -1309,7 +1309,7 @@ export const AdminView: React.FC = () => {
                           required
                           value={newPrice}
                           onChange={(e) => setNewPrice(e.target.value === '' ? '' : Number(e.target.value))}
-                          placeholder="Ex: 5000"
+                          placeholder={newStoreType === 'electronique' ? 'Ex: 350000' : 'Ex: 5000'}
                           className="w-full text-xs font-mono font-bold px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                         />
                       </div>
@@ -1323,7 +1323,7 @@ export const AdminView: React.FC = () => {
                           step={500}
                           value={newCompareAtPrice}
                           onChange={(e) => setNewCompareAtPrice(e.target.value === '' ? '' : Number(e.target.value))}
-                          placeholder="Ex: 8000 (s'affichera barré)"
+                          placeholder={newStoreType === 'electronique' ? 'Ex: 420000 (barré)' : 'Ex: 8000 (barré)'}
                           className="w-full text-xs font-mono px-3.5 py-2.5 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                         />
                         <span className="text-[10px] text-zinc-400 mt-0.5 block">
@@ -1454,10 +1454,10 @@ export const AdminView: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
                       <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-700">
-                        Tailles disponibles en stock :
+                        {newStoreType === 'electronique' ? 'Capacité / État disponible :' : 'Tailles disponibles en stock :'}
                       </label>
                       <span className="text-[10px] text-zinc-500">
-                        {newSizes.length > 0 ? `${newSizes.length} sélectionnée(s)` : 'Taille Unique'}
+                        {newSizes.length > 0 ? `${newSizes.length} sélectionnée(s)` : (newStoreType === 'electronique' ? 'Standard' : 'Taille Unique')}
                       </span>
                     </div>
 
@@ -1488,7 +1488,7 @@ export const AdminView: React.FC = () => {
                             : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'
                         }`}
                       >
-                        Taille unique
+                        {newStoreType === 'electronique' ? 'Standard / Sans option' : 'Taille unique'}
                       </button>
                     </div>
                   </div>
@@ -1502,7 +1502,7 @@ export const AdminView: React.FC = () => {
                       rows={2}
                       value={newDescription}
                       onChange={(e) => setNewDescription(e.target.value)}
-                      placeholder="Précisez le tissu, la coupe, la broderie ou les particularités..."
+                      placeholder={newStoreType === 'electronique' ? "Précisez la capacité, l'état (neuf/venant), la garantie..." : 'Précisez le tissu, la coupe ou les particularités...'}
                       className="w-full text-xs font-medium px-3.5 py-2 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                     />
                   </div>
