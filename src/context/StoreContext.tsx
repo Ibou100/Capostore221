@@ -161,7 +161,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         pathname === '/boutique' ||
         pathname === '/admin' ||
         pathname.startsWith('/admin/') ||
-        params.get('boutique')
+        params.get('boutique') ||
+        params.get('produit')
       ) {
         return true;
       }
@@ -189,6 +190,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
       if (pathname === '/suivi' || pathname === '/tracking' || params.get('track')) {
         return { type: 'tracking', orderId: params.get('track') || undefined };
+      }
+      if (params.get('produit')) {
+        return { type: 'product-detail', productId: params.get('produit')! };
       }
       if (pathname === '/catalogue' || pathname === '/boutique') {
         return { type: 'catalog' };
@@ -522,16 +526,38 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const handlePopState = () => {
       if (typeof window === 'undefined') return;
       const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '');
+      const params = new URLSearchParams(window.location.search);
+      const produitId = params.get('produit');
+
+      if (pathname === '/electronique' || params.get('boutique') === 'electronique') {
+        setActiveStore('electronique');
+        setHasEnteredStore(true);
+      } else if (pathname === '/habillement' || params.get('boutique') === 'mode') {
+        setActiveStore('mode');
+        setHasEnteredStore(true);
+      }
+
+      if (produitId) {
+        setHasEnteredStore(true);
+        setCurrentView({ type: 'product-detail', productId: produitId });
+        return;
+      }
+
       if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+        setHasEnteredStore(true);
         setCurrentView({ type: 'admin' });
       } else if (pathname === '/commandes' || pathname === '/orders') {
         setCurrentView({ type: 'orders' });
       } else if (pathname === '/suivi' || pathname === '/tracking') {
-        const params = new URLSearchParams(window.location.search);
         setCurrentView({ type: 'tracking', orderId: params.get('track') || undefined });
       } else if (pathname === '/catalogue' || pathname === '/boutique') {
+        setHasEnteredStore(true);
         setCurrentView({ type: 'catalog' });
+      } else if (pathname === '/electronique' || pathname === '/habillement') {
+        setHasEnteredStore(true);
+        setCurrentView({ type: 'home' });
       } else {
+        setHasEnteredStore(false);
         setCurrentView({ type: 'home' });
       }
     };
@@ -572,6 +598,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const goToProduct = (productId: string) => {
     setCurrentView({ type: 'product-detail', productId });
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('produit', productId);
+      window.history.pushState({ view: 'product-detail', productId }, '', url.toString());
+    }
     window.scrollTo(0, 0);
   };
 

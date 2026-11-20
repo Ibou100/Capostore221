@@ -131,11 +131,17 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
         {/* Back link */}
         <button
           type="button"
-          onClick={() => goToCatalog({ category: product.category })}
+          onClick={() => {
+            if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('produit')) {
+              window.history.back();
+            } else {
+              goToCatalog({ category: product.category });
+            }
+          }}
           className="inline-flex items-center gap-2 text-sm text-[#5F5F5A] hover:text-[#0A0A0A] transition-colors mb-6 sm:mb-8 group min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
-          <span>Retour au catalogue</span>
+          <span>Retour</span>
         </button>
 
         {/* Main Product Grid */}
