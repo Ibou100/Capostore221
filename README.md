@@ -1,56 +1,90 @@
-# CAPOSTORE221 — Boutique en Ligne Officielle
+# CAPOSTORE221 — Plateforme E-Commerce Multi-Boutiques
 
 > **« Tu commandes, on te livre. »**  
-> Site e-commerce officiel de mode, chaussures, parfums et accessoires au Sénégal (prix en Francs CFA / XOF).  
-> **Site en ligne :** https://capostore221.com  
+> Site e-commerce officiel au Sénégal (Francs CFA / XOF) regroupant deux univers distincts : **Boutique Habillement** et **Boutique Électronique**.  
+> **Portail principal :** https://capostore221.com  
+> **Boutique Habillement :** https://capostore221.com/habillement  
+> **Boutique Électronique :** https://capostore221.com/electronique  
 > **Espace Gérant (privé) :** https://capostore221.com/admin
 
 ---
 
 ## Présentation du Projet
 
-**CAPOSTORE221** est une plateforme e-commerce complète connectée en temps réel à une base de données **Supabase (PostgreSQL)** et hébergée sur **Vercel**. Elle permet aux clients de commander facilement en ligne ou via WhatsApp, et au propriétaire de gérer l'ensemble de son catalogue, de ses prix, de ses stocks et de ses commandes depuis une console d'administration dédiée.
+**CAPOSTORE221** est une application web e-commerce connectée en temps réel à **Supabase (PostgreSQL)** et déployée sur **Vercel**.  
+À l'arrivée sur **`https://capostore221.com`**, le client choisit directement entre deux boutons :
+1. **Boutique Habillement** (vêtements, chaussures, parfums, lunettes, sacs & accessoires).
+2. **Boutique Électronique** (smartphones & iPhones, ordinateurs & PC, tablettes & montres connectées, audio & écouteurs, accessoires & outils tech).
+
+Chaque boutique possède son propre catalogue, ses propres catégories, ses propres filtres et ses propres compteurs d'articles en direct, tout en étant gérée depuis une seule console d'administration (`/admin`).
 
 ---
 
 ## Fonctionnalités Principales
 
-### 1. Boutique Client (`https://capostore221.com`)
-- **Catégories complètes & dynamiques :**
-  - **Vêtements** (pantalons, jeans, cargos, chemises, t-shirts, vestes, polos)
-  - **Chaussures** (baskets, mocassins, souliers)
-  - **Parfums** (eaux de parfum, muscs, senteurs)
-  - **Lunettes** (montures optiques & solaires)
-  - **Sacs & Accessoires** (sacs à bandoulière, pochettes cuir, portefeuilles)
-  - Les catégories sans articles en stock sont automatiquement masquées sur l'accueil, et les compteurs d'articles sont calculés en direct.
+### 1. Accès & Expérience Client (`https://capostore221.com`)
+- **Écran d'accueil à 2 Boutiques :**
+  - Le visiteur choisit librement d'entrer dans **Boutique Habillement** (`/habillement`) ou **Boutique Électronique** (`/electronique`), avec compteur d'articles disponibles en temps réel sur chaque bouton.
+  - Bascule possible entre les deux boutiques à tout moment.
+- **Boutique Habillement :**
+  - Catégories : **Vêtements**, **Chaussures**, **Parfums**, **Lunettes**, **Sacs & Accessoires**.
+  - Masquage automatique des catégories vides sur la page d'accueil.
+- **Boutique Électronique :**
+  - Catégories : **Smartphones & iPhones**, **Ordinateurs & PC**, **Tablettes & Montres**, **Audio & Écouteurs**, **Accessoires Tech**.
+  - Options adaptées aux produits électroniques (`64 Go`, `128 Go`, `256 Go`, `512 Go`, `1 To`, `Neuf scellé`, `Venant`).
 - **Catalogue, Recherche & Filtres :**
-  - Filtrage par catégorie, genre, fourchette de prix (jusqu'à `100 000 FCFA`), tailles, couleurs, disponibilité en stock et tri.
+  - Filtrage dynamique par boutique, catégorie, genre, prix (jusqu'à `100 000 FCFA`), tailles/variantes, couleurs, disponibilité en stock et tri.
   - Barre de recherche instantanée et liste de favoris.
-- **Commande Rapide & Panier :**
-  - **Choix du mode de réception :** le client précise s'il souhaite **être livré à domicile** (ville + adresse précise) ou **venir récupérer sur place**.
-  - **Validation stricte du téléphone sénégalais :** format contrôlé à exactement **9 chiffres** (`77`, `78`, `76`, `70`, `75`, `33`).
+- **Commande Rapide, Panier & WhatsApp :**
+  - **Choix du mode de réception :** **Me faire livrer** (ville + adresse précise) ou **Venir récupérer sur place**.
+  - **Validation stricte du téléphone sénégalais :** exactement **9 chiffres** (`77`, `78`, `76`, `70`, `75`, `33`).
   - **Moyens de paiement avec logos officiels :** **Wave**, **Orange Money**, **Yas / Mixx** et **Espèces** (`/payments/wave.png`, `/payments/orange-money.png`, `/payments/yas.png`).
-  - **Transmission directe WhatsApp :** génération automatique du récapitulatif complet (référence `CAPO-XXXX`, articles, mode de réception, paiement, lien photo) vers le WhatsApp de la boutique.
-- **Activité & Articles Vendus en Direct :**
-  - Affichage dynamique et anonymisé des commandes récentes (ville, article, statut en temps réel, sans exposer les noms complets ni les numéros de téléphone des clients).
-  - Badges de ventes sur les fiches produits et onglet **Articles vendus**.
+  - **Envoi direct WhatsApp :** récapitulatif complet (`CAPO-XXXX`, articles, mode de réception, paiement, lien photo) vers le WhatsApp officiel de la boutique.
+- **Activité en Direct (Anonymisée) :**
+  - Affichage des commandes récentes et du nombre d'articles vendus sans exposer les données personnelles (noms complets, téléphones, adresses) des clients.
 
 ### 2. Espace Gérant / Admin (`https://capostore221.com/admin`)
-- **Accès sécurisé par mot de passe** (modifiable depuis la console).
+- **Accès protégé par mot de passe** (modifiable depuis la console).
+- **Sélecteur Multi-Boutiques en haut de l'Admin :**
+  - Vue unifiée **`Toutes les boutiques`** ou filtrage dédié **`Boutique Habillement`** / **`Boutique Électronique`** pour le Tableau de bord, les Articles et les Commandes.
 - **Tableau de bord interactif :**
-  - Filtrage par période : **Tout**, **Aujourd'hui**, **7 jours**, **30 jours**.
-  - Indicateurs cliquables : Chiffre d'affaires (total et encaissé livré), Commandes, Clients (Dakar vs Régions), Articles en ligne.
-  - Répartition des paiements (Wave, Orange Money, Yas / Mixx, Espèces) avec montants et pourcentages.
-  - Classement des articles les plus vendus et traitement rapide des dernières commandes.
-- **Gestion du Catalogue (`Articles`) :**
-  - Ajout de nouveaux articles avec upload et compression automatique d'image.
-  - Détection automatique de la catégorie selon le nom saisi (ex. *sac, parfum, chaussure, lunette*).
-  - Modification en ligne : nom, catégorie, prix de vente, ancien prix barré (calcul automatique du badge promo `%`), disponibilité (*En vente / Masqué*), et gestion exclusive des tailles/pointures disponibles.
+  - Filtres par période : **Tout**, **Aujourd'hui**, **7 jours**, **30 jours**.
+  - Cartes KPI cliquables : Chiffre d'affaires (total et encaissé livré), Commandes, Clients (Dakar vs Régions), Articles en ligne.
+  - Répartition des paiements (Wave, Orange Money, Yas / Mixx, Espèces) avec logos officiels, montants et pourcentages.
+  - Top articles vendus et mise à jour directe du statut des dernières commandes.
+- **Gestion des Articles :**
+  - Ajout d'article avec choix explicite de la boutique (**Boutique Habillement** ou **Boutique Électronique**), upload et compression automatique d'image, et détection automatique de catégorie.
+  - Modification en ligne : nom, boutique, catégorie, prix de vente, ancien prix barré (promo `%`), visibilité (*En vente / Masqué*) et gestion des tailles/options.
   - Suppression définitive synchronisée avec Supabase.
-- **Gestion des Commandes (`Commandes`) :**
-  - Suivi exclusif côté Admin (les suivis publics ont été retirés par sécurité).
-  - Filtres par statut (*Reçue → Confirmée → En préparation → En livraison → Livrée*) et recherche par référence `CAPO-XXXX`, nom ou téléphone.
-  - Badge distinct **Livraison à domicile** / **Récupération sur place**, et boutons directs **Appeler** / **WhatsApp**.
+- **Gestion des Commandes :**
+  - Suivi exclusif dans l'espace Admin (*Reçue → Confirmée → En préparation → En livraison → Livrée*).
+  - Identification claire du mode de réception (**Livraison à domicile** vs **Récupération sur place**) et de la boutique concernée (`mode`, `electronique`, `mixte`).
+  - Boutons directs **Appeler** et **WhatsApp**.
+
+---
+
+## Base de Données Supabase (SQL)
+
+Les tables `products` et `orders` supportent le champ `store_type` (`'mode'` ou `'electronique'`).  
+Le script de migration est disponible dans [`supabase/migrations/add_electronics_store.sql`](supabase/migrations/add_electronics_store.sql) :
+
+```sql
+ALTER TABLE public.products
+  ADD COLUMN IF NOT EXISTS store_type TEXT NOT NULL DEFAULT 'mode';
+
+CREATE INDEX IF NOT EXISTS idx_products_store_type
+  ON public.products (store_type);
+
+UPDATE public.products
+SET store_type = 'electronique'
+WHERE category IN ('smartphones', 'ordinateurs', 'tablettes_montres', 'audio_tech', 'accessoires_tech');
+
+ALTER TABLE public.orders
+  ADD COLUMN IF NOT EXISTS store_type TEXT NOT NULL DEFAULT 'mode';
+
+CREATE INDEX IF NOT EXISTS idx_orders_store_type
+  ON public.orders (store_type);
+```
 
 ---
 
@@ -71,29 +105,32 @@
 ```text
 CAPO221/
 ├── public/
-│   ├── payments/              # Logos officiels (wave.png, orange-money.png, yas.png)
-│   └── products/              # Images des articles d'origine
+│   ├── payments/                      # Logos officiels (wave.png, orange-money.png, yas.png)
+│   └── products/                      # Images des articles d'origine
+├── supabase/
+│   └── migrations/
+│       └── add_electronics_store.sql  # Migration SQL Multi-Boutiques (store_type)
 ├── src/
 │   ├── components/
 │   │   ├── admin/
-│   │   │   └── AdminView.tsx          # Console Admin (Dashboard, Articles, Commandes)
+│   │   │   └── AdminView.tsx          # Console Admin (Multi-boutiques, Dashboard, Articles, Commandes)
 │   │   ├── cart/
 │   │   │   └── CartDrawer.tsx         # Panier latéral & validation de commande
 │   │   ├── catalog/
 │   │   │   ├── CatalogView.tsx        # Vue catalogue filtrable
 │   │   │   ├── ProductCard.tsx        # Carte produit avec promo, stock & ventes
-│   │   │   ├── ProductFilters.tsx     # Panneau de filtres (catégorie, prix, tailles)
+│   │   │   ├── ProductFilters.tsx     # Panneau de filtres adapté à la boutique active
 │   │   │   └── WishlistView.tsx       # Page favoris
 │   │   ├── home/
-│   │   │   ├── Hero.tsx               # Bannière d'accueil dynamique
+│   │   │   ├── HomeView.tsx           # Écran de choix des 2 boutiques + vue boutique active
+│   │   │   ├── Hero.tsx               # Bannière d'accueil dynamique par boutique
 │   │   │   ├── CollectionsGrid.tsx    # Cartes de catégories dynamiques
 │   │   │   ├── NewArrivals.tsx        # Grille catalogue + onglets par catégorie
 │   │   │   ├── LiveActivityBar.tsx    # Flux temps réel des commandes anonymisées
-│   │   │   ├── NewsletterSection.tsx  # Contact & réseaux sociaux
-│   │   │   └── HomeView.tsx           # Assemblage de la page d'accueil
+│   │   │   └── NewsletterSection.tsx  # Contact & réseaux sociaux
 │   │   ├── layout/
-│   │   │   ├── AnnouncementBar.tsx    # Barre supérieure (nombre d'articles en direct)
-│   │   │   ├── Navbar.tsx             # Navigation principale (masquée sur /admin)
+│   │   │   ├── AnnouncementBar.tsx    # Barre supérieure (compteur d'articles par boutique)
+│   │   │   ├── Navbar.tsx             # Navigation principale (masquée sur /admin et avant choix)
 │   │   │   ├── MobileBottomNav.tsx    # Barre de navigation mobile
 │   │   │   └── Footer.tsx             # Pied de page + accès rapide admin
 │   │   ├── product/
@@ -104,16 +141,16 @@ CAPO221/
 │   │       ├── SearchModal.tsx        # Recherche instantanée
 │   │       └── ToastNotification.tsx  # Notifications interface
 │   ├── context/
-│   │   ├── StoreContext.tsx           # État catalogue, filtres, navigation & sync Supabase
+│   │   ├── StoreContext.tsx           # État boutique active, catalogue, filtres & sync Supabase
 │   │   ├── OrderContext.tsx           # Commandes, Realtime Supabase & activité publique
 │   │   ├── CartContext.tsx            # Gestion du panier
 │   │   └── WishlistContext.tsx        # Gestion des favoris
 │   ├── data/
-│   │   └── products.ts                # Catalogue initial & métadonnées des catégories
+│   │   └── products.ts                # Catalogue initial Habillement & métadonnées des catégories
 │   ├── lib/
 │   │   └── supabase.ts                # Client Supabase & requêtes CRUD produits/commandes
 │   ├── types/
-│   │   └── index.ts                   # Types TypeScript (Product, Order, CategoryId...)
+│   │   └── index.ts                   # Types TypeScript (StoreType, Product, Order, CategoryId...)
 │   ├── utils/
 │   │   ├── format.ts                  # Formatage FCFA, validation tél Sénégal, liens WhatsApp
 │   │   ├── cloudSync.ts               # Compression d'images & fallback sync
@@ -134,7 +171,7 @@ CAPO221/
 
 - **Frontend :** React 19 + TypeScript 6
 - **Bundler :** Vite 8
-- **Styles :** Tailwind CSS 3 + Lucide React (icônes)
+- **Styles :** Tailwind CSS 3 + Lucide React
 - **Base de données & Temps réel :** Supabase (`@supabase/supabase-js`)
 - **Qualité de code :** Oxlint + `tsc -b`
 - **Hébergement & Domaine :** Vercel + `capostore221.com`
@@ -165,4 +202,4 @@ npm run preview
 ## Déploiement
 
 Tout `git push` sur la branche `main` déclenche automatiquement le build (`tsc -b && vite build`) et la mise en production sur **Vercel** (`https://capostore221.com`).  
-Le fichier `vercel.json` gère la redirection SPA vers `/index.html` (pour les routes `/admin`, `/catalogue`, etc.) ainsi que les en-têtes de sécurité HTTP (`X-Frame-Options`, `X-Content-Type-Options`, etc.).
+Le fichier `vercel.json` assure la réécriture SPA vers `/index.html` (`/habillement`, `/electronique`, `/catalogue`, `/admin`) et applique les en-têtes de sécurité HTTP.
