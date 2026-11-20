@@ -379,12 +379,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
     showToast(`Nouvel article "${product.name}" ajouté avec succès !`, 'success');
 
-    // Supabase push if configured
+    // Supabase push directly (fast, single-row)
     if (isSupabaseConfigured()) {
-      upsertSupabaseProduct(product).catch((err) => console.warn('Supabase product save failed:', err));
+      const ok = await upsertSupabaseProduct(product).catch((err) => {
+        console.warn('Supabase product save failed:', err);
+        return false;
+      });
+      if (ok) return true;
     }
 
-    // Cloud push fallback
+    // Cloud push fallback (only if Supabase is not configured or failed)
     const saved = await saveCloudProducts(updated, productOverridesRef.current);
     return saved;
   };
@@ -412,7 +416,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     showToast('Article supprimé du catalogue.', 'info');
 
     if (isSupabaseConfigured()) {
-      deleteSupabaseProduct(productId).catch((err) => console.warn('Supabase product delete failed:', err));
+      const ok = await deleteSupabaseProduct(productId).catch((err) => {
+        console.warn('Supabase product delete failed:', err);
+        return false;
+      });
+      if (ok) return true;
     }
 
     // Cloud push fallback
