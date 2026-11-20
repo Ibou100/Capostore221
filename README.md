@@ -178,6 +178,17 @@ CAPO221/
 
 ---
 
+## Design System & Performances (2026)
+
+- **Palette :** Fond blanc `#FFFFFF`, surfaces douces `#F6F5F2`, bordures discrètes `#E8E6E1`, texte `#0A0A0A` / `#5F5F5A`, accent unique `#C2410C` et boutons pilules noirs (`rounded-full`).
+- **Typographie :** `Space Grotesk` pour les titres et `Inter` pour les textes (sans abus de majuscules ni d'émojis).
+- **Optimisation des images :**
+  - Composant `SmartImage` avec squelette `#F6F5F2`, fondu d'apparition `200ms`, `loading="lazy"`, `decoding="async"`, et `fetchPriority="high"` sur les visuels principaux.
+  - Montage paresseux de l'image secondaire au survol uniquement et pagination par tranches (« Voir plus ») dans le catalogue.
+  - Cache HTTP long terme (`max-age=31536000, immutable`) sur `/products/*`, `/payments/*` et `/assets/*` via `vercel.json`.
+
+---
+
 ## Installation & Commandes Locales
 
 ```bash

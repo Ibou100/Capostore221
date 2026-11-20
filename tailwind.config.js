@@ -8,31 +8,34 @@ export default {
     extend: {
       colors: {
         capo: {
-          black: '#0A0A0C',
+          bg: '#FFFFFF',
+          surface: '#F6F5F2',
+          black: '#0A0A0A',
+          muted: '#5F5F5A',
+          border: '#E8E6E1',
+          accent: '#C2410C',
+          accentSoft: '#FFF7ED',
           dark: '#141418',
-          card: '#18181D',
-          graphite: '#27272E',
-          silver: '#8E8E93',
-          border: '#E2E2E6',
-          borderDark: '#2C2C35',
-          cream: '#F7F7F8',
-          offwhite: '#FDFDFD',
-          accent: '#D4AF37', // subtle antique gold highlight for high-end touch if needed
-          accentHover: '#C59F2A',
+          cream: '#F6F5F2',
+          offwhite: '#FFFFFF',
         }
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
-        display: ['"Space Grotesk"', '"Plus Jakarta Sans"', 'sans-serif'],
+        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Space Grotesk"', '"Inter"', 'sans-serif'],
       },
       letterSpacing: {
-        tightest: '-0.04em',
-        widest: '0.2em',
+        tightest: '-0.03em',
+        tighter: '-0.02em',
+      },
+      borderRadius: {
+        'card': '20px',
+        'portal': '28px',
       },
       boxShadow: {
-        'subtle': '0 2px 10px rgba(0, 0, 0, 0.03)',
-        'premium': '0 20px 40px -15px rgba(0, 0, 0, 0.08)',
-        'drawer': '-10px 0 30px rgba(0,0,0,0.15)',
+        'subtle': '0 4px 20px -4px rgba(10, 10, 10, 0.06)',
+        'premium': '0 20px 40px -15px rgba(10, 10, 10, 0.08)',
+        'drawer': '-10px 0 30px rgba(0, 0, 0, 0.12)',
       }
     },
   },

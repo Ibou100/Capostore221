@@ -2,35 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CapoStore221 Production Styling - Updated 2026-11-05 */
+/* CAPOSTORE221 Design System 2026 */
 
 @layer base {
+  :root {
+    --color-bg: #FFFFFF;
+    --color-surface: #F6F5F2;
+    --color-border: #E8E6E1;
+    --color-text: #0A0A0A;
+    --color-text-secondary: #5F5F5A;
+    --color-accent: #C2410C;
+  }
+
   * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   html {
     scroll-behavior: smooth;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   body {
-    background-color: #F8F8F9;
-    color: #0A0A0C;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    outline: 2px solid #0A0A0A;
+    outline-offset: 2px;
   }
 }
 
 @layer utilities {
-  /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-  /* Hide scrollbar for IE, Edge and Firefox */
   .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   .text-balance {
@@ -38,14 +56,13 @@
   }
 }
 
-/* Custom animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slideDrawerRight {
@@ -54,5 +71,5 @@
 }
 
 .animate-drawer {
-  animation: slideDrawerRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideDrawerRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

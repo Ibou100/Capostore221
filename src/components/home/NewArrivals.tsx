@@ -1,178 +1,60 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowRight, SlidersHorizontal } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { useOrders } from '../../context/OrderContext';
 import { ProductCard } from '../catalog/ProductCard';
 
-type TabType =
-  | 'tous'
-  | 'vendus'
-  | 'pantalons'
-  | 'hauts'
-  | 'chaussures'
-  | 'parfums'
-  | 'lunettes'
-  | 'accessoires'
-  | 'smartphones'
-  | 'ordinateurs'
-  | 'tablettes_montres'
-  | 'audio_tech'
-  | 'accessoires_tech';
-
-function isPantProduct(name: string, subCategory: string): boolean {
-  if (subCategory === 'Pantalons') return true;
-  return /\b(pantalon|pantalons|jean|jeans|denim|cargo|bermuda|short|jogging)\b/i.test(`${name} ${subCategory}`);
-}
-
 export const NewArrivals: React.FC = () => {
-  const { storeProducts, activeStore, goToCatalog } = useStore();
-  const { soldCounts } = useOrders();
-  const [activeTab, setActiveTab] = useState<TabType>('tous');
+  const { storeProducts, goToCatalog } = useStore();
+  const [visibleCount, setVisibleCount] = useState(8);
 
   const publishedProducts = useMemo(
     () => storeProducts.filter((p) => p.published),
     [storeProducts]
   );
 
-  // Reset to 'tous' when switching between Mode & Electronique
-  React.useEffect(() => {
-    setActiveTab('tous');
-  }, [activeStore]);
+  if (publishedProducts.length === 0) {
+    return null;
+  }
 
-  const soldProducts = useMemo(
-    () =>
-      publishedProducts
-        .filter((p) => (soldCounts[p.id] || 0) > 0)
-        .sort((a, b) => (soldCounts[b.id] || 0) - (soldCounts[a.id] || 0)),
-    [publishedProducts, soldCounts]
-  );
-
-  const lunettesCount = useMemo(
-    () => publishedProducts.filter((p) => p.category === 'lunettes').length,
-    [publishedProducts]
-  );
-
-  const shoesCount = useMemo(
-    () => publishedProducts.filter((p) => p.category === 'chaussures').length,
-    [publishedProducts]
-  );
-
-  const parfumsCount = useMemo(
-    () => publishedProducts.filter((p) => p.category === 'parfums').length,
-    [publishedProducts]
-  );
-
-  // Filter products by active tab
-  const filteredProducts = useMemo(() => {
-    switch (activeTab) {
-      case 'vendus':
-        return soldProducts;
-      case 'pantalons':
-        return publishedProducts.filter((p) => p.category === 'vetements' && isPantProduct(p.name, p.subCategory));
-      case 'hauts':
-        return publishedProducts.filter((p) => p.category === 'vetements' && !isPantProduct(p.name, p.subCategory));
-      case 'lunettes':
-        return publishedProducts.filter((p) => p.category === 'lunettes');
-      case 'accessoires':
-        return publishedProducts.filter((p) => p.category === 'accessoires');
-      case 'chaussures':
-        return publishedProducts.filter((p) => p.category === 'chaussures');
-      case 'parfums':
-        return publishedProducts.filter((p) => p.category === 'parfums');
-      case 'smartphones':
-        return publishedProducts.filter((p) => p.category === 'smartphones');
-      case 'ordinateurs':
-        return publishedProducts.filter((p) => p.category === 'ordinateurs');
-      case 'tablettes_montres':
-        return publishedProducts.filter((p) => p.category === 'tablettes_montres');
-      case 'audio_tech':
-        return publishedProducts.filter((p) => p.category === 'audio_tech');
-      case 'accessoires_tech':
-        return publishedProducts.filter((p) => p.category === 'accessoires_tech');
-      case 'tous':
-      default:
-        return publishedProducts;
-    }
-  }, [publishedProducts, soldProducts, activeTab]);
-
-  const tabs: { id: TabType; label: string; count: number }[] =
-    activeStore === 'electronique'
-      ? [
-          { id: 'tous', label: 'Tout', count: publishedProducts.length },
-          ...(soldProducts.length > 0
-            ? [{ id: 'vendus' as TabType, label: 'Articles vendus', count: soldProducts.length }]
-            : []),
-          { id: 'smartphones', label: 'Smartphones & iPhones', count: publishedProducts.filter((p) => p.category === 'smartphones').length },
-          { id: 'ordinateurs', label: 'Ordinateurs & PC', count: publishedProducts.filter((p) => p.category === 'ordinateurs').length },
-          { id: 'tablettes_montres', label: 'Tablettes & Montres', count: publishedProducts.filter((p) => p.category === 'tablettes_montres').length },
-          { id: 'audio_tech', label: 'Audio', count: publishedProducts.filter((p) => p.category === 'audio_tech').length },
-          { id: 'accessoires_tech', label: 'Accessoires Tech', count: publishedProducts.filter((p) => p.category === 'accessoires_tech').length },
-        ]
-      : [
-          { id: 'tous', label: 'Toutes les pièces', count: publishedProducts.length },
-          ...(soldProducts.length > 0
-            ? [{ id: 'vendus' as TabType, label: 'Articles vendus', count: soldProducts.length }]
-            : []),
-          { id: 'pantalons', label: 'Pantalons & Jeans', count: publishedProducts.filter(p => p.category === 'vetements' && isPantProduct(p.name, p.subCategory)).length },
-          { id: 'hauts', label: 'Chemises, Hauts & Vestes', count: publishedProducts.filter(p => p.category === 'vetements' && !isPantProduct(p.name, p.subCategory)).length },
-          { id: 'chaussures', label: 'Chaussures', count: shoesCount },
-          { id: 'parfums', label: 'Parfums', count: parfumsCount },
-          ...(lunettesCount > 0
-            ? [{ id: 'lunettes' as TabType, label: 'Lunettes', count: lunettesCount }]
-            : []),
-          { id: 'accessoires', label: 'Sacs & Accessoires', count: publishedProducts.filter(p => p.category === 'accessoires').length },
-        ];
+  const displayed = publishedProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < publishedProducts.length;
 
   return (
-    <section className="py-8 sm:py-14 lg:py-20 bg-white border-b border-[#E7E2D9]">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-5 sm:mb-6 pb-3 border-b border-[#EFECE5] gap-2 text-left">
-          <div>
-            <h2 className="font-display font-extrabold text-xl sm:text-3xl text-zinc-900 tracking-tight">
-              Catalogue
-            </h2>
-            <p className="text-xs sm:text-sm text-zinc-500 mt-0.5">
-              {publishedProducts.length} article{publishedProducts.length > 1 ? 's' : ''} disponible{publishedProducts.length > 1 ? 's' : ''}
-            </p>
-          </div>
+    <section className="max-w-[1440px] mx-auto w-full px-4 sm:px-6 lg:px-10 pb-8 sm:pb-12">
+      {/* Header */}
+      <div className="flex items-end justify-between mb-6 sm:mb-8 gap-4">
+        <h2 className="font-display font-semibold text-2xl sm:text-4xl text-[#0A0A0A]">
+          Nouveautés
+        </h2>
+        <button
+          type="button"
+          onClick={() => goToCatalog({ category: 'tous' })}
+          className="text-sm font-medium text-[#0A0A0A] hover:text-[#C2410C] inline-flex items-center gap-1.5 transition-colors"
+        >
+          <span>Voir tout</span>
+          <ArrowRight className="w-4 h-4" strokeWidth={1.75} />
+        </button>
+      </div>
 
+      {/* 4 columns desktop / 2 columns mobile */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-10">
+        {displayed.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+
+      {/* Pagination "Voir plus" */}
+      {hasMore && (
+        <div className="mt-12 text-center">
           <button
-            onClick={() => goToCatalog({ category: 'tous' })}
-            className="group inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-900 hover:text-[#B85D19] transition-colors"
+            type="button"
+            onClick={() => setVisibleCount((c) => c + 12)}
+            className="h-12 px-8 rounded-full border border-[#E8E6E1] hover:border-[#0A0A0A] bg-white text-sm font-medium text-[#0A0A0A] transition-colors"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-zinc-500 group-hover:text-[#B85D19]" />
-            <span>Filtres avancés</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+            Voir plus ({publishedProducts.length - visibleCount} restants)
           </button>
         </div>
-
-        {/* Clean Filter Tabs - Mobile scrollable */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-5 sm:mb-8 no-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider rounded-sm transition-colors shrink-0 border ${
-                activeTab === tab.id
-                  ? 'bg-[#141210] text-white border-[#141210]'
-                  : 'bg-[#FAF8F5] text-zinc-600 border-[#E7E2D9] hover:border-zinc-900 hover:text-zinc-900'
-              }`}
-            >
-              {tab.label} <span className="ml-1 opacity-70 text-[10px]">({tab.count})</span>
-            </button>
-          ))}
-        </div>
-
-        {/* 2 columns on mobile, 3 on tablet, 4 on desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-
-      </div>
+      )}
     </section>
   );
 };

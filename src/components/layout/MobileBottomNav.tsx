@@ -9,67 +9,72 @@ export const MobileBottomNav: React.FC = () => {
   const { openCart, totalCount } = useCart();
   const { wishlistCount } = useWishlist();
 
+  if (currentView.type === 'admin') return null;
+
   const isHome = currentView.type === 'home';
   const isCatalog = currentView.type === 'catalog';
   const isWishlist = currentView.type === 'wishlist';
-  
+
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-zinc-200/90 py-1 px-2 flex items-center justify-around lg:hidden shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
-      {/* 1. Accueil */}
+    <nav
+      aria-label="Navigation mobile"
+      className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E8E6E1] py-1.5 px-2 flex items-center justify-around lg:hidden"
+    >
       <button
+        type="button"
         onClick={goToHome}
-        className={`flex flex-col items-center justify-center p-1.5 transition-colors ${
-          isHome ? 'text-[#141210]' : 'text-zinc-400 hover:text-zinc-700'
+        className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors ${
+          isHome ? 'text-[#0A0A0A]' : 'text-[#5F5F5A]'
         }`}
         aria-label="Accueil"
       >
-        <Home className="w-5 h-5" />
-        <span className="text-[10px] font-medium mt-0.5">Accueil</span>
+        <Home className="w-5 h-5" strokeWidth={1.75} />
+        <span className="text-[11px] font-medium mt-0.5">Accueil</span>
       </button>
 
-      {/* 2. Catalogue */}
       <button
+        type="button"
         onClick={() => goToCatalog({ category: 'tous' })}
-        className={`flex flex-col items-center justify-center p-1.5 transition-colors ${
-          isCatalog ? 'text-[#141210]' : 'text-zinc-400 hover:text-zinc-700'
+        className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors ${
+          isCatalog ? 'text-[#0A0A0A]' : 'text-[#5F5F5A]'
         }`}
         aria-label="Catalogue"
       >
-        <LayoutGrid className="w-5 h-5" />
-        <span className="text-[10px] font-medium mt-0.5">Boutique</span>
+        <LayoutGrid className="w-5 h-5" strokeWidth={1.75} />
+        <span className="text-[11px] font-medium mt-0.5">Catalogue</span>
       </button>
 
-      {/* 4. Favoris */}
       <button
+        type="button"
         onClick={goToWishlist}
-        className={`relative flex flex-col items-center justify-center p-1.5 transition-colors ${
-          isWishlist ? 'text-[#141210]' : 'text-zinc-400 hover:text-zinc-700'
+        className={`relative flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors ${
+          isWishlist ? 'text-[#0A0A0A]' : 'text-[#5F5F5A]'
         }`}
         aria-label="Favoris"
       >
-        <Heart className="w-5 h-5" />
+        <Heart className="w-5 h-5" strokeWidth={1.75} />
         {wishlistCount > 0 && (
-          <span className="absolute top-0 right-1 w-4 h-4 rounded-full bg-[#141210] text-white text-[9px] font-bold flex items-center justify-center">
+          <span className="absolute top-0.5 right-2 w-4 h-4 rounded-full bg-[#0A0A0A] text-white text-[9px] font-semibold flex items-center justify-center">
             {wishlistCount}
           </span>
         )}
-        <span className="text-[10px] font-medium mt-0.5">Favoris</span>
+        <span className="text-[11px] font-medium mt-0.5">Favoris</span>
       </button>
 
-      {/* 5. Panier */}
       <button
+        type="button"
         onClick={openCart}
-        className="relative flex flex-col items-center justify-center p-1.5 text-zinc-400 hover:text-zinc-700 transition-colors"
+        className="relative flex flex-col items-center justify-center min-w-[56px] min-h-[44px] text-[#5F5F5A] hover:text-[#0A0A0A] transition-colors"
         aria-label="Panier"
       >
-        <ShoppingBag className="w-5 h-5" />
+        <ShoppingBag className="w-5 h-5" strokeWidth={1.75} />
         {totalCount > 0 && (
-          <span className="absolute top-0 right-1 min-w-4 h-4 px-1 rounded-full bg-[#B85D19] text-white text-[9px] font-bold flex items-center justify-center">
+          <span className="absolute top-0.5 right-2 min-w-4 h-4 px-1 rounded-full bg-[#C2410C] text-white text-[9px] font-semibold flex items-center justify-center">
             {totalCount}
           </span>
         )}
-        <span className="text-[10px] font-medium mt-0.5">Panier</span>
+        <span className="text-[11px] font-medium mt-0.5">Panier</span>
       </button>
-    </div>
+    </nav>
   );
 };
