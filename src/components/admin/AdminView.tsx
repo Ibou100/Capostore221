@@ -77,6 +77,12 @@ export const AdminView: React.FC = () => {
   const [adminStoreFilter, setAdminStoreFilter] = useState<'all' | StoreType>('all');
   const [dashboardPeriod, setDashboardPeriod] = useState<'all' | 'today' | '7d' | '30d'>('all');
 
+  const storeScopedProducts = useMemo(() => {
+    const list = products || [];
+    if (adminStoreFilter === 'all') return list;
+    return list.filter((p) => getProductStoreType(p) === adminStoreFilter);
+  }, [products, adminStoreFilter]);
+
   const storeScopedOrders = useMemo(() => {
     const list = orders || [];
     if (adminStoreFilter === 'all') return list;
@@ -805,7 +811,7 @@ export const AdminView: React.FC = () => {
             }`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
-            <span>Articles ({products.length})</span>
+            <span>Articles ({storeScopedProducts.length})</span>
           </button>
 
           <button
@@ -870,7 +876,10 @@ export const AdminView: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={() => {
+                  setActiveTab('products');
+                  setIsAddModalOpen(true);
+                }}
                 className="px-4 py-2 bg-[#B85D19] hover:bg-[#9E4D12] text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -948,7 +957,7 @@ export const AdminView: React.FC = () => {
                 <ShoppingBag className="w-4 h-4 text-zinc-700" />
               </div>
               <div className="font-display font-black text-xl sm:text-2xl text-zinc-950">
-                {products.filter((p) => p.published).length}
+                {storeScopedProducts.filter((p) => p.published).length}
               </div>
               <div className="mt-2 pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
                 <span>Gérer le catalogue</span>
