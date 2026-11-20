@@ -123,19 +123,28 @@ export async function saveCloudProducts(
 }
 
 /**
- * Compresses an image file from the owner's phone or computer to an optimized Base64 JPEG data URL
- * (Limits max width/height to 900px, quality 0.82 -> result is typically ~40-80 KB)
+ * Optimizes an image file from the owner's phone or computer to a crisp Base64 data URL.
+ * Preserves small/medium files (< 180 KB) untouched to avoid quality loss,
+ * and uses high-res WebP (max 1400px, quality 0.90) for larger uploads.
  */
 export function compressImageFile(
   file: File,
-  maxWidth = 900,
-  maxHeight = 900,
-  quality = 0.82
+  maxWidth = 1400,
+  maxHeight = 1400,
+  quality = 0.9
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
     reader.onload = (readerEvent) => {
+      const originalDataUrl = readerEvent.target?.result as string;
+
+      // Keep already-light images untouched so crisp WebP/PNG/JPEG assets stay sharp
+      if (file.size <= 180 * 1024 && originalDataUrl) {
+        resolve(originalDataUrl);
+        return;
+      }
+
       const img = new Image();
       img.onload = () => {
         let width = img.width;
@@ -159,17 +168,24 @@ export function compressImageFile(
 
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          resolve(readerEvent.target?.result as string);
+          resolve(originalDataUrl);
           return;
         }
 
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-        resolve(dataUrl);
+
+        const webpUrl = canvas.toDataURL('image/webp', quality);
+        if (webpUrl.startsWith('data:image/webp')) {
+          resolve(webpUrl);
+        } else {
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        }
       };
 
       img.onerror = (err) => reject(err);
-      img.src = readerEvent.target?.result as string;
+      img.src = originalDataUrl;
     };
 
     reader.onerror = (err) => reject(err);

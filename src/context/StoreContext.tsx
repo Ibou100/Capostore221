@@ -572,7 +572,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const goToProduct = (productId: string) => {
     setCurrentView({ type: 'product-detail', productId });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
   };
 
   const goToEditorial = () => {

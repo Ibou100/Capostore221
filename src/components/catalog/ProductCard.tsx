@@ -70,7 +70,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           src={product.images[0]}
           alt={product.name}
           wrapperClassName="w-full h-full"
-          className={`w-full h-full object-contain transition-transform duration-300 ease-out ${
+          className={`w-full h-full object-contain mix-blend-multiply transition-transform duration-300 ease-out ${
             isHovered ? 'scale-[1.03]' : 'scale-100'
           }`}
         />
