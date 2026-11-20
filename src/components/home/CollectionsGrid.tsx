@@ -61,13 +61,13 @@ export const CollectionsGrid: React.FC = () => {
             onClick={() => goToCatalog({ category: cat.id })}
             className="group text-left cursor-pointer space-y-3"
           >
-            <div className="aspect-[4/5] w-full rounded-[20px] bg-[#F6F5F2] overflow-hidden">
+            <div className="aspect-[4/5] w-full rounded-[20px] bg-[#F6F5F2] p-3 sm:p-4 overflow-hidden">
               {cat.image && (
                 <SmartImage
                   src={cat.image}
                   alt={cat.title}
                   wrapperClassName="w-full h-full"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
                 />
               )}
             </div>

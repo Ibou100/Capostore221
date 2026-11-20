@@ -65,12 +65,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       onClick={handleCardClick}
     >
       {/* Image Stage: 4:5, rounded-[20px], #F6F5F2, no border */}
-      <div className="relative aspect-[4/5] w-full rounded-[20px] bg-[#F6F5F2] overflow-hidden">
+      <div className="relative aspect-[4/5] w-full rounded-[20px] bg-[#F6F5F2] p-3 sm:p-4 overflow-hidden">
         <SmartImage
           src={product.images[0]}
           alt={product.name}
           wrapperClassName="w-full h-full"
-          className={`w-full h-full object-cover transition-transform duration-300 ease-out ${
+          className={`w-full h-full object-contain transition-transform duration-300 ease-out ${
             isHovered ? 'scale-[1.03]' : 'scale-100'
           }`}
         />
@@ -82,7 +82,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             alt={`${product.name} - vue détail`}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-200 scale-[1.03]"
+            className="absolute inset-0 w-full h-full object-contain p-3 sm:p-4 bg-[#F6F5F2] transition-opacity duration-200 scale-[1.03]"
           />
         )}
 

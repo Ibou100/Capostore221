@@ -84,13 +84,13 @@ export const Hero: React.FC = () => {
               onClick={() => goToProduct(heroProduct.id)}
               className="group cursor-pointer space-y-3"
             >
-              <div className="aspect-[4/5] max-h-[560px] w-full rounded-[24px] bg-[#F6F5F2] overflow-hidden">
+              <div className="aspect-[4/5] max-h-[520px] w-full rounded-[24px] bg-[#F6F5F2] p-6 sm:p-10 overflow-hidden flex items-center justify-center">
                 <SmartImage
                   src={heroProduct.images[0]}
                   alt={heroProduct.name}
                   priority
                   wrapperClassName="w-full h-full"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
                 />
               </div>
               <div className="flex items-center justify-between px-1">
