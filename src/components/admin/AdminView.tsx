@@ -1184,8 +1184,8 @@ export const AdminView: React.FC = () => {
 
           {/* ADD PRODUCT MODAL / DRAWER */}
           {isAddModalOpen && (
-            <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-white w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-zinc-200 animate-fadeIn my-8">
+            <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-start justify-center p-4 sm:p-6">
+              <div className="bg-white w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-zinc-200 animate-fadeIn my-auto">
                 <div className="flex items-center justify-between pb-4 border-b border-zinc-100 mb-6">
                   <div className="flex items-center gap-2.5">
                     <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#B85D19] flex items-center justify-center">
