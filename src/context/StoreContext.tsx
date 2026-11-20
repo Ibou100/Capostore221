@@ -67,7 +67,7 @@ const DEFAULT_FILTERS: FilterState = {
   category: 'tous',
   gender: 'all',
   minPrice: 0,
-  maxPrice: 100000,
+  maxPrice: 2000000,
   sizes: [],
   colors: [],
   inStockOnly: false,

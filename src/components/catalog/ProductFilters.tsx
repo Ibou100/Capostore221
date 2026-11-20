@@ -39,6 +39,11 @@ export const ProductFilters: React.FC = () => {
 
   const CATEGORIES = activeStore === 'electronique' ? TECH_CATEGORIES : MODE_CATEGORIES;
   const SIZE_OPTIONS = activeStore === 'electronique' ? TECH_OPTIONS : MODE_SIZES;
+  const maxPriceLimit = activeStore === 'electronique' ? 2000000 : 100000;
+  const minPriceLimit = activeStore === 'electronique' ? 10000 : 2000;
+  const priceStep = activeStore === 'electronique' ? 25000 : 1000;
+  const effectiveMaxPrice = Math.min(filters.maxPrice, maxPriceLimit);
+  const isPriceFiltered = filters.maxPrice < maxPriceLimit;
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -54,7 +59,7 @@ export const ProductFilters: React.FC = () => {
     (filters.category !== 'tous' ? 1 : 0) +
     (filters.gender !== 'all' ? 1 : 0) +
     (filters.inStockOnly ? 1 : 0) +
-    (filters.maxPrice < 100000 ? 1 : 0) +
+    (isPriceFiltered ? 1 : 0) +
     filters.sizes.length +
     (filters.searchQuery ? 1 : 0);
 
@@ -177,12 +182,12 @@ export const ProductFilters: React.FC = () => {
                 type="button"
                 onClick={() => setOpenMenu(openMenu === 'price' ? null : 'price')}
                 className={`h-10 px-4 rounded-full border text-sm font-medium inline-flex items-center gap-2 transition-colors ${
-                  filters.maxPrice < 100000
+                  isPriceFiltered
                     ? 'bg-[#0A0A0A] text-white border-[#0A0A0A]'
                     : 'bg-white text-[#0A0A0A] border-[#E8E6E1] hover:border-[#0A0A0A]'
                 }`}
               >
-                <span>{filters.maxPrice < 100000 ? `Max ${formatFCFA(filters.maxPrice)}` : 'Prix'}</span>
+                <span>{isPriceFiltered ? `Max ${formatFCFA(effectiveMaxPrice)}` : 'Prix'}</span>
                 <ChevronDown className="w-3.5 h-3.5 opacity-70" />
               </button>
 
@@ -190,22 +195,22 @@ export const ProductFilters: React.FC = () => {
                 <div className="absolute left-0 top-12 z-30 w-64 bg-white border border-[#E8E6E1] rounded-2xl shadow-premium p-4 space-y-3 animate-fade-in">
                   <div className="flex items-center justify-between text-xs font-medium text-[#0A0A0A]">
                     <span>Prix maximum</span>
-                    <span>{formatFCFA(filters.maxPrice)}</span>
+                    <span>{formatFCFA(effectiveMaxPrice)}</span>
                   </div>
                   <input
                     type="range"
-                    min={2000}
-                    max={100000}
-                    step={1000}
-                    value={filters.maxPrice}
+                    min={minPriceLimit}
+                    max={maxPriceLimit}
+                    step={priceStep}
+                    value={effectiveMaxPrice}
                     onChange={(e) =>
                       setFilters((prev) => ({ ...prev, maxPrice: Number(e.target.value) }))
                     }
                     className="w-full accent-[#0A0A0A] cursor-pointer"
                   />
                   <div className="flex justify-between text-[12px] text-[#5F5F5A]">
-                    <span>2 000 FCFA</span>
-                    <span>100 000 FCFA</span>
+                    <span>{formatFCFA(minPriceLimit)}</span>
+                    <span>{formatFCFA(maxPriceLimit)}</span>
                   </div>
                 </div>
               )}
@@ -350,14 +355,14 @@ export const ProductFilters: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm font-medium text-[#0A0A0A]">
                   <span>Prix max</span>
-                  <span>{formatFCFA(filters.maxPrice)}</span>
+                  <span>{formatFCFA(effectiveMaxPrice)}</span>
                 </div>
                 <input
                   type="range"
-                  min={2000}
-                  max={100000}
-                  step={1000}
-                  value={filters.maxPrice}
+                  min={minPriceLimit}
+                  max={maxPriceLimit}
+                  step={priceStep}
+                  value={effectiveMaxPrice}
                   onChange={(e) =>
                     setFilters((prev) => ({ ...prev, maxPrice: Number(e.target.value) }))
                   }
