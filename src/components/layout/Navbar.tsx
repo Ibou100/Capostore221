@@ -18,7 +18,7 @@ import type { CategoryId } from '../../types';
 export const Navbar: React.FC = () => {
   const { totalCount, openCart } = useCart();
   const { wishlistCount } = useWishlist();
-  const { goToHome, goToCatalog, goToWishlist, openSearch, currentView, activeStore, switchStore } = useStore();
+  const { goToHome, goToCatalog, goToWishlist, openSearch, currentView, activeStore, hasEnteredStore, switchStore } = useStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -114,8 +114,8 @@ export const Navbar: React.FC = () => {
             </button>
           </div>
 
-          {/* Desktop Navigation Links (hidden in Admin view) */}
-          {!isAdminView && (
+          {/* Desktop Navigation Links (hidden in Admin view or before entering a boutique) */}
+          {!isAdminView && hasEnteredStore && (
             <nav className="hidden lg:flex items-center space-x-6">
               {navLinks.map((link) => {
                 const isActive =

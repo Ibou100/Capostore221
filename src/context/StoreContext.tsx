@@ -13,6 +13,7 @@ import {
 interface StoreContextType {
   products: Product[];
   activeStore: StoreType;
+  hasEnteredStore: boolean;
   setActiveStore: (store: StoreType) => void;
   switchStore: (store: StoreType) => void;
   storeProducts: Product[];
@@ -147,6 +148,25 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
     return 'mode';
+  });
+
+  const [hasEnteredStore, setHasEnteredStore] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '');
+      const params = new URLSearchParams(window.location.search);
+      if (
+        pathname === '/electronique' ||
+        pathname === '/habillement' ||
+        pathname === '/catalogue' ||
+        pathname === '/boutique' ||
+        pathname === '/admin' ||
+        pathname.startsWith('/admin/') ||
+        params.get('boutique')
+      ) {
+        return true;
+      }
+    }
+    return false;
   });
 
   const [currentView, setCurrentView] = useState<ViewState>(() => {
@@ -597,10 +617,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const switchStore = (store: StoreType) => {
     setActiveStore(store);
+    setHasEnteredStore(true);
     setFilters(DEFAULT_FILTERS);
     setCurrentView({ type: 'home' });
     if (typeof window !== 'undefined') {
-      const targetPath = store === 'electronique' ? '/electronique' : '/';
+      const targetPath = store === 'electronique' ? '/electronique' : '/habillement';
       if (window.location.pathname !== targetPath) {
         window.history.pushState(null, '', targetPath);
       }
@@ -695,6 +716,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       value={{
         products,
         activeStore,
+        hasEnteredStore,
         setActiveStore,
         switchStore,
         storeProducts,
