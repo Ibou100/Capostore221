@@ -67,7 +67,7 @@ export const CollectionsGrid: React.FC = () => {
                   src={cat.image}
                   alt={cat.title}
                   wrapperClassName="w-full h-full"
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+                  className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.03]"
                 />
               )}
             </div>
