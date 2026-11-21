@@ -167,15 +167,21 @@ export async function testSupabaseConnection(): Promise<{ success: boolean; mess
 // PRODUCTS CRUD OPERATIONS
 // ============================================================================
 
-export async function fetchSupabaseProducts(): Promise<Product[] | null> {
+export async function fetchSupabaseProducts(storeFilter?: StoreType): Promise<Product[] | null> {
   const client = getSupabaseClient();
   if (!client) return null;
 
   try {
-    const { data, error } = await client
+    let query = client
       .from('products')
-      .select('*')
+      .select('id,name,slug,store_type,category,sub_category,gender,price,compare_at_price,images,description,details,materials,variants,available_sizes,stock,is_new,is_featured,is_popular,published,created_at')
       .order('created_at', { ascending: false });
+
+    if (storeFilter) {
+      query = query.eq('store_type', storeFilter);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.warn('Supabase fetch products error:', error.message);

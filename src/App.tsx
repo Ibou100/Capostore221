@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -9,12 +9,12 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 
 import { HomeView } from './components/home/HomeView';
-import { CatalogView } from './components/catalog/CatalogView';
-import { ProductDetailView } from './components/product/ProductDetailView';
-import { WishlistView } from './components/catalog/WishlistView';
-import { EditorialStoryView } from './components/home/EditorialStoryView';
-// Public orders/tracking views removed: order management is exclusive to AdminView
-import { AdminView } from './components/admin/AdminView';
+
+const CatalogView = lazy(() => import('./components/catalog/CatalogView').then((m) => ({ default: m.CatalogView })));
+const ProductDetailView = lazy(() => import('./components/product/ProductDetailView').then((m) => ({ default: m.ProductDetailView })));
+const WishlistView = lazy(() => import('./components/catalog/WishlistView').then((m) => ({ default: m.WishlistView })));
+const EditorialStoryView = lazy(() => import('./components/home/EditorialStoryView').then((m) => ({ default: m.EditorialStoryView })));
+const AdminView = lazy(() => import('./components/admin/AdminView').then((m) => ({ default: m.AdminView })));
 
 import { CartDrawer } from './components/cart/CartDrawer';
 import { SearchModal } from './components/ui/SearchModal';
@@ -122,7 +122,20 @@ const AppContent: React.FC = () => {
 
       {/* 3. Main Dynamic Content */}
       <main className="flex-1">
-        {renderCurrentView()}
+        <Suspense
+          fallback={
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-16">
+              <div className="h-8 w-48 bg-[#F6F5F2] rounded-full animate-pulse mb-8" />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="aspect-[4/5] rounded-[20px] bg-[#F6F5F2] animate-pulse" />
+                ))}
+              </div>
+            </div>
+          }
+        >
+          {renderCurrentView()}
+        </Suspense>
       </main>
 
       {/* 4. Footer */}

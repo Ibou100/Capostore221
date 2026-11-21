@@ -250,6 +250,26 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       // 1. Try Supabase first if configured
       if (isSupabaseConfigured()) {
+        // Priority fast-path: if user is on /electronique, fetch electronics first (~2 rows, ~50ms)
+        const isOnElecRoute =
+          typeof window !== 'undefined' &&
+          (window.location.pathname.toLowerCase().startsWith('/electronique') ||
+            new URLSearchParams(window.location.search).get('boutique') === 'electronique');
+
+        if (isOnElecRoute) {
+          const fastElec = await fetchSupabaseProducts('electronique');
+          if (fastElec && Array.isArray(fastElec)) {
+            hasSyncedFromCloudRef.current = true;
+            setCustomProducts((prev) => {
+              const nonElec = prev.filter((p) => getProductStoreType(p) !== 'electronique');
+              const merged = [...fastElec.filter((p) => p.id.startsWith('capo-custom-')), ...nonElec];
+              setCachedCustomProducts(merged);
+              return merged;
+            });
+            setIsCatalogSyncing(false);
+          }
+        }
+
         const dbProducts = await fetchSupabaseProducts();
         if (dbProducts && Array.isArray(dbProducts) && dbProducts.length > 0) {
           // Identify any initial products that have been deleted in Supabase
@@ -368,7 +388,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const handleVisibility = () => {
       if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
         const now = Date.now();
-        if (now - lastCloudSyncAtRef.current > 4000) {
+        if (now - lastCloudSyncAtRef.current > 60000) {
           lastCloudSyncAtRef.current = now;
           refreshCloudCatalog();
         }
