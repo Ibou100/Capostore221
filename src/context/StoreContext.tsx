@@ -335,13 +335,20 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  // Sync cloud catalog on mount and on tab focus
+  const lastCloudSyncAtRef = useRef<number>(0);
+
+  // Sync cloud catalog on mount and on tab focus (throttled to avoid redundant reloads)
   useEffect(() => {
+    lastCloudSyncAtRef.current = Date.now();
     refreshCloudCatalog();
 
     const handleVisibility = () => {
       if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-        refreshCloudCatalog();
+        const now = Date.now();
+        if (now - lastCloudSyncAtRef.current > 30000) {
+          lastCloudSyncAtRef.current = now;
+          refreshCloudCatalog();
+        }
       }
     };
 
@@ -434,9 +441,20 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const deleteCustomProduct = deleteProduct;
 
-  // Compute merged products (Base 23 products + Owner custom products + Overrides)
+  // Compute merged products (Base catalog + Owner custom products, deduplicated by id, + Overrides)
   const products = useMemo(() => {
-    const allBase = [...INITIAL_PRODUCTS, ...customProducts].filter((p) => !deletedProductIds.includes(p.id));
+    const productMap = new Map<string, Product>();
+    INITIAL_PRODUCTS.forEach((p) => {
+      if (!deletedProductIds.includes(p.id)) {
+        productMap.set(p.id, p);
+      }
+    });
+    customProducts.forEach((p) => {
+      if (!deletedProductIds.includes(p.id)) {
+        productMap.set(p.id, p);
+      }
+    });
+    const allBase = Array.from(productMap.values());
     return allBase.map((baseProduct) => {
       const override = productOverrides[baseProduct.id];
       if (!override) return baseProduct;
