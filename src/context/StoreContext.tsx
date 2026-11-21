@@ -345,19 +345,40 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const handleVisibility = () => {
       if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
         const now = Date.now();
-        if (now - lastCloudSyncAtRef.current > 30000) {
+        if (now - lastCloudSyncAtRef.current > 4000) {
           lastCloudSyncAtRef.current = now;
           refreshCloudCatalog();
         }
       }
     };
 
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === CUSTOM_PRODUCTS_STORAGE_KEY && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setCustomProducts(parsed);
+        } catch {}
+      } else if (e.key === DELETED_PRODUCTS_STORAGE_KEY && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setDeletedProductIds(parsed);
+        } catch {}
+      } else if (e.key === OVERRIDES_STORAGE_KEY && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed && typeof parsed === 'object') setProductOverrides(parsed);
+        } catch {}
+      }
+    };
+
     window.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('focus', handleVisibility);
+    window.addEventListener('storage', handleStorage);
 
     return () => {
       window.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('focus', handleVisibility);
+      window.removeEventListener('storage', handleStorage);
     };
   }, [refreshCloudCatalog]);
 

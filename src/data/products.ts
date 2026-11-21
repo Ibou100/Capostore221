@@ -1014,34 +1014,6 @@ export const INITIAL_PRODUCTS: Product[] = [
     isPopular: true,
     published: true,
     createdAt: '2026-11-21'
-  },
-  {
-    id: 'capo-custom-hp-elitebook-840-g8',
-    name: 'HP EliteBook 840 G8 · Core i7',
-    slug: 'hp-elitebook-840-g8-core-i7',
-    storeType: 'electronique',
-    category: 'ordinateurs',
-    subCategory: 'Ordinateurs Pro',
-    gender: 'unisexe',
-    price: 285000,
-    compareAtPrice: 330000,
-    images: ['/products/hp-elitebook-840.jpg'],
-    description: 'HP EliteBook 840 G8 professionnel en aluminium argent, Intel Core i7 11e génération, 16 Go RAM, 512 Go SSD NVMe. Écran 14" Full HD antireflet, clavier rétroéclairé et son Bang & Olufsen.',
-    details: [
-      'Intel Core i7 (11e gén.) · 16 Go RAM · 512 Go SSD NVMe',
-      'Écran 14" Full HD IPS antireflet',
-      'Châssis aluminium fin & lecteur d’empreintes',
-      'Venant état impeccable · Chargeur original inclus'
-    ],
-    materials: 'Aluminium brossé argent',
-    variants: [],
-    availableSizes: ['256 Go', '512 Go', 'Venant'],
-    stock: 5,
-    isNew: true,
-    isFeatured: false,
-    isPopular: false,
-    published: true,
-    createdAt: '2026-11-21'
   }
 ];
 
