@@ -205,6 +205,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [isCatalogSyncing, setIsCatalogSyncing] = useState<boolean>(() => customProducts.length === 0);
+  const hasSyncedFromCloudRef = useRef<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
@@ -213,7 +214,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     let active = true;
     getCachedCustomProducts().then((cached) => {
-      if (!active || !cached || cached.length === 0) return;
+      if (!active || hasSyncedFromCloudRef.current || !cached || cached.length === 0) return;
       setCustomProducts((prev) => (prev.length === 0 ? cached : prev));
       setIsCatalogSyncing(false);
     });
@@ -268,6 +269,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
 
           const customs = dbProducts.filter((p) => p.id.startsWith('capo-custom-'));
+          hasSyncedFromCloudRef.current = true;
           setCustomProducts(customs);
           setCachedCustomProducts(customs);
           try {
@@ -396,10 +398,21 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     window.addEventListener('focus', handleVisibility);
     window.addEventListener('storage', handleStorage);
 
+    let bc: BroadcastChannel | null = null;
+    if (typeof BroadcastChannel !== 'undefined') {
+      bc = new BroadcastChannel('capostore221_catalog');
+      bc.onmessage = (event) => {
+        if (event.data?.type === 'CATALOG_UPDATED') {
+          refreshCloudCatalog();
+        }
+      };
+    }
+
     return () => {
       window.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('focus', handleVisibility);
       window.removeEventListener('storage', handleStorage);
+      bc?.close();
     };
   }, [refreshCloudCatalog]);
 
@@ -425,10 +438,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addCustomProduct = async (product: Product): Promise<boolean> => {
     const updated = [product, ...customProductsRef.current];
     setCustomProducts(updated);
+    setCachedCustomProducts(updated);
     try {
       localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(updated));
-    } catch (e) {
-      console.error(e);
+    } catch {}
+    if (typeof BroadcastChannel !== 'undefined') {
+      const bc = new BroadcastChannel('capostore221_catalog');
+      bc.postMessage({ type: 'CATALOG_UPDATED' });
+      bc.close();
     }
     showToast(`Nouvel article "${product.name}" ajouté avec succès !`, 'success');
 
@@ -451,10 +468,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // 1. Remove from customProducts if present
     const updatedCustoms = customProductsRef.current.filter((p) => p.id !== productId);
     setCustomProducts(updatedCustoms);
+    setCachedCustomProducts(updatedCustoms);
     try {
       localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(updatedCustoms));
-    } catch (e) {
-      console.error(e);
+    } catch {}
+    if (typeof BroadcastChannel !== 'undefined') {
+      const bc = new BroadcastChannel('capostore221_catalog');
+      bc.postMessage({ type: 'CATALOG_UPDATED' });
+      bc.close();
     }
 
     // 2. Add to deletedProductIds
