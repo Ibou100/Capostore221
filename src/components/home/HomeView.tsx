@@ -9,7 +9,7 @@ import { NewArrivals } from './NewArrivals';
 import { SmartImage } from '../ui/SmartImage';
 
 export const HomeView: React.FC = () => {
-  const { hasEnteredStore, switchStore, products } = useStore();
+  const { hasEnteredStore, switchStore, products, isCatalogSyncing } = useStore();
 
   const modeProducts = products.filter((p) => p.published && getProductStoreType(p) === 'mode');
   const techProducts = products.filter((p) => p.published && getProductStoreType(p) === 'electronique');
@@ -52,7 +52,7 @@ export const HomeView: React.FC = () => {
               {/* Top-left count pill */}
               <div className="absolute top-6 left-6">
                 <span className="inline-block px-3.5 py-1.5 rounded-full bg-white text-[#0A0A0A] text-[13px] font-medium shadow-subtle">
-                  {modeCount} article{modeCount > 1 ? 's' : ''}
+                  {isCatalogSyncing ? 'Chargement...' : `${modeCount} article${modeCount > 1 ? 's' : ''}`}
                 </span>
               </div>
 

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useMemo, useEffect, useCall
 import type { Product, CategoryId, ProductGender, FilterState, ViewState, ProductCustomOverride, StoreType } from '../types';
 import { INITIAL_PRODUCTS, getProductStoreType } from '../data/products';
 import { fetchCloudProducts, saveCloudProducts } from '../utils/cloudSync';
+import { getCachedCustomProducts, setCachedCustomProducts } from '../utils/catalogCache';
 import {
   isSupabaseConfigured,
   fetchSupabaseProducts,
@@ -43,6 +44,7 @@ interface StoreContextType {
   
   // Custom Owner Products (Created & Uploaded from Admin panel)
   customProducts: Product[];
+  isCatalogSyncing: boolean;
   addCustomProduct: (product: Product) => Promise<boolean>;
   deleteCustomProduct: (productId: string) => Promise<boolean>;
   deleteProduct: (productId: string) => Promise<boolean>;
@@ -202,16 +204,31 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+  const [isCatalogSyncing, setIsCatalogSyncing] = useState<boolean>(() => customProducts.length === 0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
 
-  // Sync custom products to localStorage
+  // Hydrate custom products from IndexedDB on mount (avoids 5MB localStorage quota limit for base64 photos)
   useEffect(() => {
+    let active = true;
+    getCachedCustomProducts().then((cached) => {
+      if (!active || !cached || cached.length === 0) return;
+      setCustomProducts((prev) => (prev.length === 0 ? cached : prev));
+      setIsCatalogSyncing(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Sync custom products to IndexedDB + localStorage fallback
+  useEffect(() => {
+    setCachedCustomProducts(customProducts);
     try {
       localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(customProducts));
-    } catch (e) {
-      console.error('Failed to save custom products', e);
+    } catch {
+      // Ignore 5MB localStorage quota errors; IndexedDB holds full catalog
     }
   }, [customProducts]);
 
@@ -252,9 +269,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
           const customs = dbProducts.filter((p) => p.id.startsWith('capo-custom-'));
           setCustomProducts(customs);
+          setCachedCustomProducts(customs);
           try {
             localStorage.setItem(CUSTOM_PRODUCTS_STORAGE_KEY, JSON.stringify(customs));
           } catch {}
+          setIsCatalogSyncing(false);
 
           const overrides: Record<string, ProductCustomOverride> = {};
           dbProducts
@@ -332,6 +351,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     } catch (err) {
       console.warn('Could not refresh cloud catalog:', err);
+    } finally {
+      setIsCatalogSyncing(false);
     }
   }, []);
 
@@ -818,6 +839,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updateProductOverride,
         resetProductOverrides,
         customProducts,
+        isCatalogSyncing,
         addCustomProduct,
         deleteCustomProduct,
         deleteProduct,
