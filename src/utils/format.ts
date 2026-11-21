@@ -171,6 +171,20 @@ export function getSiteOrigin(): string {
   return 'https://capostore221.com';
 }
 
+function formatWhatsAppPhotoLine(origin: string, imagePath?: string, prefix = '\n\n📸 Photo de l\'article :\n'): string {
+  if (!imagePath) return '';
+  const trimmed = imagePath.trim();
+  if (!trimmed || trimmed.startsWith('data:')) return '';
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return `${prefix}${trimmed}`;
+  }
+  return `${prefix}${origin}${trimmed.startsWith('/') ? trimmed : `/${trimmed}`}`;
+}
+
+function isTechOptionLabel(size: string): boolean {
+  return /\b(go|to|mo|neuf|venant|standard)\b/i.test(size);
+}
+
 /**
  * Builds WhatsApp message for single quick order
  */
@@ -190,10 +204,9 @@ export function getWhatsAppOrderLink(
   }
 ): string {
   const origin = getSiteOrigin();
-  const sizeText = size ? `\n• Taille choisie : ${size}` : '';
-  const photoText = imagePath 
-    ? `\n\n📸 Photo de l'article :\n${origin}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}` 
-    : '';
+  const sizeLabel = size ? (isTechOptionLabel(size) ? 'Option / Capacité' : 'Taille choisie') : '';
+  const sizeText = size ? `\n• ${sizeLabel} : ${size}` : '';
+  const photoText = formatWhatsAppPhotoLine(origin, imagePath);
 
   const orderIdText = extra?.orderId ? `📦 COMMANDE N° : ${extra.orderId}\n` : '';
   const isRetrait = extra?.deliveryMode === 'retrait' || (extra?.customerAddress || '').toLowerCase().includes('récupération') || (extra?.customerCity || '').toLowerCase().includes('sur place');
@@ -231,8 +244,8 @@ export function getWhatsAppCheckoutLink(
   const origin = getSiteOrigin();
 
   const itemsText = items.map((i) => {
-    const photo = i.product.images?.[0] ? `\n  📸 Photo : ${origin}${i.product.images[0]}` : '';
-    return `• ${i.quantity}x ${i.product.name}${i.selectedSize ? ` (Taille : ${i.selectedSize})` : ''} — ${formatFCFA(i.unitPrice * i.quantity)}${photo}`;
+    const photo = formatWhatsAppPhotoLine(origin, i.product.images?.[0], '\n  📸 Photo : ');
+    return `• ${i.quantity}x ${i.product.name}${i.selectedSize ? ` (${i.selectedSize})` : ''} — ${formatFCFA(i.unitPrice * i.quantity)}${photo}`;
   }).join('\n\n');
 
   const orderIdHeader = customer.orderId ? `📦 COMMANDE N° : ${customer.orderId}\n` : '';
