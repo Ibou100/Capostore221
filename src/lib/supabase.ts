@@ -558,13 +558,23 @@ export async function fetchPublicOrderActivity(): Promise<PublicOrderActivity[]>
   if (!client) return [];
 
   try {
-    const { data, error } = await client
-      .from('orders')
-      .select('created_at, updated_at, customer_city, status, items')
-      .order('created_at', { ascending: false })
-      .limit(100);
+    // Prefer SECURITY DEFINER RPC so public anon role never needs SELECT on public.orders
+    let data: any[] | null = null;
+    const rpcRes = await client.rpc('get_public_order_activity');
+    if (!rpcRes.error && Array.isArray(rpcRes.data)) {
+      data = rpcRes.data;
+    } else {
+      const tableRes = await client
+        .from('orders')
+        .select('created_at, updated_at, customer_city, status, items')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      if (!tableRes.error && Array.isArray(tableRes.data)) {
+        data = tableRes.data;
+      }
+    }
 
-    if (error || !Array.isArray(data)) {
+    if (!Array.isArray(data)) {
       return [];
     }
 
