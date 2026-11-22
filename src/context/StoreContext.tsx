@@ -3,6 +3,7 @@ import type { Product, CategoryId, ProductGender, FilterState, ViewState, Produc
 import { INITIAL_PRODUCTS, getProductStoreType } from '../data/products';
 import { fetchCloudProducts, saveCloudProducts } from '../utils/cloudSync';
 import { getCachedCustomProducts, setCachedCustomProducts } from '../utils/catalogCache';
+import { isSessionValid } from '../utils/security';
 import {
   isSupabaseConfigured,
   fetchSupabaseProducts,
@@ -456,6 +457,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Add custom product from owner admin
   const addCustomProduct = async (product: Product): Promise<boolean> => {
+    if (!isSessionValid()) return false;
     const updated = [product, ...customProductsRef.current];
     setCustomProducts(updated);
     setCachedCustomProducts(updated);
@@ -485,6 +487,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Delete any product from owner admin (both catalog and custom products)
   const deleteProduct = async (productId: string): Promise<boolean> => {
+    if (!isSessionValid()) return false;
     // 1. Remove from customProducts if present
     const updatedCustoms = customProductsRef.current.filter((p) => p.id !== productId);
     setCustomProducts(updatedCustoms);
@@ -560,6 +563,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [productOverrides, customProducts, deletedProductIds]);
 
   const updateProductOverride = (productId: string, override: ProductCustomOverride) => {
+    if (!isSessionValid()) return;
     setProductOverrides((prev) => {
       const updated = {
         ...prev,
@@ -595,6 +599,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const resetProductOverrides = () => {
+    if (!isSessionValid()) return;
     setProductOverrides({});
     try {
       localStorage.removeItem(OVERRIDES_STORAGE_KEY);

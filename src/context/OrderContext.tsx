@@ -316,19 +316,42 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [refreshOrders, refreshPublicActivity]);
 
   const createOrder = (input: CreateOrderInput): Order => {
+    const sanitizedItems: OrderItem[] = (Array.isArray(input.items) ? input.items : [])
+      .slice(0, 50)
+      .map((item) => {
+        const rawQty = Number(item.quantity);
+        const safeQty = Number.isFinite(rawQty) ? Math.min(99, Math.max(1, Math.round(rawQty))) : 1;
+        const rawPrice = Number(item.price);
+        const safePrice = Number.isFinite(rawPrice) && rawPrice >= 0 ? Math.round(rawPrice) : 0;
+        return {
+          productId: String(item.productId || '').slice(0, 120),
+          name: String(item.name || 'Article CAPOSTORE221').slice(0, 160),
+          price: safePrice,
+          quantity: safeQty,
+          size: item.size ? String(item.size).slice(0, 40) : undefined,
+          color: item.color ? String(item.color).slice(0, 40) : undefined,
+          image: String(item.image || '/products/pantalon-prince-galles.jpg'),
+        };
+      });
+
+    const rawShipping = Number(input.shippingFee ?? 0);
+    const safeShipping = Number.isFinite(rawShipping) && rawShipping >= 0 ? Math.round(rawShipping) : 0;
+    const computedTotal =
+      sanitizedItems.reduce((sum, item) => sum + item.price * item.quantity, 0) + safeShipping;
+
     const newOrder: Order = {
       id: generateOrderId(),
       createdAt: new Date().toISOString(),
-      customerName: input.customerName.trim() || 'Client CAPOSTORE221',
-      customerPhone: input.customerPhone.trim(),
-      customerCity: input.customerCity.trim(),
-      customerAddress: input.customerAddress.trim(),
+      customerName: (input.customerName.trim() || 'Client CAPOSTORE221').slice(0, 100),
+      customerPhone: input.customerPhone.trim().slice(0, 30),
+      customerCity: input.customerCity.trim().slice(0, 80),
+      customerAddress: input.customerAddress.trim().slice(0, 240),
       paymentMethod: input.paymentMethod,
-      items: input.items,
-      total: input.total,
-      shippingFee: input.shippingFee ?? 0,
+      items: sanitizedItems,
+      total: computedTotal,
+      shippingFee: safeShipping,
       status: 'transmise',
-      notes: input.notes,
+      notes: input.notes ? String(input.notes).slice(0, 300) : undefined,
       storeType: input.storeType || 'mode',
     };
 
@@ -356,31 +379,31 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error(err);
       }
 
-      // Supabase direct push
+      // Supabase direct push (never leak customer PII to unauthenticated third-party endpoints)
       if (isSupabaseConfigured()) {
         insertSupabaseOrder(newOrder).catch((err) =>
           console.warn('Supabase order insert error:', err)
         );
+      } else {
+        // Fallback only when Supabase is not configured
+        (async () => {
+          try {
+            const rawCloud = await fetchCloudOrders();
+            const cloudExisting = Array.isArray(rawCloud)
+              ? rawCloud.map(sanitizeOrder).filter((o): o is Order => o !== null)
+              : [];
+            const map = new Map<string, Order>();
+            cloudExisting.forEach((o) => map.set(o.id, o));
+            map.set(newOrder.id, newOrder);
+            const fullList = Array.from(map.values()).sort(
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+            await saveCloudOrders(fullList);
+          } catch (e) {
+            console.warn('Could not push order to cloud immediately', e);
+          }
+        })();
       }
-
-      // Cloud push fallback
-      (async () => {
-        try {
-          const rawCloud = await fetchCloudOrders();
-          const cloudExisting = Array.isArray(rawCloud)
-            ? rawCloud.map(sanitizeOrder).filter((o): o is Order => o !== null)
-            : [];
-          const map = new Map<string, Order>();
-          cloudExisting.forEach((o) => map.set(o.id, o));
-          map.set(newOrder.id, newOrder);
-          const fullList = Array.from(map.values()).sort(
-            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-          await saveCloudOrders(fullList);
-        } catch (e) {
-          console.warn('Could not push order to cloud immediately', e);
-        }
-      })();
 
       return updated;
     });
@@ -389,6 +412,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const updateOrderStatus = (orderId: string, status: OrderStatus) => {
+    if (!isSessionValid()) return;
     setOrders((prev) => {
       const updated = prev.map((order) =>
         order.id === orderId ? { ...order, status } : order
@@ -404,17 +428,18 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updateSupabaseOrderStatus(orderId, status)
           .then(() => refreshPublicActivity())
           .catch((err) => console.warn('Supabase status update error:', err));
+      } else {
+        saveCloudOrders(updated).catch((err) =>
+          console.warn('Could not sync status update to cloud', err)
+        );
       }
-
-      saveCloudOrders(updated).catch((err) =>
-        console.warn('Could not sync status update to cloud', err)
-      );
 
       return updated;
     });
   };
 
   const deleteOrder = (orderId: string) => {
+    if (!isSessionValid()) return;
     setOrders((prev) => {
       const updated = prev.filter((order) => order.id !== orderId);
       try {
@@ -428,11 +453,11 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         deleteSupabaseOrder(orderId)
           .then(() => refreshPublicActivity())
           .catch((err) => console.warn('Supabase order delete error:', err));
+      } else {
+        saveCloudOrders(updated).catch((err) =>
+          console.warn('Could not delete from cloud', err)
+        );
       }
-
-      saveCloudOrders(updated).catch((err) =>
-        console.warn('Could not delete from cloud', err)
-      );
 
       return updated;
     });
