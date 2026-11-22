@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import type { Product, ProductColor } from '../../types';
 import { formatFCFA } from '../../utils/format';
+import { getSelectableSizes } from '../../data/products';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useStore } from '../../context/StoreContext';
@@ -38,7 +39,7 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
 
   const images = Array.isArray(product.images) && product.images.length > 0 ? product.images : [];
   const availableColors = Array.isArray(product.availableColors) ? product.availableColors : [];
-  const availableSizes = Array.isArray(product.availableSizes) ? product.availableSizes : [];
+  const availableSizes = getSelectableSizes(product);
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | undefined>(
