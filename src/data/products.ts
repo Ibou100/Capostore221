@@ -16,6 +16,29 @@ export function getProductStoreType(product: Pick<Product, 'storeType' | 'catego
   return 'mode';
 }
 
+export const NO_SIZE_CATEGORIES = [
+  'lunettes',
+  'parfums',
+  'accessoires',
+  'accessoires_tech',
+] as const;
+
+export function getSelectableSizes(
+  product: Pick<Product, 'category' | 'availableSizes'>
+): string[] {
+  if ((NO_SIZE_CATEGORIES as readonly string[]).includes(product.category)) {
+    return [];
+  }
+  if (!Array.isArray(product.availableSizes)) return [];
+  return product.availableSizes.filter(
+    (s) =>
+      Boolean(s) &&
+      !/^(taille unique|unique|standard|standard\s*\/\s*sans option|sans option)$/i.test(
+        s.trim()
+      )
+  );
+}
+
 export const INITIAL_PRODUCTS: Product[] = [
   // --- NOUVELLE SÉLECTION CLIENT CAPOSTORE221 (PHOTOS RÉELLES) ---
   {
