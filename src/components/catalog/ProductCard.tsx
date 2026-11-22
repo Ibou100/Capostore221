@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Heart, MessageCircle } from 'lucide-react';
 import type { Product } from '../../types';
 import { formatFCFA } from '../../utils/format';
+import { getSelectableSizes } from '../../data/products';
 import { useWishlist } from '../../context/WishlistContext';
 import { useStore } from '../../context/StoreContext';
 import { useCart } from '../../context/CartContext';
@@ -35,7 +36,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    const hasRequiredSizes = product.availableSizes && product.availableSizes.length > 0;
+    const hasRequiredSizes = getSelectableSizes(product).length > 0;
     const hasRequiredColors = product.availableColors && product.availableColors.length > 1;
 
     if (hasRequiredSizes || hasRequiredColors) {

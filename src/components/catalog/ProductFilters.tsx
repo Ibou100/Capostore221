@@ -28,7 +28,9 @@ const GENDERS: { id: 'all' | ProductGender; label: string }[] = [
   { id: 'unisexe', label: 'Unisexe' },
 ];
 
-const MODE_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '39', '40', '41', '42', '43', '44', '45'];
+const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const SHOE_SIZES = ['39', '40', '41', '42', '43', '44', '45'];
+const MODE_SIZES = [...CLOTHING_SIZES, ...SHOE_SIZES];
 const TECH_OPTIONS = ['64 Go', '128 Go', '256 Go', '512 Go', '1 To', 'Neuf scellé', 'Venant'];
 
 export const ProductFilters: React.FC = () => {
@@ -38,7 +40,21 @@ export const ProductFilters: React.FC = () => {
   const barRef = useRef<HTMLDivElement>(null);
 
   const CATEGORIES = activeStore === 'electronique' ? TECH_CATEGORIES : MODE_CATEGORIES;
-  const SIZE_OPTIONS = activeStore === 'electronique' ? TECH_OPTIONS : MODE_SIZES;
+  const showSizeFilter =
+    activeStore === 'electronique'
+      ? filters.category === 'tous' || filters.category === 'smartphones' || filters.category === 'ordinateurs' || filters.category === 'tablettes_montres'
+      : filters.category === 'tous' || filters.category === 'vetements' || filters.category === 'chaussures';
+  const showGenderFilter =
+    activeStore !== 'electronique' &&
+    (filters.category === 'tous' || filters.category === 'vetements' || filters.category === 'chaussures');
+  const SIZE_OPTIONS =
+    activeStore === 'electronique'
+      ? TECH_OPTIONS
+      : filters.category === 'vetements'
+        ? CLOTHING_SIZES
+        : filters.category === 'chaussures'
+          ? SHOE_SIZES
+          : MODE_SIZES;
   const maxPriceLimit = activeStore === 'electronique' ? 2000000 : 100000;
   const minPriceLimit = activeStore === 'electronique' ? 10000 : 2000;
   const priceStep = activeStore === 'electronique' ? 25000 : 1000;
@@ -131,8 +147,8 @@ export const ProductFilters: React.FC = () => {
               )}
             </div>
 
-            {/* 2. Genre (Mode only) */}
-            {activeStore === 'mode' && (
+            {/* 2. Genre (uniquement pour vêtements / chaussures) */}
+            {showGenderFilter && (
               <div className="relative">
                 <button
                   type="button"
@@ -216,8 +232,9 @@ export const ProductFilters: React.FC = () => {
               )}
             </div>
 
-            {/* 4. Tailles / Stockage */}
-            <div className="relative">
+            {/* 4. Tailles / Stockage (masqué pour lunettes, parfums, accessoires) */}
+            {showSizeFilter && (
+              <div className="relative">
               <button
                 type="button"
                 onClick={() => setOpenMenu(openMenu === 'size' ? null : 'size')}
@@ -257,7 +274,8 @@ export const ProductFilters: React.FC = () => {
                   </div>
                 </div>
               )}
-            </div>
+              </div>
+            )}
 
             {/* 5. En stock uniquement */}
             <button
@@ -370,28 +388,30 @@ export const ProductFilters: React.FC = () => {
                 />
               </div>
 
-              {/* Tailles / Options */}
-              <div className="space-y-2.5">
-                <h4 className="text-sm font-medium text-[#0A0A0A]">
-                  {activeStore === 'electronique' ? 'Stockage & état' : 'Tailles & pointures'}
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {SIZE_OPTIONS.map((sz) => (
-                    <button
-                      key={sz}
-                      type="button"
-                      onClick={() => toggleSize(sz)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
-                        filters.sizes.includes(sz)
-                          ? 'bg-[#0A0A0A] text-white border-[#0A0A0A]'
-                          : 'bg-white text-[#5F5F5A] border-[#E8E6E1]'
-                      }`}
-                    >
-                      {sz}
-                    </button>
-                  ))}
+              {/* Tailles / Options (masqué pour lunettes, parfums, accessoires) */}
+              {showSizeFilter && (
+                <div className="space-y-2.5">
+                  <h4 className="text-sm font-medium text-[#0A0A0A]">
+                    {activeStore === 'electronique' ? 'Stockage & état' : 'Tailles & pointures'}
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {SIZE_OPTIONS.map((sz) => (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => toggleSize(sz)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
+                          filters.sizes.includes(sz)
+                            ? 'bg-[#0A0A0A] text-white border-[#0A0A0A]'
+                            : 'bg-white text-[#5F5F5A] border-[#E8E6E1]'
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* En stock */}
               <label className="flex items-center gap-2.5 text-sm text-[#0A0A0A] cursor-pointer">
