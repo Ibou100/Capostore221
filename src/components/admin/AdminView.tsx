@@ -26,7 +26,7 @@ import {
 } from '../../utils/security';
 import { compressImageFile } from '../../utils/cloudSync';
 import type { OrderStatus, Product, CategoryId, ProductCategory, StoreType } from '../../types';
-import { getProductStoreType } from '../../data/products';
+import { getProductStoreType, NO_SIZE_CATEGORIES } from '../../data/products';
 
 const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
 const SHOE_SIZES = ['39', '40', '41', '42', '43', '44', '45'];
@@ -1452,7 +1452,7 @@ export const AdminView: React.FC = () => {
 
                   {/* SIZES SELECTION */}
                   <div>
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className={(NO_SIZE_CATEGORIES as readonly string[]).includes(newCategory) ? 'hidden' : 'flex items-center justify-between mb-1.5'}>
                       <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-700">
                         {newStoreType === 'electronique' ? 'Capacité / État disponible :' : 'Tailles disponibles en stock :'}
                       </label>
@@ -1461,7 +1461,7 @@ export const AdminView: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className={(NO_SIZE_CATEGORIES as readonly string[]).includes(newCategory) ? 'hidden' : 'flex flex-wrap gap-2'}>
                       {(newStoreType === 'electronique' ? TECH_VARIANTS : newCategory === 'chaussures' ? SHOE_SIZES : CLOTHING_SIZES).map((sz) => {
                         const isChecked = newSizes.includes(sz);
                         return (
@@ -1502,7 +1502,17 @@ export const AdminView: React.FC = () => {
                       rows={2}
                       value={newDescription}
                       onChange={(e) => setNewDescription(e.target.value)}
-                      placeholder={newStoreType === 'electronique' ? "Précisez la capacité, l'état (neuf/venant), la garantie..." : 'Précisez le tissu, la coupe ou les particularités...'}
+                      placeholder={
+                        newStoreType === 'electronique'
+                          ? "Précisez la capacité, l'état (neuf/venant), la garantie..."
+                          : newCategory === 'parfums'
+                            ? 'Précisez les notes olfactives, la contenance (ml) ou la tenue...'
+                            : newCategory === 'lunettes'
+                              ? 'Précisez la monture, la protection UV ou les finitions...'
+                              : newCategory === 'accessoires'
+                                ? 'Précisez la matière, la couleur ou les dimensions...'
+                                : 'Précisez le tissu, la coupe ou les particularités...'
+                      }
                       className="w-full text-xs font-medium px-3.5 py-2 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85D19]"
                     />
                   </div>
@@ -1741,16 +1751,16 @@ export const AdminView: React.FC = () => {
 
                       {/* Sizes selection checkboxes */}
                       <div className="pt-3 border-t border-zinc-100">
-                        <div className="flex items-center justify-between mb-2">
+                        <div className={(NO_SIZE_CATEGORIES as readonly string[]).includes(editCategory) ? 'hidden' : 'flex items-center justify-between mb-2'}>
                           <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-800">
-                            Tailles en stock pour cette tenue :
+                            {editStoreType === 'electronique' ? 'Capacité / État disponible :' : 'Tailles en stock pour cet article :'}
                           </label>
                           <span className="text-[10px] text-zinc-500">
                             (Seules les tailles cochées seront sélectionnables par les clients)
                           </span>
                         </div>
 
-                        <div className="flex flex-wrap gap-2">
+                        <div className={(NO_SIZE_CATEGORIES as readonly string[]).includes(editCategory) ? 'hidden' : 'flex flex-wrap gap-2'}>
                           {(editStoreType === 'electronique' ? TECH_VARIANTS : editCategory === 'chaussures' ? SHOE_SIZES : CLOTHING_SIZES).map((size) => {
                             const isChecked = editSizes.includes(size);
                             return (
