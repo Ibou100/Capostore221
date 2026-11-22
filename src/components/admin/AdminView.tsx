@@ -17,6 +17,7 @@ import {
 } from '../../utils/format';
 import { 
   verifyOwnerPassword, 
+  createAdminSession,
   isSessionValid, 
   revokeAdminSession, 
   setOwnerPassword, 
@@ -24,6 +25,7 @@ import {
   addAuditLog,
   type SecurityAuditLog 
 } from '../../utils/security';
+import { getSupabaseClient, isSupabaseConfigured } from '../../lib/supabase';
 import { compressImageFile } from '../../utils/cloudSync';
 import type { OrderStatus, Product, CategoryId, ProductCategory, StoreType } from '../../types';
 import { getProductStoreType, NO_SIZE_CATEGORIES } from '../../data/products';
@@ -56,6 +58,10 @@ export const AdminView: React.FC = () => {
   // Authentication & Session State - Check if persistent session is valid
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return isSessionValid();
+  });
+  const [emailInput, setEmailInput] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    return localStorage.getItem('capostore_admin_email_v1') || '';
   });
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -245,6 +251,22 @@ export const AdminView: React.FC = () => {
     }
   }, []);
 
+  // Verify live Supabase Auth session on mount
+  useEffect(() => {
+    if (isSupabaseConfigured()) {
+      const client = getSupabaseClient();
+      client?.auth.getSession().then(({ data }) => {
+        if (data.session) {
+          createAdminSession();
+          setIsAuthenticated(true);
+        } else {
+          revokeAdminSession();
+          setIsAuthenticated(false);
+        }
+      });
+    }
+  }, []);
+
   // Refresh audit logs on tab switch
   useEffect(() => {
     if (isAuthenticated) {
@@ -263,6 +285,34 @@ export const AdminView: React.FC = () => {
     setAuthError(null);
 
     try {
+      const cleanEmail = emailInput.trim();
+      if (isSupabaseConfigured()) {
+        if (!cleanEmail) {
+          setAuthError('Veuillez saisir votre email administrateur.');
+          return;
+        }
+        const client = getSupabaseClient();
+        if (client) {
+          const { data, error } = await client.auth.signInWithPassword({
+            email: cleanEmail,
+            password: passwordInput,
+          });
+          if (!error && data.session) {
+            try {
+              localStorage.setItem('capostore_admin_email_v1', cleanEmail);
+            } catch {}
+            createAdminSession();
+            addAuditLog('Connexion Supabase Auth réussie', cleanEmail);
+            setIsAuthenticated(true);
+            setPasswordInput('');
+            setAuthError(null);
+            showToast('Connexion sécurisée Supabase Auth réussie !', 'success');
+            return;
+          }
+          setAuthError('Email ou mot de passe administrateur incorrect.');
+          return;
+        }
+      }
       const result = await verifyOwnerPassword(passwordInput);
       if (result.success) {
         setIsAuthenticated(true);
@@ -281,6 +331,9 @@ export const AdminView: React.FC = () => {
 
   const handleLogout = () => {
     revokeAdminSession();
+    if (isSupabaseConfigured()) {
+      getSupabaseClient()?.auth.signOut().catch(() => {});
+    }
     setIsAuthenticated(false);
     setPasswordInput('');
     showToast('Session propriétaire fermée.', 'info');
@@ -628,6 +681,19 @@ export const AdminView: React.FC = () => {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1.5">
+                Email Administrateur *
+              </label>
+              <input
+                type="email"
+                required={isSupabaseConfigured()}
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                placeholder="admin@capostore221.com"
+                className="w-full text-sm font-medium px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#B85D19] focus:border-transparent transition-all"
+              />
+            </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-[11px] font-bold uppercase tracking-wider text-zinc-300">
