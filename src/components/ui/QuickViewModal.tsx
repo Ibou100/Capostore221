@@ -5,6 +5,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useOrders } from '../../context/OrderContext';
 import { formatFCFA } from '../../utils/format';
+import { getSelectableSizes } from '../../data/products';
 import type { Product, ProductColor } from '../../types';
 
 interface QuickViewContentProps {
@@ -21,8 +22,9 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
   const isFavorited = isInWishlist(product.id);
   const isOutOfStock = product.stock <= 0;
 
+  const selectableSizes = getSelectableSizes(product);
   const [selectedSize, setSelectedSize] = useState<string | undefined>(
-    product.availableSizes && product.availableSizes.length > 0 ? product.availableSizes[0] : undefined
+    selectableSizes.length > 0 ? selectableSizes[0] : undefined
   );
   const [selectedColor, _setSelectedColor] = useState<ProductColor | undefined>(
     product.availableColors && product.availableColors.length > 0 ? product.availableColors[0] : undefined
@@ -33,7 +35,7 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
   const handleAdd = () => {
     setErrorMsg(null);
 
-    if (product.availableSizes && product.availableSizes.length > 0 && !selectedSize) {
+    if (selectableSizes.length > 0 && !selectedSize) {
       setErrorMsg('Veuillez sélectionner une taille.');
       return;
     }
@@ -133,14 +135,14 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
               </p>
             )}
 
-            {/* Size Selector if Clothing */}
-            {product.availableSizes && product.availableSizes.length > 0 && (
+            {/* Size Selector if applicable */}
+            {selectableSizes.length > 0 && (
               <div>
                 <span className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-700 mb-2">
                   Taille :
                 </span>
                 <div className="flex flex-wrap gap-1.5">
-                  {product.availableSizes.map((size) => (
+                  {selectableSizes.map((size) => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}

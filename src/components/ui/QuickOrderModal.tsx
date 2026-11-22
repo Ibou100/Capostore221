@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, ArrowRight, MessageCircle, ExternalLink, Truck, Store, Banknote } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useStore } from '../../context/StoreContext';
-import { getProductStoreType } from '../../data/products';
+import { getProductStoreType, getSelectableSizes } from '../../data/products';
 import type { PaymentMethod } from '../../types';
 import {
   formatFCFA,
@@ -35,17 +35,17 @@ export const QuickOrderModal: React.FC = () => {
       setWhatsAppUrl('');
       if (quickOrderProduct.initialSize) {
         setSelectedSize(quickOrderProduct.initialSize);
-      } else if (product?.availableSizes && product.availableSizes.length > 0) {
-        setSelectedSize(product.availableSizes[0]);
       } else {
-        setSelectedSize(undefined);
+        const selectable = product ? getSelectableSizes(product) : [];
+        setSelectedSize(selectable.length > 0 ? selectable[0] : undefined);
       }
     }
   }, [quickOrderProduct, product]);
 
   if (!quickOrderProduct || !product) return null;
 
-  const hasSizes = product.availableSizes && product.availableSizes.length > 0;
+  const selectableSizes = getSelectableSizes(product);
+  const hasSizes = selectableSizes.length > 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -242,7 +242,7 @@ export const QuickOrderModal: React.FC = () => {
                       Option disponible *
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {product.availableSizes!.map((size) => (
+                      {selectableSizes.map((size) => (
                         <button
                           key={size}
                           type="button"
