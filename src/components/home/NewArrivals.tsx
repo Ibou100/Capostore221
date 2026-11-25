@@ -51,7 +51,7 @@ export const NewArrivals: React.FC = () => {
             onClick={() => setVisibleCount((c) => c + 12)}
             className="h-12 px-8 rounded-full border border-[#E8E6E1] hover:border-[#0A0A0A] bg-white text-sm font-medium text-[#0A0A0A] transition-colors"
           >
-            Voir plus ({publishedProducts.length - visibleCount} restants)
+            Voir plus
           </button>
         </div>
       )}

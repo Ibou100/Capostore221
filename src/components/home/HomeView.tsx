@@ -9,12 +9,9 @@ import { NewArrivals } from './NewArrivals';
 import { SmartImage } from '../ui/SmartImage';
 
 export const HomeView: React.FC = () => {
-  const { hasEnteredStore, switchStore, products, isCatalogSyncing } = useStore();
+  const { hasEnteredStore, switchStore, products } = useStore();
 
   const modeProducts = products.filter((p) => p.published && getProductStoreType(p) === 'mode');
-  const techProducts = products.filter((p) => p.published && getProductStoreType(p) === 'electronique');
-  const modeCount = modeProducts.length;
-  const techCount = techProducts.length;
 
   const portalImage = modeProducts[0]?.images?.[0] || '/products/pantalon-cargo-ecru.jpg';
 
@@ -48,13 +45,6 @@ export const HomeView: React.FC = () => {
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-
-              {/* Top-left count pill */}
-              <div className="absolute top-3.5 left-4 sm:top-6 sm:left-6">
-                <span className="inline-block px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white text-[#0A0A0A] text-xs sm:text-[13px] font-medium shadow-subtle">
-                  {isCatalogSyncing ? 'Chargement...' : `${modeCount} article${modeCount > 1 ? 's' : ''}`}
-                </span>
-              </div>
 
               {/* Bottom content */}
               <div className="absolute bottom-4 left-4 right-4 sm:bottom-7 sm:left-7 sm:right-7 text-white space-y-1 sm:space-y-2">
@@ -92,13 +82,6 @@ export const HomeView: React.FC = () => {
                   <circle cx="126" cy="45" r="2.5" fill="currentColor" />
                   <line x1="86" y1="296" x2="134" y2="296" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                 </svg>
-              </div>
-
-              {/* Top-left badge */}
-              <div className="absolute top-3.5 left-4 sm:top-6 sm:left-6">
-                <span className="inline-block px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white text-[#0A0A0A] text-xs sm:text-[13px] font-medium">
-                  {techCount === 0 ? 'Nouveau' : `${techCount} article${techCount > 1 ? 's' : ''}`}
-                </span>
               </div>
 
               {/* Bottom content */}

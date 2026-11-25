@@ -75,9 +75,6 @@ export const CollectionsGrid: React.FC = () => {
               <h3 className="font-display font-medium text-base text-[#0A0A0A] group-hover:text-[#C2410C] transition-colors">
                 {cat.title}
               </h3>
-              <p className="text-[13px] text-[#5F5F5A]">
-                {cat.count} article{cat.count > 1 ? 's' : ''}
-              </p>
             </div>
           </button>
         ))}
