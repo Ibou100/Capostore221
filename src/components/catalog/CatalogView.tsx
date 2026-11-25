@@ -28,9 +28,6 @@ export const CatalogView: React.FC = () => {
             <h1 className="font-display font-semibold text-3xl sm:text-4xl text-[#0A0A0A] tracking-tight">
               {filters.category === 'tous' ? 'Catalogue' : currentCategoryMeta.name}
             </h1>
-            <span className="text-sm text-[#5F5F5A]">
-              {filteredProducts.length} pièce{filteredProducts.length > 1 ? 's' : ''}
-            </span>
           </div>
         </div>
 
@@ -53,7 +50,7 @@ export const CatalogView: React.FC = () => {
                   onClick={() => setVisibleCount((c) => c + 12)}
                   className="h-12 px-8 rounded-full border border-[#E8E6E1] hover:border-[#0A0A0A] bg-white text-sm font-medium text-[#0A0A0A] transition-colors"
                 >
-                  Voir plus ({filteredProducts.length - visibleCount} restants)
+                  Voir plus
                 </button>
               </div>
             )}

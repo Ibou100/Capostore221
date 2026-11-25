@@ -34,7 +34,7 @@ const MODE_SIZES = [...CLOTHING_SIZES, ...SHOE_SIZES];
 const TECH_OPTIONS = ['64 Go', '128 Go', '256 Go', '512 Go', '1 To', 'Neuf scellé', 'Venant'];
 
 export const ProductFilters: React.FC = () => {
-  const { filters, setFilters, resetFilters, filteredProducts, activeStore } = useStore();
+  const { filters, setFilters, resetFilters, activeStore } = useStore();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
@@ -442,7 +442,7 @@ export const ProductFilters: React.FC = () => {
                 onClick={() => setIsMobileFiltersOpen(false)}
                 className="w-full h-12 rounded-full bg-[#0A0A0A] text-white text-sm font-medium"
               >
-                Afficher {filteredProducts.length} article{filteredProducts.length > 1 ? 's' : ''}
+                Appliquer les filtres
               </button>
             </div>
           </div>
