@@ -21,24 +21,24 @@ export const HomeView: React.FC = () => {
   if (!hasEnteredStore) {
     return (
       <div className="bg-white min-h-[82vh] flex flex-col justify-between">
-        <section className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-10 pt-10 sm:pt-16 pb-16 sm:pb-24">
+        <section className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-10 pt-5 sm:pt-12 lg:pt-16 pb-12 sm:pb-24">
           {/* Header */}
-          <div className="max-w-2xl text-left mb-10 sm:mb-14 space-y-3">
-            <h1 className="font-display font-semibold text-4xl sm:text-5xl lg:text-6xl text-[#0A0A0A] tracking-tightest leading-[1.06]">
+          <div className="max-w-2xl text-left mb-5 sm:mb-10 lg:mb-14 space-y-1.5 sm:space-y-3">
+            <h1 className="font-display font-semibold text-[28px] sm:text-5xl lg:text-6xl text-[#0A0A0A] tracking-tightest leading-[1.08]">
               Que cherchez-vous aujourd'hui ?
             </h1>
-            <p className="text-base sm:text-lg text-[#5F5F5A] font-normal">
+            <p className="text-sm sm:text-lg text-[#5F5F5A] font-normal">
               Deux boutiques, une seule livraison rapide.
             </p>
           </div>
 
-          {/* 2 Large Portal Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          {/* 2 Large Portal Cards — both fit above the fold on mobile */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-6 lg:gap-8">
             {/* Card 1: Habillement */}
             <button
               type="button"
               onClick={() => switchStore('mode')}
-              className="group relative h-[420px] sm:h-[520px] w-full rounded-[28px] overflow-hidden bg-[#F6F5F2] text-left cursor-pointer transition-transform duration-200 hover:-translate-y-1 hover:shadow-premium"
+              className="group relative h-[210px] sm:h-[320px] md:h-[500px] w-full rounded-[22px] sm:rounded-[28px] overflow-hidden bg-[#F6F5F2] text-left cursor-pointer transition-transform duration-200 hover:-translate-y-1 hover:shadow-premium"
             >
               <SmartImage
                 src={portalImage}
@@ -47,26 +47,26 @@ export const HomeView: React.FC = () => {
                 wrapperClassName="w-full h-full"
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
 
               {/* Top-left count pill */}
-              <div className="absolute top-6 left-6">
-                <span className="inline-block px-3.5 py-1.5 rounded-full bg-white text-[#0A0A0A] text-[13px] font-medium shadow-subtle">
+              <div className="absolute top-3.5 left-4 sm:top-6 sm:left-6">
+                <span className="inline-block px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white text-[#0A0A0A] text-xs sm:text-[13px] font-medium shadow-subtle">
                   {isCatalogSyncing ? 'Chargement...' : `${modeCount} article${modeCount > 1 ? 's' : ''}`}
                 </span>
               </div>
 
               {/* Bottom content */}
-              <div className="absolute bottom-7 left-7 right-7 text-white space-y-2">
-                <h2 className="font-display font-semibold text-3xl sm:text-4xl tracking-tight">
+              <div className="absolute bottom-4 left-4 right-4 sm:bottom-7 sm:left-7 sm:right-7 text-white space-y-1 sm:space-y-2">
+                <h2 className="font-display font-semibold text-2xl sm:text-3xl md:text-4xl tracking-tight">
                   Habillement
                 </h2>
-                <p className="text-sm sm:text-base text-white/85">
+                <p className="text-xs sm:text-sm md:text-base text-white/85 line-clamp-1 sm:line-clamp-none">
                   Vêtements, chaussures, parfums, lunettes et accessoires
                 </p>
-                <div className="pt-2 inline-flex items-center gap-2 text-sm font-medium text-white">
+                <div className="pt-0.5 sm:pt-2 inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium text-white">
                   <span>Entrer dans la boutique</span>
-                  <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1.5" strokeWidth={1.75} />
+                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-200 group-hover:translate-x-1.5" strokeWidth={1.75} />
                 </div>
               </div>
             </button>
@@ -75,15 +75,15 @@ export const HomeView: React.FC = () => {
             <button
               type="button"
               onClick={() => switchStore('electronique')}
-              className="group relative h-[420px] sm:h-[520px] w-full rounded-[28px] overflow-hidden bg-[#0A0A0A] text-left cursor-pointer transition-transform duration-200 hover:-translate-y-1 hover:shadow-premium"
+              className="group relative h-[210px] sm:h-[320px] md:h-[500px] w-full rounded-[22px] sm:rounded-[28px] overflow-hidden bg-[#0A0A0A] text-left cursor-pointer transition-transform duration-200 hover:-translate-y-1 hover:shadow-premium"
             >
               {/* Line-art Smartphone SVG Illustration */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-25 group-hover:opacity-35 transition-opacity duration-200 pointer-events-none">
+              <div className="absolute inset-0 flex items-center justify-end pr-6 sm:justify-center sm:pr-0 opacity-25 group-hover:opacity-35 transition-opacity duration-200 pointer-events-none">
                 <svg
                   viewBox="0 0 220 340"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-48 sm:w-56 h-auto text-white"
+                  className="w-28 sm:w-44 md:w-56 h-auto text-white"
                   aria-hidden="true"
                 >
                   <rect x="20" y="16" width="180" height="308" rx="34" stroke="currentColor" strokeWidth="2.5" />
@@ -95,23 +95,23 @@ export const HomeView: React.FC = () => {
               </div>
 
               {/* Top-left badge */}
-              <div className="absolute top-6 left-6">
-                <span className="inline-block px-3.5 py-1.5 rounded-full bg-white text-[#0A0A0A] text-[13px] font-medium">
+              <div className="absolute top-3.5 left-4 sm:top-6 sm:left-6">
+                <span className="inline-block px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white text-[#0A0A0A] text-xs sm:text-[13px] font-medium">
                   {techCount === 0 ? 'Nouveau' : `${techCount} article${techCount > 1 ? 's' : ''}`}
                 </span>
               </div>
 
               {/* Bottom content */}
-              <div className="absolute bottom-7 left-7 right-7 text-white space-y-2">
-                <h2 className="font-display font-semibold text-3xl sm:text-4xl tracking-tight">
+              <div className="absolute bottom-4 left-4 right-4 sm:bottom-7 sm:left-7 sm:right-7 text-white space-y-1 sm:space-y-2">
+                <h2 className="font-display font-semibold text-2xl sm:text-3xl md:text-4xl tracking-tight">
                   Électronique
                 </h2>
-                <p className="text-sm sm:text-base text-zinc-300">
+                <p className="text-xs sm:text-sm md:text-base text-zinc-300 line-clamp-1 sm:line-clamp-none">
                   iPhone, ordinateurs, tablettes, montres et audio
                 </p>
-                <div className="pt-2 inline-flex items-center gap-2 text-sm font-medium text-white">
+                <div className="pt-0.5 sm:pt-2 inline-flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium text-white">
                   <span>Entrer dans la boutique</span>
-                  <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1.5" strokeWidth={1.75} />
+                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-200 group-hover:translate-x-1.5" strokeWidth={1.75} />
                 </div>
               </div>
             </button>
