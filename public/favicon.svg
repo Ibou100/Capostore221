@@ -1,9 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <rect width="100" height="100" rx="20" fill="#0A0A0C"/>
-  <!-- C -->
-  <path d="M42 34C38 30 33 28 26 28C14 28 8 38 8 50C8 62 14 72 26 72C33 72 38 70 42 66" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
-  <!-- S -->
-  <path d="M72 35C68 30 60 28 53 31C47 34 47 41 53 44L61 48C68 51 68 59 62 63C55 67 46 65 42 60" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
-  <!-- 221 accent dot -->
-  <circle cx="86" cy="50" r="4.5" fill="#D4AF37"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#0A0A0A"/>
+  <!-- Speed lines -->
+  <path d="M8 31H18L16 34H6L8 31Z" fill="#EA580C"/>
+  <path d="M6 37H16L14 40H4L6 37Z" fill="#EA580C"/>
+  <!-- Bag handles -->
+  <path d="M26 20C26 14.5 29.5 11 34 11C38.5 11 42 14.5 42 20" stroke="#EA580C" stroke-width="3" stroke-linecap="round"/>
+  <path d="M30 20C30 16 32 13.5 35 13.5C38 13.5 40 16 40 20" stroke="#EA580C" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  <!-- Shopping bag body -->
+  <path d="M19 21H48L52 49H15L19 21Z" stroke="#EA580C" stroke-width="3" stroke-linejoin="round" fill="#EA580C" fill-opacity="0.18"/>
+  <!-- Bold C -->
+  <path d="M40.5 27.5C38.8 25.8 36.4 25 33.6 25C27.8 25 24 29 24 35C24 41 27.8 45 33.6 45C36.6 45 39 44 40.8 42.2" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round"/>
+  <!-- Mini cart inside C -->
+  <path d="M31 32H44.5L42.5 39H33L31 32Z" stroke="#EA580C" stroke-width="2.2" stroke-linejoin="round" fill="#EA580C"/>
+  <path d="M29 30.5H31L33 39" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="34.5" cy="42" r="1.6" fill="#EA580C"/>
+  <circle cx="41" cy="42" r="1.6" fill="#EA580C"/>
 </svg>
