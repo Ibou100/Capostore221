@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowRight, Truck, ShieldCheck, RefreshCw, MessageCircle } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { getProductStoreType } from '../../data/products';
 import { STORE_WHATSAPP_PHONE } from '../../utils/format';
 import { Hero } from './Hero';
 import { CollectionsGrid } from './CollectionsGrid';
@@ -9,11 +8,10 @@ import { NewArrivals } from './NewArrivals';
 import { SmartImage } from '../ui/SmartImage';
 
 export const HomeView: React.FC = () => {
-  const { hasEnteredStore, switchStore, products } = useStore();
+  const { hasEnteredStore, switchStore } = useStore();
 
-  const modeProducts = products.filter((p) => p.published && getProductStoreType(p) === 'mode');
-
-  const portalImage = modeProducts[0]?.images?.[0] || '/products/pantalon-cargo-ecru.jpg';
+  const portalImage = '/portal-habillement.jpg';
+  const techPortalImage = '/portal-electronique.jpg';
 
   if (!hasEnteredStore) {
     return (
@@ -67,22 +65,14 @@ export const HomeView: React.FC = () => {
               onClick={() => switchStore('electronique')}
               className="group relative h-[210px] sm:h-[320px] md:h-[500px] w-full rounded-[22px] sm:rounded-[28px] overflow-hidden bg-[#0A0A0A] text-left cursor-pointer transition-transform duration-200 hover:-translate-y-1 hover:shadow-premium"
             >
-              {/* Line-art Smartphone SVG Illustration */}
-              <div className="absolute inset-0 flex items-center justify-end pr-6 sm:justify-center sm:pr-0 opacity-25 group-hover:opacity-35 transition-opacity duration-200 pointer-events-none">
-                <svg
-                  viewBox="0 0 220 340"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-28 sm:w-44 md:w-56 h-auto text-white"
-                  aria-hidden="true"
-                >
-                  <rect x="20" y="16" width="180" height="308" rx="34" stroke="currentColor" strokeWidth="2.5" />
-                  <rect x="32" y="28" width="156" height="284" rx="24" stroke="currentColor" strokeWidth="1.2" strokeOpacity="0.5" />
-                  <rect x="82" y="38" width="56" height="14" rx="7" stroke="currentColor" strokeWidth="1.8" />
-                  <circle cx="126" cy="45" r="2.5" fill="currentColor" />
-                  <line x1="86" y1="296" x2="134" y2="296" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                </svg>
-              </div>
+              <SmartImage
+                src={techPortalImage}
+                alt="Boutique Électronique CAPOSTORE221"
+                priority
+                wrapperClassName="w-full h-full"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
               {/* Bottom content */}
               <div className="absolute bottom-4 left-4 right-4 sm:bottom-7 sm:left-7 sm:right-7 text-white space-y-1 sm:space-y-2">
