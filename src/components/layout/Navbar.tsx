@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, ShoppingBag, Heart, Menu, X, ArrowRight, MessageCircle, Phone } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { BrandLogo } from '../ui/BrandLogo';
 import { useStore } from '../../context/StoreContext';
 import {
   STORE_WHATSAPP_PHONE,
@@ -94,15 +95,10 @@ export const Navbar: React.FC = () => {
           <button
             type="button"
             onClick={goToHome}
-            className="flex items-center gap-2.5 text-left group shrink-0 min-h-[44px]"
+            className="flex items-center text-left group shrink-0 min-h-[44px]"
             aria-label="CAPOSTORE221 - Accueil"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#0A0A0A] flex items-center justify-center text-white font-display font-bold text-xs tracking-tight transition-transform duration-150 group-hover:scale-105">
-              CS
-            </div>
-            <span className="font-display font-bold tracking-tight text-lg sm:text-xl text-[#0A0A0A]">
-              CAPOSTORE<span className="text-[#C2410C]">221</span>
-            </span>
+            <BrandLogo />
           </button>
 
           {/* Center (Desktop): Short navigation for active boutique */}
@@ -234,9 +230,7 @@ export const Navbar: React.FC = () => {
         <div className="fixed inset-0 z-50 xl:hidden bg-white flex flex-col justify-between p-6 overflow-y-auto animate-fade-in">
           <div>
             <div className="flex items-center justify-between pb-5 border-b border-[#E8E6E1]">
-              <span className="font-display font-bold text-lg text-[#0A0A0A]">
-                CAPOSTORE<span className="text-[#C2410C]">221</span>
-              </span>
+              <BrandLogo size="sm" />
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(false)}

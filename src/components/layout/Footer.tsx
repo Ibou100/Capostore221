@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone, MessageCircle, Mail } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { BrandLogo } from '../ui/BrandLogo';
 import {
   FACEBOOK_URL,
   INSTAGRAM_URL,
@@ -43,14 +44,10 @@ export const Footer: React.FC = () => {
             <button
               type="button"
               onClick={goToHome}
-              className="flex items-center gap-2.5 text-left group"
+              className="flex items-center text-left group"
+              aria-label="CAPOSTORE221 - Accueil"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#0A0A0A] flex items-center justify-center text-white font-display font-bold text-xs">
-                CS
-              </div>
-              <span className="font-display font-bold text-lg tracking-tight text-[#0A0A0A]">
-                CAPOSTORE<span className="text-[#C2410C]">221</span>
-              </span>
+              <BrandLogo size="sm" />
             </button>
             <p className="text-sm text-[#5F5F5A] leading-relaxed max-w-xs">
               Boutique en ligne d'habillement et d'électronique au Sénégal. Tu commandes, on te livre.
