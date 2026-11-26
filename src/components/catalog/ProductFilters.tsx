@@ -91,7 +91,10 @@ export const ProductFilters: React.FC = () => {
   const activeCategoryLabel = CATEGORIES.find((c) => c.id === filters.category)?.label || 'Catégorie';
 
   return (
-    <div ref={barRef} className="space-y-4">
+    <div
+      ref={barRef}
+      className="sticky top-[68px] z-30 bg-white/95 backdrop-blur-md py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10 border-b border-[#E8E6E1]/70 space-y-4"
+    >
       {/* Top Horizontal Pill Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Left: Pills on Desktop, Trigger on Mobile */}

@@ -3,15 +3,22 @@ import { useStore } from '../../context/StoreContext';
 import { ProductCard } from './ProductCard';
 import { ProductFilters } from './ProductFilters';
 import { CATEGORIES_META } from '../../data/products';
-import { PackageSearch } from 'lucide-react';
+import { PackageSearch, ArrowUp } from 'lucide-react';
 
 export const CatalogView: React.FC = () => {
   const { filteredProducts, filters, resetFilters, activeStore, switchStore } = useStore();
   const [visibleCount, setVisibleCount] = useState(12);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     setVisibleCount(12);
   }, [filters, activeStore]);
+
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 450);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const currentCategoryMeta =
     CATEGORIES_META.find((c) => c.id === filters.category) || CATEGORIES_META[0];
@@ -92,6 +99,18 @@ export const CatalogView: React.FC = () => {
           </div>
         )}
       </div>
+
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Remonter en haut"
+          className="fixed bottom-20 right-4 lg:bottom-8 lg:right-8 z-30 h-11 px-4 rounded-full bg-[#0A0A0A] text-white text-xs font-medium shadow-premium inline-flex items-center gap-1.5 hover:bg-neutral-800 transition-colors"
+        >
+          <ArrowUp className="w-4 h-4" strokeWidth={1.75} />
+          <span>Haut</span>
+        </button>
+      )}
     </div>
   );
 };
