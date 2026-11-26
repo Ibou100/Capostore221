@@ -11,7 +11,7 @@
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Order, OrderStatus, Product, StoreType } from '../types';
-import { ELECTRONICS_CATEGORY_IDS } from '../data/products';
+import { ELECTRONICS_CATEGORY_IDS, INITIAL_PRODUCTS } from '../data/products';
 
 const SUPABASE_CONFIG_KEY = 'capostore_supabase_config_v1';
 
@@ -342,6 +342,44 @@ export async function seedInitialProductsToSupabase(products: Product[]): Promis
 // ORDERS CRUD OPERATIONS
 // ============================================================================
 
+let ordersHasStoreTypeColumn = true;
+
+function inferOrderStoreType(
+  rawStoreType: unknown,
+  rawItems: unknown
+): StoreType | 'mixte' | undefined {
+  if (rawStoreType === 'mode' || rawStoreType === 'electronique' || rawStoreType === 'mixte') {
+    return rawStoreType;
+  }
+  if (!Array.isArray(rawItems) || rawItems.length === 0) return undefined;
+
+  const detected = new Set<StoreType>();
+  for (const item of rawItems) {
+    const pid = String(item?.productId || '');
+    const name = String(item?.name || '').toLowerCase();
+    const matched = INITIAL_PRODUCTS.find((p) => p.id === pid);
+    if (matched) {
+      const isElec =
+        matched.storeType === 'electronique' ||
+        (ELECTRONICS_CATEGORY_IDS as readonly string[]).includes(matched.category);
+      detected.add(isElec ? 'electronique' : 'mode');
+    } else if (
+      /\b(iphone|macbook|ipad|airpods|elitebook|samsung|galaxy|watch|ordinateur|smartphone)\b/i.test(
+        name
+      )
+    ) {
+      detected.add('electronique');
+    } else {
+      detected.add('mode');
+    }
+  }
+
+  if (detected.size > 1) return 'mixte';
+  if (detected.has('electronique')) return 'electronique';
+  if (detected.has('mode')) return 'mode';
+  return undefined;
+}
+
 export async function fetchSupabaseOrders(): Promise<Order[] | null> {
   const client = getSupabaseClient();
   if (!client) return null;
@@ -359,21 +397,24 @@ export async function fetchSupabaseOrders(): Promise<Order[] | null> {
 
     if (!Array.isArray(data)) return [];
 
-    return data.map((row: any): Order => ({
-      id: String(row.id),
-      createdAt: row.created_at || new Date().toISOString(),
-      customerName: String(row.customer_name || 'Client CAPOSTORE221'),
-      customerPhone: String(row.customer_phone || ''),
-      customerCity: String(row.customer_city || 'Dakar'),
-      customerAddress: String(row.customer_address || ''),
-      paymentMethod: row.payment_method || 'wave',
-      items: Array.isArray(row.items) ? row.items : [],
-      total: Number(row.total) || 0,
-      shippingFee: Number(row.shipping_fee) || 0,
-      status: (row.status as OrderStatus) || 'transmise',
-      notes: row.notes ? String(row.notes) : undefined,
-      storeType: row.store_type || undefined,
-    }));
+    return data.map((row: any): Order => {
+      const items = Array.isArray(row.items) ? row.items : [];
+      return {
+        id: String(row.id),
+        createdAt: row.created_at || new Date().toISOString(),
+        customerName: String(row.customer_name || 'Client CAPOSTORE221'),
+        customerPhone: String(row.customer_phone || ''),
+        customerCity: String(row.customer_city || 'Dakar'),
+        customerAddress: String(row.customer_address || ''),
+        paymentMethod: row.payment_method || 'wave',
+        items,
+        total: Number(row.total) || 0,
+        shippingFee: Number(row.shipping_fee) || 0,
+        status: (row.status as OrderStatus) || 'transmise',
+        notes: row.notes ? String(row.notes) : undefined,
+        storeType: inferOrderStoreType(row.store_type, items),
+      };
+    });
   } catch (err) {
     console.warn('Failed to fetch orders from Supabase:', err);
     return null;
@@ -402,21 +443,24 @@ export async function fetchSupabaseOrdersByIds(ids: string[]): Promise<Order[]> 
       return [];
     }
 
-    return data.map((row: any): Order => ({
-      id: String(row.id),
-      createdAt: row.created_at || new Date().toISOString(),
-      customerName: String(row.customer_name || 'Client CAPOSTORE221'),
-      customerPhone: String(row.customer_phone || ''),
-      customerCity: String(row.customer_city || 'Dakar'),
-      customerAddress: String(row.customer_address || ''),
-      paymentMethod: row.payment_method || 'wave',
-      items: Array.isArray(row.items) ? row.items : [],
-      total: Number(row.total) || 0,
-      shippingFee: Number(row.shipping_fee) || 0,
-      status: (row.status as OrderStatus) || 'transmise',
-      notes: row.notes ? String(row.notes) : undefined,
-      storeType: row.store_type || undefined,
-    }));
+    return data.map((row: any): Order => {
+      const items = Array.isArray(row.items) ? row.items : [];
+      return {
+        id: String(row.id),
+        createdAt: row.created_at || new Date().toISOString(),
+        customerName: String(row.customer_name || 'Client CAPOSTORE221'),
+        customerPhone: String(row.customer_phone || ''),
+        customerCity: String(row.customer_city || 'Dakar'),
+        customerAddress: String(row.customer_address || ''),
+        paymentMethod: row.payment_method || 'wave',
+        items,
+        total: Number(row.total) || 0,
+        shippingFee: Number(row.shipping_fee) || 0,
+        status: (row.status as OrderStatus) || 'transmise',
+        notes: row.notes ? String(row.notes) : undefined,
+        storeType: inferOrderStoreType(row.store_type, items),
+      };
+    });
   } catch (err) {
     console.warn('Failed to fetch orders by IDs from Supabase:', err);
     return [];
@@ -444,6 +488,7 @@ export async function fetchSupabaseOrderById(orderId: string): Promise<Order | n
       return null;
     }
 
+    const items = Array.isArray(data.items) ? data.items : [];
     return {
       id: String(data.id),
       createdAt: data.created_at || new Date().toISOString(),
@@ -452,11 +497,12 @@ export async function fetchSupabaseOrderById(orderId: string): Promise<Order | n
       customerCity: String(data.customer_city || 'Dakar'),
       customerAddress: String(data.customer_address || ''),
       paymentMethod: data.payment_method || 'wave',
-      items: Array.isArray(data.items) ? data.items : [],
+      items,
       total: Number(data.total) || 0,
       shippingFee: Number(data.shipping_fee) || 0,
       status: (data.status as OrderStatus) || 'transmise',
       notes: data.notes ? String(data.notes) : undefined,
+      storeType: inferOrderStoreType(data.store_type, items),
     };
   } catch (err) {
     console.warn('Failed to fetch single order from Supabase:', err);
@@ -464,6 +510,10 @@ export async function fetchSupabaseOrderById(orderId: string): Promise<Order | n
   }
 }
 
+/**
+ * Inserts a new customer order using pure INSERT (no ON CONFLICT DO UPDATE / SELECT)
+ * so unauthenticated visitors (anon role) anywhere in the world pass strict RLS cleanly.
+ */
 export async function insertSupabaseOrder(order: Order): Promise<boolean> {
   const client = getSupabaseClient();
   if (!client) return false;
@@ -484,17 +534,42 @@ export async function insertSupabaseOrder(order: Order): Promise<boolean> {
       notes: order.notes || null,
     };
 
-    const { error } = await client
-      .from('orders')
-      .upsert({ ...baseRow, store_type: order.storeType || 'mode' }, { onConflict: 'id' });
+    const payload = ordersHasStoreTypeColumn
+      ? { ...baseRow, store_type: order.storeType || 'mode' }
+      : baseRow;
+
+    const { error } = await client.from('orders').insert(payload);
 
     if (error) {
-      if (error.message?.includes('store_type') || error.code === 'PGRST204') {
-        const { error: retryErr } = await client
-          .from('orders')
-          .upsert(baseRow, { onConflict: 'id' });
+      // Fallback if store_type column does not exist in Supabase schema
+      if (
+        ordersHasStoreTypeColumn &&
+        (error.message?.includes('store_type') || error.code === 'PGRST204')
+      ) {
+        ordersHasStoreTypeColumn = false;
+        const { error: retryErr } = await client.from('orders').insert(baseRow);
         if (!retryErr) return true;
+        if (retryErr.code === '23505') {
+          const fallbackId = `CAPO-${Math.floor(10000 + Math.random() * 90000)}`;
+          const { error: dupErr } = await client
+            .from('orders')
+            .insert({ ...baseRow, id: fallbackId });
+          return !dupErr;
+        }
+        console.error('Supabase order insert retry error:', retryErr);
+        return false;
       }
+
+      // Rare order ID collision: retry with 5-digit CAPO ID
+      if (error.code === '23505') {
+        const fallbackId = `CAPO-${Math.floor(10000 + Math.random() * 90000)}`;
+        const retryPayload = ordersHasStoreTypeColumn
+          ? { ...baseRow, id: fallbackId, store_type: order.storeType || 'mode' }
+          : { ...baseRow, id: fallbackId };
+        const { error: dupErr } = await client.from('orders').insert(retryPayload);
+        return !dupErr;
+      }
+
       console.error('Supabase order insert error:', error);
       return false;
     }
