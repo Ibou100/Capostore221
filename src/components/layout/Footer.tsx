@@ -56,6 +56,7 @@ export const Footer: React.FC = () => {
               <img src="/payments/wave.png" alt="Wave" className="w-7 h-7 rounded-md object-contain bg-white border border-[#E8E6E1] p-0.5" loading="lazy" />
               <img src="/payments/orange-money.png" alt="Orange Money" className="w-7 h-7 rounded-md object-contain bg-white border border-[#E8E6E1] p-0.5" loading="lazy" />
               <img src="/payments/yas.png" alt="Yas" className="w-7 h-7 rounded-md object-contain bg-white border border-[#E8E6E1] p-0.5" loading="lazy" />
+              <img src="/payments/visa-mastercard.svg" alt="Visa / Mastercard" className="h-7 w-10 rounded-md object-contain bg-white border border-[#E8E6E1] p-0.5" loading="lazy" />
             </div>
           </div>
 
@@ -88,8 +89,8 @@ export const Footer: React.FC = () => {
           <div className="space-y-3">
             <h3 className="font-display font-semibold text-sm text-[#0A0A0A]">Aide & livraison</h3>
             <ul className="space-y-2.5 text-sm text-[#5F5F5A]">
-              <li>Livraison partout au Sénégal</li>
-              <li>Wave, Orange Money, Yas ou espèces</li>
+              <li>Commandes au Sénégal & à l'international</li>
+              <li>Carte bancaire (Visa / Mastercard), Wave, Orange Money, Yas ou espèces</li>
               <li>Échanges sous 7 jours</li>
               <li>
                 <a

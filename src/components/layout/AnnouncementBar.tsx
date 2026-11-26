@@ -12,7 +12,7 @@ export const AnnouncementBar: React.FC = () => {
       className="bg-[#0A0A0A] text-white h-9 px-4 flex items-center justify-center relative"
     >
       <p className="text-[12px] sm:text-[13px] font-normal text-zinc-200 truncate pr-8 text-center">
-        Livraison partout au Sénégal · Paiement Wave, Orange Money, Yas ou à la remise
+        Commandes Sénégal & International · Paiement Carte Bancaire, Wave, Orange Money, Yas ou espèces
       </p>
       <button
         type="button"
