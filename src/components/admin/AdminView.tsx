@@ -13,7 +13,7 @@ import { useOrders } from '../../context/OrderContext';
 import { 
   formatFCFA, 
   ORDER_STATUS_CONFIG, 
-  getPaymentMethodLabel 
+  getPaymentMethodLabel, getWhatsAppPhoneDigits 
 } from '../../utils/format';
 import { 
   verifyOwnerPassword, 
@@ -147,6 +147,7 @@ export const AdminView: React.FC = () => {
     return {
       wave: calc('wave'),
       om: calc('orange_money'),
+      card: calc('carte_bancaire'),
       cash: calc('especes'),
       free: calc('free_money'),
     };
@@ -259,18 +260,20 @@ export const AdminView: React.FC = () => {
         if (data.session) {
           createAdminSession();
           setIsAuthenticated(true);
+          refreshOrders();
         } else {
           revokeAdminSession();
           setIsAuthenticated(false);
         }
       });
     }
-  }, []);
+  }, [refreshOrders]);
 
   // Refresh audit logs on tab switch
   useEffect(() => {
     if (isAuthenticated) {
       setAuditLogs(getAuditLogs());
+      refreshOrders();
     }
   }, [isAuthenticated, activeTab]);
 
@@ -304,6 +307,7 @@ export const AdminView: React.FC = () => {
             createAdminSession();
             addAuditLog('Connexion Supabase Auth réussie', cleanEmail);
             setIsAuthenticated(true);
+            refreshOrders();
             setPasswordInput('');
             setAuthError(null);
             showToast('Connexion sécurisée Supabase Auth réussie !', 'success');
@@ -1007,7 +1011,7 @@ export const AdminView: React.FC = () => {
                 {uniqueCustomersCount}
               </div>
               <div className="mt-2 pt-2 border-t border-zinc-100 text-[11px] text-zinc-500">
-                {cityStats.dakar} Dakar • {cityStats.regions} Régions
+                {cityStats.dakar} Dakar • {cityStats.regions} Hors Dakar & International
               </div>
             </div>
 
@@ -1050,6 +1054,7 @@ export const AdminView: React.FC = () => {
                 {[
                   { label: 'Wave', logo: '/payments/wave.png', stat: paymentStats.wave, barColor: 'bg-sky-500' },
                   { label: 'Orange Money', logo: '/payments/orange-money.png', stat: paymentStats.om, barColor: 'bg-orange-500' },
+                  { label: 'Carte bancaire', logo: '/payments/visa-mastercard.svg', stat: paymentStats.card, barColor: 'bg-indigo-600' },
                   { label: 'Yas / Mixx', logo: '/payments/yas.png', stat: paymentStats.free, barColor: 'bg-amber-400' },
                   { label: 'Espèces', logo: '', stat: paymentStats.cash, barColor: 'bg-emerald-600' },
                 ].map((pm) => {
@@ -1201,7 +1206,7 @@ export const AdminView: React.FC = () => {
                           <option value="livree">Livrée</option>
                         </select>
                         <a
-                          href={`https://wa.me/${String(order.customerPhone || '').replace(/\D/g, '')}`}
+                          href={`https://wa.me/${getWhatsAppPhoneDigits(order.customerPhone)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
@@ -2326,7 +2331,7 @@ export const AdminView: React.FC = () => {
                               <Phone className="w-3.5 h-3.5" />
                             </a>
                             <a
-                              href={`https://wa.me/${String(order.customerPhone || '').replace(/\D/g, '')}?text=${encodeURIComponent(
+                              href={`https://wa.me/${getWhatsAppPhoneDigits(order.customerPhone)}?text=${encodeURIComponent(
                                 `Bonjour ${order.customerName || 'Client'}, CAPOSTORE221 vous remercie pour votre commande ${order.id}. Nous sommes en train de la traiter.`
                               )}`}
                               target="_blank"
@@ -2389,7 +2394,7 @@ export const AdminView: React.FC = () => {
 
                         <div className="flex items-center gap-3">
                           <a
-                            href={`https://wa.me/${String(order.customerPhone || '').replace(/\D/g, '')}?text=${encodeURIComponent(
+                            href={`https://wa.me/${getWhatsAppPhoneDigits(order.customerPhone)}?text=${encodeURIComponent(
                               `Bonjour ${order.customerName || 'Client'}, CAPOSTORE221 vous informe que votre commande ${order.id} est actuellement : ${statusConfig.label}. Merci pour votre confiance sur https://capostore221.com !`
                             )}`}
                             target="_blank"
