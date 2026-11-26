@@ -24,7 +24,7 @@ export const TerangaServices: React.FC = () => {
     {
       number: '04',
       title: 'Paiement Flexible',
-      desc: 'Réglez en toute sérénité par Wave, Orange Money ou en espèces à la réception.',
+      desc: 'Réglez par Carte bancaire (Visa / Mastercard), Wave, Orange Money, Yas ou espèces à la réception.',
       icon: CreditCard,
     },
   ];

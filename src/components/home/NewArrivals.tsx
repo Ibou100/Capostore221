@@ -1,11 +1,18 @@
-import React, { useState, useMemo } from 'react';
-import { ArrowRight } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { ArrowRight, ArrowUp } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { ProductCard } from '../catalog/ProductCard';
 
 export const NewArrivals: React.FC = () => {
   const { storeProducts, goToCatalog } = useStore();
   const [visibleCount, setVisibleCount] = useState(8);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 550);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const publishedProducts = useMemo(
     () => storeProducts.filter((p) => p.published),
@@ -54,6 +61,18 @@ export const NewArrivals: React.FC = () => {
             Voir plus
           </button>
         </div>
+      )}
+
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Remonter en haut"
+          className="fixed bottom-20 right-4 lg:bottom-8 lg:right-8 z-30 h-11 px-4 rounded-full bg-[#0A0A0A] text-white text-xs font-medium shadow-premium inline-flex items-center gap-1.5 hover:bg-neutral-800 transition-colors"
+        >
+          <ArrowUp className="w-4 h-4" strokeWidth={1.75} />
+          <span>Haut</span>
+        </button>
       )}
     </section>
   );
