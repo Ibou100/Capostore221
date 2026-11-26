@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import type { Order, OrderItem, OrderStatus, PaymentMethod, Product } from '../types';
 import { generateOrderId, arePhoneNumbersMatching } from '../utils/format';
 import { fetchCloudOrders, saveCloudOrders } from '../utils/cloudSync';
-import { isSessionValid } from '../utils/security';
+import { isSessionValid, createAdminSession } from '../utils/security';
 import {
   isSupabaseConfigured,
   fetchSupabaseOrders,
@@ -68,7 +68,7 @@ export function sanitizeOrder(raw: any): Order | null {
   const validStatuses: OrderStatus[] = ['transmise', 'confirmee', 'en_preparation', 'en_livraison', 'livree'];
   const status: OrderStatus = validStatuses.includes(raw.status) ? raw.status : 'transmise';
 
-  const validPayments: PaymentMethod[] = ['wave', 'orange_money', 'especes', 'free_money'];
+  const validPayments: PaymentMethod[] = ['wave', 'orange_money', 'especes', 'free_money', 'carte_bancaire'];
   const paymentMethod: PaymentMethod = validPayments.includes(raw.paymentMethod) ? raw.paymentMethod : 'wave';
 
   const rawItems = Array.isArray(raw.items) ? raw.items : [];
@@ -95,6 +95,10 @@ export function sanitizeOrder(raw: any): Order | null {
     shippingFee: typeof raw.shippingFee === 'number' ? raw.shippingFee : 0,
     status,
     notes: raw.notes ? String(raw.notes) : undefined,
+    storeType:
+      raw.storeType === 'mode' || raw.storeType === 'electronique' || raw.storeType === 'mixte'
+        ? raw.storeType
+        : undefined,
   };
 }
 
@@ -201,7 +205,15 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const refreshOrders = useCallback(async () => {
     setIsSyncing(true);
     try {
-      const isAdminSession = isSessionValid();
+      let isAdminSession = isSessionValid();
+
+      if (!isAdminSession && isSupabaseConfigured()) {
+        const sbSessionRes = await getSupabaseClient()?.auth.getSession();
+        if (sbSessionRes?.data?.session) {
+          createAdminSession();
+          isAdminSession = true;
+        }
+      }
 
       // 1. If Admin Session Active: Full store orders sync for dashboard
       if (isAdminSession) {
@@ -239,19 +251,34 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
 
       // 2. Regular Client Session: STRICT PRIVACY ISOLATION
-      // Only fetch the customer's own device orders
+      // Only keep/update the customer's own device orders (never overwrite local receipt with empty array when anon RLS blocks SELECT)
       if (myOrderIds.length > 0) {
+        const upperMyIds = myOrderIds.map((id) => id.toUpperCase());
+        const localOwned = ordersRef.current.filter((o) =>
+          upperMyIds.includes(o.id.toUpperCase())
+        );
+
         if (isSupabaseConfigured()) {
           const clientOrders = await fetchSupabaseOrdersByIds(myOrderIds);
-          if (clientOrders && Array.isArray(clientOrders)) {
-            setOrders(clientOrders);
+          if (clientOrders && Array.isArray(clientOrders) && clientOrders.length > 0) {
+            const map = new Map<string, Order>();
+            localOwned.forEach((o) => map.set(o.id.toUpperCase(), o));
+            clientOrders.forEach((o) => map.set(o.id.toUpperCase(), o));
+            const mergedClient = Array.from(map.values()).sort(
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+            setOrders(mergedClient);
             try {
-              localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(clientOrders));
+              localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedClient));
             } catch {}
             setLastSyncTime(new Date());
             return;
           }
         }
+
+        setOrders(localOwned);
+        setLastSyncTime(new Date());
+        return;
       } else {
         // Clear any old customer orders cached on this device
         setOrders([]);
@@ -266,7 +293,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [myOrderIds]);
 
-  // Sync on initial mount and on tab focus
+  // Sync on initial mount, Supabase auth changes, and tab focus
   useEffect(() => {
     refreshOrders();
 
@@ -280,17 +307,33 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     window.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('focus', handleVisibility);
 
-    // Periodic live refresh every 30s while tab is visible so new/treated orders appear automatically
+    // Periodic live refresh while tab is visible so new international/local orders appear automatically in Admin
     const interval = setInterval(() => {
       if (typeof document === 'undefined' || document.visibilityState === 'visible') {
         refreshPublicActivity();
+        if (isSessionValid()) {
+          refreshOrders();
+        }
       }
-    }, 30000);
+    }, 20000);
+
+    let unsubscribeAuth: (() => void) | undefined;
+    if (isSupabaseConfigured()) {
+      const client = getSupabaseClient();
+      const sub = client?.auth.onAuthStateChange((_event, session) => {
+        if (session) {
+          createAdminSession();
+          refreshOrders();
+        }
+      });
+      unsubscribeAuth = () => sub?.data.subscription.unsubscribe();
+    }
 
     return () => {
       window.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('focus', handleVisibility);
       clearInterval(interval);
+      unsubscribeAuth?.();
     };
   }, [refreshOrders, refreshPublicActivity]);
 
@@ -381,9 +424,17 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       // Supabase direct push (never leak customer PII to unauthenticated third-party endpoints)
       if (isSupabaseConfigured()) {
-        insertSupabaseOrder(newOrder).catch((err) =>
-          console.warn('Supabase order insert error:', err)
-        );
+        insertSupabaseOrder(newOrder)
+          .then((ok) => {
+            if (!ok) {
+              setTimeout(() => {
+                insertSupabaseOrder(newOrder).catch((err) =>
+                  console.warn('Supabase order retry error:', err)
+                );
+              }, 1500);
+            }
+          })
+          .catch((err) => console.warn('Supabase order insert error:', err));
       } else {
         // Fallback only when Supabase is not configured
         (async () => {
