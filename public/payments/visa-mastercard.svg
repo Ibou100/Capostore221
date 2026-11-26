@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 40" fill="none">
+  <rect width="64" height="40" rx="8" fill="#FFFFFF"/>
+  <!-- VISA mark (top) -->
+  <text x="32" y="16" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-style="italic" font-size="12" letter-spacing="0.5" fill="#1A1F71">VISA</text>
+  <!-- Mastercard circles (bottom) -->
+  <circle cx="27" cy="28" r="7" fill="#EB001B"/>
+  <circle cx="37" cy="28" r="7" fill="#F79E1B" fill-opacity="0.9"/>
+  <path d="M32 22.58A6.98 6.98 0 0 0 29.5 28c0 2.18 1 4.13 2.5 5.42A6.98 6.98 0 0 0 34.5 28c0-2.18-1-4.13-2.5-5.42Z" fill="#FF5F00"/>
+</svg>
