@@ -210,7 +210,7 @@ const QuickViewContent: React.FC<QuickViewContentProps> = ({ product, onClose })
 
             <div className="p-2.5 bg-[#FAF8F5] rounded-sm border border-[#E7E2D9] flex items-center gap-2 text-[11px] text-zinc-500">
               <Truck className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
-              <span>Tu commandes, on te livre • Paiement Wave, OM ou espèces</span>
+              <span>Commandes Sénégal & International • Carte bancaire, Wave, OM, Yas ou espèces</span>
             </div>
 
             <div className="text-center pt-1">
