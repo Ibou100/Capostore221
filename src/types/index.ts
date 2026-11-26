@@ -13,7 +13,7 @@ export type CategoryId = 'tous' | ProductCategory;
 
 export type ProductGender = 'homme' | 'unisexe';
 
-export type PaymentMethod = 'wave' | 'orange_money' | 'especes' | 'free_money';
+export type PaymentMethod = 'wave' | 'orange_money' | 'free_money' | 'carte_bancaire' | 'especes';
 
 export type OrderStatus = 'transmise' | 'confirmee' | 'en_preparation' | 'en_livraison' | 'livree';
 
