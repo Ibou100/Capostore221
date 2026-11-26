@@ -407,7 +407,7 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
                 className="w-full h-12 px-6 rounded-full border border-[#E8E6E1] hover:border-[#0A0A0A] bg-white text-[#0A0A0A] text-sm font-medium flex items-center justify-center gap-2 transition-colors"
               >
                 <MessageCircle className="w-4 h-4 text-[#16A34A]" />
-                <span>Commander sur WhatsApp</span>
+                <span>Commander maintenant</span>
               </button>
             </div>
 
@@ -415,7 +415,7 @@ const ProductDetailContent: React.FC<ProductDetailContentProps> = ({ product }) 
             <div className="pt-4 border-t border-[#E8E6E1] space-y-2 text-xs sm:text-sm text-[#5F5F5A]">
               <div className="flex items-center gap-2.5">
                 <Truck className="w-4 h-4 text-[#0A0A0A] shrink-0" />
-                <span>Livraison directe au Sénégal · Paiement Wave, Orange Money, Yas ou espèces.</span>
+                <span>Commandes Sénégal & International · Carte bancaire, Wave, Orange Money, Yas ou espèces.</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <RotateCcw className="w-4 h-4 text-[#0A0A0A] shrink-0" />
