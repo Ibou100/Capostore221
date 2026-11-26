@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   MessageCircle,
   Banknote,
+  CreditCard,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
@@ -46,7 +47,7 @@ export const CartDrawer: React.FC = () => {
   const [customerPhone, setCustomerPhone] = useState('');
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [customerAddress, setCustomerAddress] = useState('');
-  const [customerCity, setCustomerCity] = useState('Dakar');
+  const [customerCity, setCustomerCity] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('wave');
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
@@ -70,7 +71,7 @@ export const CartDrawer: React.FC = () => {
     if (!phoneValidation.isValid) {
       setPhoneError(phoneValidation.error || 'Numéro invalide');
       showToast(
-        phoneValidation.error || 'Veuillez saisir un numéro sénégalais valide à 9 chiffres.',
+        phoneValidation.error || 'Veuillez saisir un numéro de téléphone valide.',
         'error'
       );
       return;
@@ -78,7 +79,7 @@ export const CartDrawer: React.FC = () => {
 
     if (deliveryMode === 'livraison') {
       if (!city || city.length < 2) {
-        showToast('Veuillez renseigner votre ville ou localité.', 'error');
+        showToast('Veuillez renseigner votre ville et pays.', 'error');
         return;
       }
 
@@ -393,27 +394,22 @@ export const CartDrawer: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-[#0A0A0A] mb-1">
-                        Téléphone *
+                        Téléphone (Tous pays) *
                       </label>
-                      <div className="relative">
-                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-[#5F5F5A] select-none">
-                          +221
-                        </span>
-                        <input
-                          type="tel"
-                          required
-                          value={customerPhone}
-                          onChange={(e) => {
-                            setCustomerPhone(formatSenegalPhoneInput(e.target.value));
-                            setPhoneError(null);
-                          }}
-                          placeholder="77 455 23 41"
-                          maxLength={12}
-                          className={`w-full h-11 text-sm font-mono pl-14 pr-3.5 rounded-xl border focus:outline-none ${
-                            phoneError ? 'border-red-500 bg-red-50/30' : 'border-[#E8E6E1] focus:border-[#0A0A0A]'
-                          }`}
-                        />
-                      </div>
+                      <input
+                        type="tel"
+                        required
+                        value={customerPhone}
+                        onChange={(e) => {
+                          setCustomerPhone(formatSenegalPhoneInput(e.target.value));
+                          setPhoneError(null);
+                        }}
+                        placeholder="Ex: +33 6 12 34 56 78 ou 77 455 23 41"
+                        maxLength={24}
+                        className={`w-full h-11 text-sm font-mono px-3.5 rounded-xl border focus:outline-none ${
+                          phoneError ? 'border-red-500 bg-red-50/30' : 'border-[#E8E6E1] focus:border-[#0A0A0A]'
+                        }`}
+                      />
                       {phoneError && <p className="text-[11px] text-red-600 mt-1">{phoneError}</p>}
                     </div>
                   </div>
@@ -422,27 +418,27 @@ export const CartDrawer: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-medium text-[#0A0A0A] mb-1">
-                          Ville / Localité *
+                          Ville & Pays *
                         </label>
                         <input
                           type="text"
                           required
                           value={customerCity}
                           onChange={(e) => setCustomerCity(e.target.value)}
-                          placeholder="Votre ville"
+                          placeholder="Ex: Dakar, Paris, Bruxelles..."
                           className="w-full h-11 text-sm px-3.5 rounded-xl border border-[#E8E6E1] focus:border-[#0A0A0A] focus:outline-none"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-[#0A0A0A] mb-1">
-                          Adresse précise *
+                          Adresse complète *
                         </label>
                         <input
                           type="text"
                           required
                           value={customerAddress}
                           onChange={(e) => setCustomerAddress(e.target.value)}
-                          placeholder="Quartier, rue..."
+                          placeholder="Rue, code postal ou quartier..."
                           className="w-full h-11 text-sm px-3.5 rounded-xl border border-[#E8E6E1] focus:border-[#0A0A0A] focus:outline-none"
                         />
                       </div>
@@ -457,33 +453,51 @@ export const CartDrawer: React.FC = () => {
                     <div className="grid grid-cols-2 gap-2">
                       {PAYMENT_METHODS_DATA.map((method) => {
                         const isSelected = paymentMethod === method.id;
+                        const isCard = method.id === 'carte_bancaire';
                         return (
                           <button
                             key={method.id}
                             type="button"
                             onClick={() => setPaymentMethod(method.id)}
                             className={`p-2.5 rounded-2xl border text-left transition-all flex items-center gap-2.5 ${
+                              isCard ? 'col-span-2 justify-between' : ''
+                            } ${
                               isSelected
                                 ? 'border-[#0A0A0A] bg-[#F6F5F2]'
                                 : 'border-[#E8E6E1] bg-white hover:border-[#0A0A0A]'
                             }`}
                           >
-                            {method.logo ? (
-                              <img
-                                src={method.logo}
-                                alt={method.label}
-                                className="w-7 h-7 rounded-lg object-contain bg-white border border-[#E8E6E1] p-0.5 shrink-0"
-                              />
-                            ) : (
-                              <div className="w-7 h-7 rounded-lg bg-[#F6F5F2] border border-[#E8E6E1] flex items-center justify-center shrink-0">
-                                <Banknote className="w-4 h-4 text-[#0A0A0A]" strokeWidth={1.75} />
-                              </div>
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              {method.logo ? (
+                                <img
+                                  src={method.logo}
+                                  alt={method.label}
+                                  className="w-7 h-7 rounded-lg object-contain bg-white border border-[#E8E6E1] p-0.5 shrink-0"
+                                />
+                              ) : (
+                                <div className="w-7 h-7 rounded-lg bg-[#F6F5F2] border border-[#E8E6E1] flex items-center justify-center shrink-0">
+                                  <Banknote className="w-4 h-4 text-[#0A0A0A]" strokeWidth={1.75} />
+                                </div>
+                              )}
+                              <span className="font-medium text-xs text-[#0A0A0A]">{method.label}</span>
+                            </div>
+                            {isCard && (
+                              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">
+                                Sénégal & International
+                              </span>
                             )}
-                            <span className="font-medium text-xs text-[#0A0A0A]">{method.label}</span>
                           </button>
                         );
                       })}
                     </div>
+                    {paymentMethod === 'carte_bancaire' && (
+                      <div className="p-3 rounded-xl bg-indigo-50/60 border border-indigo-200/80 flex items-start gap-2 text-xs text-indigo-950">
+                        <CreditCard className="w-4 h-4 text-indigo-700 shrink-0 mt-0.5" />
+                        <span>
+                          Paiement sécurisé <strong>Visa / Mastercard</strong> (Europe, International & Sénégal). Votre commande est enregistrée immédiatement et vous recevez votre lien de paiement CB sécurisé.
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-2 flex gap-3">
